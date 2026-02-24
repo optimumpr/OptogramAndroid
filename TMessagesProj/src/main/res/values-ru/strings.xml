@@ -164,6 +164,7 @@
     <string name="CopyWithoutProtocol">Копировать без протокола</string>
     <!--fork settings view-->
     <string name="ForkSettingsTitle">Настройки Optogram</string>
+    <string name="OptogramHideSponsoredMessages">Скрыть рекламные сообщения</string>
     <string name="SquareAvatars">Квадратные аватары</string>
     <string name="AvatarShape">Форма аватара</string>
     <string name="AvatarShapeRound">Круглая</string>

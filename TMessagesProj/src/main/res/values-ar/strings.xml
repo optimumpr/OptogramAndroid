@@ -172,6 +172,7 @@
     <string name="CopyWithoutProtocol">نسخ بدون بروتوكول</string>
     <!--fork settings view-->
     <string name="ForkSettingsTitle">إعدادات عميل Optogram</string>
+    <string name="OptogramHideSponsoredMessages">إخفاء الرسائل الدعائية</string>
     <string name="SquareAvatars">أفاتارات مربعة</string>
     <string name="AvatarShape">شكل الصورة الرمزية</string>
     <string name="AvatarShapeRound">دائري</string>

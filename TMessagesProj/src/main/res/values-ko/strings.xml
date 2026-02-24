@@ -172,6 +172,7 @@
     <string name="CopyWithoutProtocol">프로토콜 없이 복사</string>
     <!--fork settings view-->
     <string name="ForkSettingsTitle">Optogram 설정</string>
+    <string name="OptogramHideSponsoredMessages">스폰서 메시지 숨기기</string>
     <string name="SquareAvatars">정사각형 아바타</string>
     <string name="AvatarShape">아바타 모양</string>
     <string name="AvatarShapeRound">원형</string>

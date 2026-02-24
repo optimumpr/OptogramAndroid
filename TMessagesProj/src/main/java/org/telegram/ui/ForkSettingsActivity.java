@@ -538,7 +538,7 @@ public class ForkSettingsActivity extends BaseFragment {
     }
 
     private void fillSettings(ArrayList<UItem> items) {
-        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES, "Hide Sponsored Messages", null)
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES, LocaleController.getString(R.string.OptogramHideSponsoredMessages), null)
             .setChecked(pref("disableAds", true)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO, "Hide Premium Speed Promotion", "Hide the download-speed promotion in chat search")
             .setChecked(pref("hidePremiumSpeedPromo", false)).setMultiline(true));
