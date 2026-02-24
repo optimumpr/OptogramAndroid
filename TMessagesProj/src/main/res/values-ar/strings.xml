@@ -154,7 +154,6 @@
     <string name="LockPremiumInfo">إخفاء إعلانات Telegram Premium وزر الاشتراك. إعادة التشغيل مطلوبة.</string>
     <string name="DisableTabletModeInfo">استخدام تخطيط الهاتف على الأجهزة اللوحية. سيُعاد تشغيل التطبيق فوراً.</string>
     <string name="VoiceMessageQuality">جودة الرسائل الصوتية</string>
-    <string name="UpdateCheckInterval">فترة التحقق من التحديثات</string>
     <string name="DropScreenshotCaption">إزالة التسمية التوضيحية للقطة الشاشة</string>
     <string name="DisablePlayVisibleVideoOnVolume">تعطيل تشغيل الفيديو عند تغيير مستوى الصوت</string>
     <string name="ForkRestartRequired">إعادة التشغيل مطلوبة</string>

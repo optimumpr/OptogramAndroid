@@ -154,7 +154,6 @@
     <string name="LockPremiumInfo">Telegram-Premium-Werbung und die Abo-Schaltfläche ausblenden. Neustart erforderlich.</string>
     <string name="DisableTabletModeInfo">Auf Tablets das Telefon-Layout verwenden. Die App startet sofort neu.</string>
     <string name="VoiceMessageQuality">Qualität der Sprachnachrichten</string>
-    <string name="UpdateCheckInterval">Intervall der Update-Prüfung</string>
     <string name="DropScreenshotCaption">Screenshot-Beschriftung entfernen</string>
     <string name="DisablePlayVisibleVideoOnVolume">Videowiedergabe bei Lautstärkeänderung deaktivieren</string>
     <string name="ForkRestartRequired">Neustart erforderlich</string>

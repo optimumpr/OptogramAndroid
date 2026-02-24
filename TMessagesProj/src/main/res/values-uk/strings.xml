@@ -154,7 +154,6 @@
     <string name="LockPremiumInfo">Приховувати рекламу Telegram Premium і кнопку підписки. Потрібен перезапуск.</string>
     <string name="DisableTabletModeInfo">Використовувати телефонний режим на планшетах. Застосунок перезапуститься одразу.</string>
     <string name="VoiceMessageQuality">Якість голосових повідомлень</string>
-    <string name="UpdateCheckInterval">Інтервал перевірки оновлень</string>
     <string name="DropScreenshotCaption">Прибирати підпис зі скриншотів</string>
     <string name="DisablePlayVisibleVideoOnVolume">Вимкнути відтворення відео при зміні гучності</string>
     <string name="ForkRestartRequired">Потрібен перезапуск</string>

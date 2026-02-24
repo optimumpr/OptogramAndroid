@@ -154,7 +154,6 @@
     <string name="LockPremiumInfo">Telegram Premium 광고와 구독 버튼을 숨깁니다. 재시작 필요.</string>
     <string name="DisableTabletModeInfo">태블릿에서 휴대폰 레이아웃을 사용합니다. 앱이 즉시 재시작됩니다.</string>
     <string name="VoiceMessageQuality">음성 메시지 품질</string>
-    <string name="UpdateCheckInterval">업데이트 확인 간격</string>
     <string name="DropScreenshotCaption">스크린샷 캡션 제거</string>
     <string name="DisablePlayVisibleVideoOnVolume">볼륨 변경 시 동영상 재생 비활성화</string>
     <string name="ForkRestartRequired">재시작 필요</string>

@@ -154,7 +154,6 @@
     <string name="LockPremiumInfo">Nascondere le pubblicità di Telegram Premium e il pulsante di abbonamento. Riavvio richiesto.</string>
     <string name="DisableTabletModeInfo">Usare il layout telefono sui tablet. L\'app si riavvia immediatamente.</string>
     <string name="VoiceMessageQuality">Qualità dei messaggi vocali</string>
-    <string name="UpdateCheckInterval">Intervallo di controllo aggiornamenti</string>
     <string name="DropScreenshotCaption">Rimuovi la didascalia degli screenshot</string>
     <string name="DisablePlayVisibleVideoOnVolume">Disabilita la riproduzione del video al variare del volume</string>
     <string name="ForkRestartRequired">Riavvio richiesto</string>

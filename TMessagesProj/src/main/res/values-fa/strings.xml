@@ -65,7 +65,6 @@
     <string name="LockPremiumInfo">تبلیغات تلگرام پریمیوم و دکمهٔ اشتراک پنهان شوند. نیازمند راه‌اندازی مجدد.</string>
     <string name="DisableTabletModeInfo">در تبلت‌ها از چیدمان گوشی استفاده شود. برنامه بی‌درنگ دوباره اجرا می‌شود.</string>
     <string name="VoiceMessageQuality">کیفیت پیام صوتی</string>
-    <string name="UpdateCheckInterval">بازهٔ بررسی به‌روزرسانی</string>
     <string name="DropScreenshotCaption">حذف شرح اسکرین‌شات</string>
     <string name="DisablePlayVisibleVideoOnVolume">غیرفعال کردن پخش ویدیو با تغییر صدا</string>
     <string name="ForkRestartRequired">نیازمند راه‌اندازی مجدد</string>

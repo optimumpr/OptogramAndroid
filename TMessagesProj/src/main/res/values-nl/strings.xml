@@ -154,7 +154,6 @@
     <string name="LockPremiumInfo">Telegram Premium-advertenties en de abonneerknop verbergen. Herstart vereist.</string>
     <string name="DisableTabletModeInfo">De telefoonindeling gebruiken op tablets. De app start direct opnieuw op.</string>
     <string name="VoiceMessageQuality">Kwaliteit van spraakberichten</string>
-    <string name="UpdateCheckInterval">Interval voor controle op updates</string>
     <string name="DropScreenshotCaption">Bijschrift van schermafbeelding verwijderen</string>
     <string name="DisablePlayVisibleVideoOnVolume">Video afspelen bij volumeverandering uitschakelen</string>
     <string name="ForkRestartRequired">Herstart vereist</string>

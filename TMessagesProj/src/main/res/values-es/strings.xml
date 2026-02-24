@@ -154,7 +154,6 @@
     <string name="LockPremiumInfo">Ocultar los anuncios de Telegram Premium y el botón de suscripción. Reinicio requerido.</string>
     <string name="DisableTabletModeInfo">Usar el diseño de teléfono en tablets. La aplicación se reinicia de inmediato.</string>
     <string name="VoiceMessageQuality">Calidad de los mensajes de voz</string>
-    <string name="UpdateCheckInterval">Intervalo de comprobación de actualizaciones</string>
     <string name="DropScreenshotCaption">Quitar la leyenda de las capturas</string>
     <string name="DisablePlayVisibleVideoOnVolume">Desactivar reproducción de video al cambiar el volumen</string>
     <string name="ForkRestartRequired">Reinicio requerido</string>

@@ -12,7 +12,6 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.BuildVars
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
-import org.telegram.messenger.MessagesController
 import org.telegram.messenger.R
 import org.telegram.messenger.UserConfig
 import org.telegram.tgnet.ConnectionsManager
@@ -30,7 +29,6 @@ object AppUpdater {
     private const val KEY_LAST_APK_PATH = "lastApkPath"
 
     private var downloadBroadcastReceiver: DownloadReceiver? = null
-    private var lastTimestampOfCheck = 0L
     var downloadId = 0L
 
     @JvmStatic
@@ -78,14 +76,9 @@ object AppUpdater {
     ) {
 
         try {
-            val updateInterval = MessagesController.getGlobalMainSettings().getLong("updateForkCheckInterval", 30 * 60 * 1000L)
-            if (!manual && (updateInterval == 0L || System.currentTimeMillis() - lastTimestampOfCheck < updateInterval)) {
+            if (!manual || downloadId != 0L) {
                 return
             }
-            if (downloadId != 0L) {
-                return
-            }
-            lastTimestampOfCheck = System.currentTimeMillis()
             val currentVersion = BuildVars.BUILD_VERSION_STRING
 
             // Try Telegram channel first if we have an active session
@@ -205,7 +198,6 @@ object AppUpdater {
                         return@sendRequest
                     }
 
-                    lastTimestampOfCheck = System.currentTimeMillis()
 
                     if (compareVersions(newVersion, currentVersion) <= 0) {
                         if (manual) {
@@ -332,7 +324,6 @@ object AppUpdater {
                         FileLog.w("Connection error.")
                         return@httpRequest
                     }
-                    lastTimestampOfCheck = System.currentTimeMillis()
 
                     val root = JSONObject(response)
                     val tag = root.optString("tag_name")
