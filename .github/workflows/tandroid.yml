@@ -72,7 +72,7 @@ jobs:
           {
             printf '\nDUMMY_CONST=0\norg.gradle.workers.max=1\n'
             printf 'ADDITIONAL_BUILD_NUMBER=%s\n' "$((ADDITIONAL_BUILD / 10000))"
-            printf 'USER_REPO=%s\nCHECK_UPDATES=1\n' "$GITHUB_REPOSITORY"
+            printf 'CHECK_UPDATES=1\n'
             printf 'APP_ID=%s\nAPP_HASH=%s\n' "${APP_ID:-0}" "${APP_HASH:-0}"
             printf 'USER_ID_OWNER=%s\n' "$USER_ID_OWNER"
             printf 'LASTFM_API_KEY=%s\nLASTFM_API_SECRET=%s\n' "$LASTFM_API_KEY" "$LASTFM_API_SECRET"
