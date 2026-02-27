@@ -8196,7 +8196,7 @@ public class MessagesStorage extends BaseController {
                     usersToLoad.add(c.user_id);
                 }
             } else if (info instanceof TLRPC.TL_channelFull) {
-                cursor = database.queryFinalized("SELECT us.data, us.status, cu.data, cu.date FROM channel_users_v2 as cu LEFT JOIN users as us ON us.uid = cu.uid WHERE cu.did = " + (-chatId) + " ORDER BY cu.date DESC");
+                cursor = database.queryFinalized("SELECT us.data, us.status, cu.data FROM channel_users_v2 as cu LEFT JOIN users as us ON us.uid = cu.uid WHERE cu.did = " + (-chatId) + " ORDER BY cu.date DESC");
                 info.participants = new TLRPC.TL_chatParticipants();
                 while (cursor.next()) {
                     try {
@@ -8220,7 +8220,6 @@ public class MessagesStorage extends BaseController {
                                 user.status.expires = cursor.intValue(1);
                             }
                             loadedUsers.add(user);
-                            participant.date = cursor.intValue(3);
                             TLRPC.TL_chatChannelParticipant chatChannelParticipant = new TLRPC.TL_chatChannelParticipant();
                             chatChannelParticipant.user_id = MessageObject.getPeerId(participant.peer);
                             chatChannelParticipant.date = participant.date;
