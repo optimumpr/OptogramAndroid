@@ -1,0 +1,5 @@
+Optogram is an unofficial Telegram client for Android based on Forkgram.
+
+Optogram Settings includes controls to hide sponsored messages, mask phone numbers on supported screens, and hide device details sent by the client. Contact syncing is off by default.
+
+Use Fast Forward to open the sharing dialog for messages that can be forwarded.
