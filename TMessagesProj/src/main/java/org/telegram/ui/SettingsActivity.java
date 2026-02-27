@@ -818,7 +818,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
         {
             items.add(UItem.asShadow(null));
-            items.add(UItem.asHeader("Fork"));
+            items.add(UItem.asHeader(getString(R.string.AppName)));
             items.add(SettingCell.Factory.of(98, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_fork, "Optogram Settings"));
             items.add(SettingCell.Factory.of(99, IconBackgroundColors.BLUE_DEEP.top, IconBackgroundColors.BLUE_DEEP.bottom, R.drawable.settings_check_update, getString(R.string.ForkCheckUpdate)));
         }
