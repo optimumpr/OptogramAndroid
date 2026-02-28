@@ -186,8 +186,6 @@ android {
         buildConfigField 'String', 'APP_HASH', getStringForConfig(telegramApiHash)
         buildConfigField 'int', 'USER_ID_OWNER', USER_ID_OWNER
         buildConfigField 'int', 'CHECK_UPDATES', CHECK_UPDATES
-        buildConfigField 'String', 'LASTFM_API_KEY', getStringForConfig(LASTFM_API_KEY)
-        buildConfigField 'String', 'LASTFM_API_SECRET', getStringForConfig(LASTFM_API_SECRET)
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 

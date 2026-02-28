@@ -255,7 +255,6 @@ object ForkSettings {
         "disableTabletMode" to ForkSettingsActivity.ID_DISABLE_TABLET_MODE,
         "webPublish" to ForkSettingsActivity.ID_WEB_PUBLISH,
         "voiceTimecodes" to ForkSettingsActivity.ID_VOICE_TIMECODES,
-        "lastfm" to ForkSettingsActivity.ID_LASTFM_LOGIN,
         "exportSettings" to ForkSettingsActivity.ID_EXPORT_SETTINGS,
         "importSettings" to ForkSettingsActivity.ID_IMPORT_SETTINGS,
         "resetLauncherShortcuts" to ForkSettingsActivity.ID_RESET_LAUNCHER_SHORTCUTS,

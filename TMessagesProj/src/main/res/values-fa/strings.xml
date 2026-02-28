@@ -166,7 +166,6 @@
     <string name="VoiceFileSize">نمایش حجم فایل پیام صوتی</string>
     <string name="AudioPlayerAutoplayNext">پخش خودکار بعدی</string>
     <string name="SmsOnlyOfficialWarning">توجه: تأیید با پیامک فقط برای برنامه‌های موبایل رسمی در دسترس است</string>
-    <string name="ThirdParty">شخص ثالث</string>
     <string name="EnableLastSeenDots">فعال کردن نقطه‌های رنگی آخرین بازدید</string>
     <string name="HideStoriesInArchive">پنهان کردن استوری‌ها در آرشیو</string>
     <string name="ExtractMediaFromPreview">ارسال رسانهٔ پیش‌نمایش پیوند به‌صورت پیوست</string>

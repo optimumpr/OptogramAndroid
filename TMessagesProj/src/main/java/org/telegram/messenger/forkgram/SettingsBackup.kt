@@ -13,7 +13,6 @@ object SettingsBackup {
     private val ALLOWED_PREFS = listOf(
         "mainconfig",
         "themeconfig",
-        "lastfm",
         "langconfig",
         "playback_speed",
         "camera",

@@ -245,7 +245,6 @@
     <string name="VoiceFileSize">Размер файла голосовых сообщений</string>
     <string name="AudioPlayerAutoplayNext">Автовоспроизведение следующего</string>
     <string name="SmsOnlyOfficialWarning">Примечание: SMS-подтверждение доступно ТОЛЬКО в официальных мобильных приложениях</string>
-    <string name="ThirdParty">Сторонние</string>
     <string name="EnableLastSeenDots">Включить цветные точки последнего входа</string>
     <string name="HideStoriesInArchive">Скрыть истории в архиве</string>
     <string name="ExtractMediaFromPreview">Отправлять медиа из превью ссылки как вложение</string>

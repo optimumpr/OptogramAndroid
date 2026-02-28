@@ -30,7 +30,6 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.forkgram.FolderIcons;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BotWebViewVibrationEffect;
-import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
@@ -156,7 +155,6 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_WEBSOCKET_DOMAIN = 85;
     public static final int ID_SATELLITE_DATA_SAVING = 86;
 
-    public static final int ID_LASTFM_LOGIN = 90;
 
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
@@ -771,13 +769,6 @@ public class ForkSettingsActivity extends BaseFragment {
         items.add(UItem.asSettingsCell(ID_RESET_LAUNCHER_SHORTCUTS, LocaleController.getString(R.string.ResetLauncherShortcuts), ""));
         items.add(UItem.asShadow(LocaleController.getString(R.string.ResetLauncherShortcutsInfo)));
 
-        if (BuildVars.LASTFM_API_KEY != null && BuildVars.LASTFM_API_KEY.length() > 2 &&
-            BuildVars.LASTFM_API_SECRET != null && BuildVars.LASTFM_API_SECRET.length() > 2) {
-            items.add(UItem.asHeader(LocaleController.getString(R.string.ThirdParty)));
-            items.add(UItem.asSettingsCell(ID_LASTFM_LOGIN, R.drawable.ic_lastfm, "Last.fm"));
-            items.add(UItem.asShadow(null));
-        }
-
         items.add(UItem.asHeader(LocaleController.getString(R.string.WebPublishSection)));
         items.add(UItem.asSettingsCell(ID_WEB_PUBLISH, LocaleController.getString(R.string.WebPublish), getWebPublishText()));
         items.add(UItem.asShadow(LocaleController.getString(R.string.WebPublishInfo)));
@@ -1007,9 +998,6 @@ public class ForkSettingsActivity extends BaseFragment {
             System.exit(0);
         } else if (id == ID_LOCK_PREMIUM) {
             toggle("lockPremium", item, view);
-
-        } else if (id == ID_LASTFM_LOGIN) {
-            presentFragment(new LastFmLoginActivity());
 
         } else if (id == ID_WEB_PUBLISH) {
             presentFragment(new WebPublishSettingsActivity());

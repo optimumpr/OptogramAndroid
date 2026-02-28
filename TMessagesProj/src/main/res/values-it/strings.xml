@@ -255,7 +255,6 @@
     <string name="VoiceFileSize">Mostra la dimensione dei messaggi vocali</string>
     <string name="AudioPlayerAutoplayNext">Riproduci automaticamente il successivo</string>
     <string name="SmsOnlyOfficialWarning">Nota: la verifica SMS è limitata SOLO alle app mobili ufficiali</string>
-    <string name="ThirdParty">Di terze parti</string>
     <string name="EnableLastSeenDots">Abilita i puntini colorati dell\'ultimo accesso</string>
     <string name="HideStoriesInArchive">Nascondi le storie nell\'archivio</string>
     <string name="ExtractMediaFromPreview">Invia i media dall\'anteprima del link come allegato</string>

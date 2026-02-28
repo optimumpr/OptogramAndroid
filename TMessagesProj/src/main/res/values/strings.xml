@@ -154,7 +154,6 @@
     <string name="VoiceFileSize">Show voice message file size</string>
     <string name="AudioPlayerAutoplayNext">Auto-play next</string>
     <string name="SmsOnlyOfficialWarning">Note: SMS verification is limited to ONLY official mobile apps</string>
-    <string name="ThirdParty">Third-party</string>
     <string name="EnableLastSeenDots">Enable colored last seen dots</string>
     <string name="HideStoriesInArchive">Hide Stories in Archive</string>
     <string name="ExtractMediaFromPreview">Send media from link preview as attachment</string>

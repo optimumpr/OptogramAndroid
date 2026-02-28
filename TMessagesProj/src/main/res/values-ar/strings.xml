@@ -255,7 +255,6 @@
     <string name="VoiceFileSize">إظهار حجم ملف الرسائل الصوتية</string>
     <string name="AudioPlayerAutoplayNext">التشغيل التلقائي للتالي</string>
     <string name="SmsOnlyOfficialWarning">ملاحظة: التحقق عبر الرسائل النصية مقتصر فقط على التطبيقات الرسمية</string>
-    <string name="ThirdParty">طرف ثالث</string>
     <string name="EnableLastSeenDots">تفعيل نقاط ملونة لآخر ظهور</string>
     <string name="HideStoriesInArchive">إخفاء القصص في الأرشيف</string>
     <string name="ExtractMediaFromPreview">إرسال الوسائط من معاينة الرابط كمرفق</string>
