@@ -180,6 +180,7 @@
     <string name="ForkSettingsLockChangeCode">Change code</string>
     <string name="ForkSettingsLockRemoveCode">Remove code</string>
     <string name="ForkSettingsLockRemoveCodeConfirm">Fork Client Settings will open without a code.</string>
+    <string name="HideChatKeyboard">Hide keyboard on chat scroll</string>
     <string name="AppName">Optogram</string>
     <string name="AppNameBeta">Optogram</string>
     <string name="AppNameFdroid">Forkgram</string>
