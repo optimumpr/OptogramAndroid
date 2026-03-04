@@ -426,7 +426,7 @@ public class MessagesController extends BaseController implements NotificationCe
         protected void getRemote(int currentAccount, Integer arguments, long hash, Utilities.Callback4<Boolean, TLRPC.TL_help_appConfig, Long, Boolean> onResult) {
             TLRPC.TL_help_getAppConfig req = new TLRPC.TL_help_getAppConfig();
             req.hash = (int) hash;
-            getConnectionsManager().sendRequest(req, (res, err) -> {
+            getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
                 if (res instanceof TLRPC.TL_help_appConfigNotModified) {
                     onResult.run(true, null, 0L, true);
                 } else if (res instanceof TLRPC.TL_help_appConfig) {
@@ -435,41 +435,39 @@ public class MessagesController extends BaseController implements NotificationCe
                     FileLog.e("getting appconfig error " + (err != null ? err.code + " " + err.text : ""));
                     onResult.run(false, null, 0L, err == null || !(err.code == -2000 || err.code == -2001));
                 }
-            });
+            }));
         }
 
         @Override
         protected void getLocal(int currentAccount, Integer arguments, Utilities.Callback2<Long, TLRPC.TL_help_appConfig> onResult) {
             getMessagesStorage().getStorageQueue().postRunnable(() -> {
                 SQLiteCursor cursor = null;
+                TLRPC.help_AppConfig stored = null;
                 try {
                     SQLiteDatabase database = MessagesStorage.getInstance(currentAccount).getDatabase();
                     if (database != null) {
-                        TLRPC.help_AppConfig maybeResult = null;
                         cursor = database.queryFinalized("SELECT data FROM app_config");
                         if (cursor.next()) {
                             NativeByteBuffer data = cursor.byteBufferValue(0);
                             if (data != null) {
-                                maybeResult = TLRPC.help_AppConfig.TLdeserialize(data, data.readInt32(false), true);
-                                data.reuse();
+                                try {
+                                    stored = TLRPC.help_AppConfig.TLdeserialize(data, data.readInt32(false), true);
+                                } finally {
+                                    data.reuse();
+                                }
                             }
-                        }
-
-                        if (maybeResult instanceof TLRPC.TL_help_appConfig) {
-                            TLRPC.TL_help_appConfig result = (TLRPC.TL_help_appConfig) maybeResult;
-                            onResult.run((long) result.hash, result);
-                        } else {
-                            onResult.run(0L, null);
                         }
                     }
                 } catch (Exception e) {
                     FileLog.e(e);
-                    onResult.run(0L, null);
                 } finally {
                     if (cursor != null) {
                         cursor.dispose();
                     }
                 }
+                final TLRPC.TL_help_appConfig config = stored instanceof TLRPC.TL_help_appConfig
+                        ? (TLRPC.TL_help_appConfig) stored : null;
+                AndroidUtilities.runOnUIThread(() -> onResult.run(config != null ? (long) config.hash : 0L, config));
             });
         }
 
@@ -2642,23 +2640,37 @@ public class MessagesController extends BaseController implements NotificationCe
         getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
     }
 
-    private Runnable loadAppConfigRunnable = this::loadAppConfig;
+    private static final long APP_CONFIG_CHECK_INTERVAL_MS = 4 * 60 * 1000L;
+    private long lastAppConfigCheckTime = SystemClock.elapsedRealtime();
+    private boolean loadingAppConfig;
+    private boolean appConfigForcePending;
 
     public void loadAppConfig() {
         loadAppConfig(true);
     }
 
     public void loadAppConfig(boolean force) {
-        AndroidUtilities.cancelRunOnUIThread(loadAppConfigRunnable);
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            AndroidUtilities.runOnUIThread(() -> loadAppConfig(force));
+            return;
+        }
+        if (loadingAppConfig) {
+            appConfigForcePending |= force;
+            return;
+        }
         if (force) {
             appConfigFetcher.forceRequest(currentAccount, 0);
         }
+        loadingAppConfig = true;
         appConfigFetcher.fetch(currentAccount, 0, config -> AndroidUtilities.runOnUIThread(() -> {
+            loadingAppConfig = false;
             if (config != null && config.config instanceof TLRPC.TL_jsonObject) {
                 applyAppConfig((TLRPC.TL_jsonObject) config.config);
             }
-            AndroidUtilities.cancelRunOnUIThread(loadAppConfigRunnable);
-            AndroidUtilities.runOnUIThread(loadAppConfigRunnable, 4 * 60 * 1000 + 10);
+            if (appConfigForcePending) {
+                appConfigForcePending = false;
+                loadAppConfig(true);
+            }
         }));
     }
 
@@ -10903,6 +10915,11 @@ public class MessagesController extends BaseController implements NotificationCe
         }
         if (lastPushRegisterSendTime != 0 && Math.abs(SystemClock.elapsedRealtime() - lastPushRegisterSendTime) >= 3 * 60 * 60 * 1000) {
             PushListenerController.sendRegistrationToServer(SharedConfig.pushType, SharedConfig.pushString);
+        }
+        final long elapsedTime = SystemClock.elapsedRealtime();
+        if (getUserConfig().isClientActivated() && elapsedTime - lastAppConfigCheckTime >= APP_CONFIG_CHECK_INTERVAL_MS) {
+            lastAppConfigCheckTime = elapsedTime;
+            loadAppConfig(false);
         }
         getLocationController().update();
         checkPromoInfoInternal(false);
