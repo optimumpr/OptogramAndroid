@@ -135,6 +135,8 @@ public class ChatActivityChannelButtonsLayout extends FrameLayout implements Fac
                 button.setContentDescription(getString(R.string.Search));
             } else if (buttonId == BUTTON_GIGA_GROUP_INFO) {
                 button.setContentDescription(getString(R.string.BroadcastGroupInfo));
+            } else if (buttonId == BUTTON_RECENT_ACTIONS_INFO) {
+                button.setContentDescription(getString(R.string.EventLogInfoTitle));
             }
 
             ScaleStateListAnimator.apply(button, .13f, 2f);
