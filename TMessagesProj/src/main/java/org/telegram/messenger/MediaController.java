@@ -863,19 +863,24 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         }
 
         public void rebuildPhoto(boolean highQuality) {
-            final Pair<Integer, Integer> orientation = AndroidUtilities.getImageOrientation(filterPath != null ? filterPath : path);
-            final Bitmap.CompressFormat compressFormat = Bitmap.CompressFormat.JPEG;
-            final Bitmap bitmap = StoryEntry.getScaledBitmap(opts -> BitmapFactory.decodeFile(filterPath != null ? filterPath : path, opts), AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), false, true);
-            if (imagePath != null) {
-                new File(imagePath).delete(); imagePath = null;
-            }
-
-            Bitmap b;
-            if (cropState != null) {
-                b = PhotoViewer.createCroppedBitmap(bitmap, cropState, new int[] { orientation.first, orientation.second }, true);
-                bitmap.recycle();
-            } else {
-                if (orientation.first != 0) {
+            final String sourcePath = filterPath != null ? filterPath : path;
+            final int photoSize = AndroidUtilities.getPhotoSize(highQuality);
+            final int quality = highQuality ? 99 : 87;
+            Bitmap source = null;
+            Bitmap photo = null;
+            Bitmap paintSource = null;
+            Bitmap paint = null;
+            Bitmap result = null;
+            File output = null;
+            try {
+                final Pair<Integer, Integer> orientation = AndroidUtilities.getImageOrientation(sourcePath);
+                source = StoryEntry.getScaledBitmap(opts -> BitmapFactory.decodeFile(sourcePath, opts), photoSize, photoSize, false, true);
+                if (source == null) {
+                    return;
+                }
+                if (cropState != null) {
+                    photo = PhotoViewer.createCroppedBitmap(source, cropState, new int[] {orientation.first, orientation.second}, true);
+                } else if (orientation.first != 0) {
                     Matrix matrix = new Matrix();
                     matrix.postRotate(orientation.first);
                     if (orientation.second == 1) {
@@ -883,46 +888,76 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                     } else if (orientation.second == 2) {
                         matrix.postScale(1, -1);
                     }
-                    int width1 = bitmap.getWidth();
-                    int height1 = bitmap.getHeight();
-                    b = Bitmap.createBitmap(bitmap, 0, 0, width1, height1, matrix, true);
-                    bitmap.recycle();
+                    photo = Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
                 } else {
-                    b = bitmap;
+                    photo = source;
                 }
-            }
-            if (fullPaintPath == null) {
-                TLRPC.PhotoSize size = ImageLoader.scaleAndSaveImage(b, compressFormat, AndroidUtilities.getPhotoSize(highQuality), AndroidUtilities.getPhotoSize(highQuality), highQuality ? 99 : 87, false, 101, 101);
-                imagePath = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(size, true).toString();
-            } else {
-                Bitmap paintBitmap;
-                if (cropState != null) {
-                    Bitmap b2 = BitmapFactory.decodeFile(fullPaintPath);
-                    paintBitmap = PhotoViewer.createCroppedBitmap(b2, cropState, null, false);
-                    b2.recycle();
-                } else {
-                    paintBitmap = BitmapFactory.decodeFile(fullPaintPath);
+                if (photo == null) {
+                    return;
                 }
-                try {
-                    final Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-                    final Bitmap resultBitmap = Bitmap.createBitmap(b.getWidth(), b.getHeight(), Bitmap.Config.ARGB_8888);
-                    final Canvas canvas = new Canvas(resultBitmap);
+                if (photo != source) {
+                    source.recycle();
+                    source = null;
+                }
 
-                    canvas.drawBitmap(b, 0, 0, bitmapPaint);
-                    canvas.scale(b.getWidth() / (float) paintBitmap.getWidth(), b.getHeight() / (float) paintBitmap.getHeight());
-                    canvas.drawBitmap(paintBitmap, 0, 0, bitmapPaint);
+                if (fullPaintPath == null) {
+                    TLRPC.PhotoSize size = ImageLoader.scaleAndSaveImage(photo, Bitmap.CompressFormat.JPEG, photoSize, photoSize, quality, false, 101, 101);
+                    if (size != null && size.size > 0) {
+                        imagePath = FileLoader.getInstance(UserConfig.selectedAccount).getPathToAttach(size, true).toString();
+                    }
+                    return;
+                }
 
-                    imagePath = getTempFileAbsolutePath();
-                    resultBitmap.compress(Bitmap.CompressFormat.JPEG, highQuality ? 99 : 87, new FileOutputStream(imagePath));
-                } catch (Exception e) {
-                    FileLog.e(e);
+                paintSource = BitmapFactory.decodeFile(fullPaintPath);
+                if (paintSource == null) {
+                    return;
                 }
-                if (paintBitmap != null) {
-                    paintBitmap.recycle();
+                paint = cropState != null ? PhotoViewer.createCroppedBitmap(paintSource, cropState, null, false) : paintSource;
+                if (paint == null) {
+                    return;
                 }
-            }
-            if (b != null) {
-                b.recycle();
+                if (paint != paintSource) {
+                    paintSource.recycle();
+                    paintSource = null;
+                }
+                final Paint bitmapPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
+                result = Bitmap.createBitmap(photo.getWidth(), photo.getHeight(), Bitmap.Config.ARGB_8888);
+                final Canvas canvas = new Canvas(result);
+                canvas.drawBitmap(photo, 0, 0, bitmapPaint);
+                canvas.scale(photo.getWidth() / (float) paint.getWidth(), photo.getHeight() / (float) paint.getHeight());
+                canvas.drawBitmap(paint, 0, 0, bitmapPaint);
+
+                output = new File(getTempFileAbsolutePath());
+                boolean saved;
+                try (FileOutputStream stream = new FileOutputStream(output)) {
+                    saved = result.compress(Bitmap.CompressFormat.JPEG, quality, stream);
+                }
+                if (saved) {
+                    imagePath = output.getAbsolutePath();
+                    output = null;
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            } finally {
+                // The send workers receive file paths only. These decoded bitmaps are private to this rebuild.
+                if (result != null) {
+                    result.recycle();
+                }
+                if (paint != null && paint != paintSource) {
+                    paint.recycle();
+                }
+                if (paintSource != null) {
+                    paintSource.recycle();
+                }
+                if (photo != null && photo != source) {
+                    photo.recycle();
+                }
+                if (source != null) {
+                    source.recycle();
+                }
+                if (output != null) {
+                    output.delete();
+                }
             }
         }
     }
