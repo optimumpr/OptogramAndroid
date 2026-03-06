@@ -6277,10 +6277,17 @@ public class ChatActivityEnterView extends FrameLayout implements
                 }
                 checkBotMenu();
 
-                if (editingCaption && !captionLimitBulletinShown && !MessagesController.getInstance(currentAccount).premiumFeaturesBlocked() && !UserConfig.getInstance(currentAccount).isPremium() && codePointCount > MessagesController.getInstance(currentAccount).captionLengthLimitDefault && codePointCount < MessagesController.getInstance(currentAccount).captionLengthLimitPremium) {
+                if (editingCaption && !captionLimitBulletinShown && !MessagesController.getInstance(currentAccount).premiumFeaturesBlocked() && !UserConfig.getInstance(currentAccount).hasLocalPremiumFeatures() && codePointCount > MessagesController.getInstance(currentAccount).captionLengthLimitDefault && codePointCount < MessagesController.getInstance(currentAccount).captionLengthLimitPremium) {
                     captionLimitBulletinShown = true;
                     if (heightShouldBeChanged) {
-                        AndroidUtilities.runOnUIThread(() -> showCaptionLimitBulletin(), 300);
+                        final int account = currentAccount;
+                        final MessageObject message = editingMessageObject;
+                        AndroidUtilities.runOnUIThread(() -> {
+                            if (isAttachedToWindow() && editingCaption && currentAccount == account
+                                    && editingMessageObject == message && !UserConfig.getInstance(account).hasLocalPremiumFeatures()) {
+                                showCaptionLimitBulletin();
+                            }
+                        }, 300);
                     } else {
                         showCaptionLimitBulletin();
                     }
