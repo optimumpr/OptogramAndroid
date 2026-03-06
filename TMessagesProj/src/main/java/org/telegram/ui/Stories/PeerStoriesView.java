@@ -199,7 +199,6 @@ import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.ReportBottomSheet;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
-import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 import org.telegram.ui.Stories.recorder.CaptionContainerView;
 import org.telegram.ui.Stories.recorder.HintView2;
 import org.telegram.ui.Stories.recorder.StoryEntry;
@@ -2469,88 +2468,20 @@ public class PeerStoriesView extends SizeNotifierFrameLayout implements Notifica
 
     private void createQualityItem(ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout) {
         final boolean qualityFull = MessagesController.getInstance(currentAccount).storyQualityFull;
-        if (UserConfig.getInstance(currentAccount).isPremium()) {
-            ActionBarMenuItem.addItem(popupLayout, qualityFull ? R.drawable.menu_quality_sd : R.drawable.menu_quality_hd, getString(qualityFull ? R.string.StoryQualityDecrease : R.string.StoryQualityIncrease), false, resourcesProvider).setOnClickListener(v -> {
-                final boolean newQualityFull = !qualityFull;
-                MessagesController.getInstance(currentAccount).setStoryQuality(newQualityFull);
-                BulletinFactory.of(storyContainer, resourcesProvider)
-                    .createSimpleBulletin(
-                        R.raw.chats_infotip,
-                        getString(newQualityFull ? R.string.StoryQualityIncreasedTitle : R.string.StoryQualityDecreasedTitle),
-                        getString(newQualityFull ? R.string.StoryQualityIncreasedMessage : R.string.StoryQualityDecreasedMessage)
-                    )
-                    .show();
-                if (popupMenu != null) {
-                    popupMenu.dismiss();
-                }
-            });
-        } else {
-            Drawable lockIcon2 = ContextCompat.getDrawable(getContext(), R.drawable.msg_gallery_locked2);
-            lockIcon2.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(Color.WHITE, Color.BLACK, 0.5f), PorterDuff.Mode.MULTIPLY));
-            CombinedDrawable combinedDrawable2 = new CombinedDrawable(
-                    ContextCompat.getDrawable(getContext(), R.drawable.menu_quality_hd2),
-                    lockIcon2
-            ) {
-                @Override
-                public void setColorFilter(ColorFilter colorFilter) {
-
-                }
-            };
-            combinedDrawable2.setIconSize(dp(24), dp(24));
-            combinedDrawable2.setIconOffset(dp(1), -dp(2));
-            ActionBarMenuSubItem item2 = ActionBarMenuItem.addItem(popupLayout, R.drawable.menu_quality_hd, getString(R.string.StoryQualityIncrease), false, resourcesProvider);
-            item2.setOnClickListener(v -> {
-                BottomSheet sheet = new BottomSheet(getContext(), false, resourcesProvider);
-                sheet.fixNavigationBar(Theme.getColor(Theme.key_dialogBackground, resourcesProvider));
-
-                LinearLayout layout = new LinearLayout(getContext());
-                layout.setOrientation(LinearLayout.VERTICAL);
-                layout.setPadding(dp(16), 0, dp(16), 0);
-
-                BackupImageView imageView = new BackupImageView(getContext());
-                imageView.getImageReceiver().setAutoRepeat(1);
-//                imageView.setScaleType(ImageView.ScaleType.CENTER);
-//                imageView.setAutoRepeat(true);
-//                imageView.setAnimation(R.raw.utyan_cache, 150, 150);
-                MediaDataController.getInstance(currentAccount).setPlaceholderImage(imageView, AndroidUtilities.STICKERS_PLACEHOLDER_PACK_NAME_2, "😎", "150_150");
-                layout.addView(imageView, LayoutHelper.createLinear(150, 150, Gravity.CENTER_HORIZONTAL, 0, 16, 0, 16));
-
-                TextView headerView = new TextView(getContext());
-                headerView.setTypeface(AndroidUtilities.bold());
-                headerView.setGravity(Gravity.CENTER);
-                ThemeBind.textColor(headerView, Theme.key_dialogTextBlack, resourcesProvider);
-                headerView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-                headerView.setText(getString(R.string.StoryQualityPremium));
-                layout.addView(headerView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 12, 0, 12, 0));
-
-                TextView descriptionView = new TextView(getContext());
-                descriptionView.setGravity(Gravity.CENTER);
-                ThemeBind.textColor(descriptionView, Theme.key_dialogTextGray3, resourcesProvider);
-                descriptionView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-                descriptionView.setText(AndroidUtilities.replaceTags(getString(R.string.StoryQualityPremiumText)));
-                layout.addView(descriptionView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL, 32, 9, 32, 19));
-
-                ButtonWithCounterView button = new ButtonWithCounterView(getContext(), resourcesProvider);
-                button.setText(getString(R.string.StoryQualityIncrease), false);
-                SpannableStringBuilder lock = new SpannableStringBuilder("l");
-                ColoredImageSpan coloredImageSpan = new ColoredImageSpan(R.drawable.mini_switch_lock);
-                coloredImageSpan.setTopOffset(1);
-                lock.setSpan(coloredImageSpan, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                button.setSubText(new SpannableStringBuilder().append(lock).append(getString(R.string.OptionPremiumRequiredTitle)), false);
-                layout.addView(button, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.CENTER_HORIZONTAL));
-                button.setOnClickListener(view -> {
-                    delegate.showDialog(new PremiumFeatureBottomSheet(storyViewer.fragment, PremiumPreviewFragment.PREMIUM_FEATURE_STORIES, false));
-                    sheet.dismiss();
-                });
-
-                sheet.setCustomView(layout);
-                delegate.showDialog(sheet);
-                if (popupMenu != null) {
-                    popupMenu.dismiss();
-                }
-            });
-            item2.setIcon(combinedDrawable2);
-        }
+        ActionBarMenuItem.addItem(popupLayout, qualityFull ? R.drawable.menu_quality_sd : R.drawable.menu_quality_hd, getString(qualityFull ? R.string.StoryQualityDecrease : R.string.StoryQualityIncrease), false, resourcesProvider).setOnClickListener(v -> {
+            final boolean newQualityFull = !qualityFull;
+            MessagesController.getInstance(currentAccount).setStoryQuality(newQualityFull);
+            BulletinFactory.of(storyContainer, resourcesProvider)
+                .createSimpleBulletin(
+                    R.raw.chats_infotip,
+                    getString(newQualityFull ? R.string.StoryQualityIncreasedTitle : R.string.StoryQualityDecreasedTitle),
+                    getString(newQualityFull ? R.string.StoryQualityIncreasedMessage : R.string.StoryQualityDecreasedMessage)
+                )
+                .show();
+            if (popupMenu != null) {
+                popupMenu.dismiss();
+            }
+        });
     }
 
     private void showLikesReaction(boolean show) {

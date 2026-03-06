@@ -24391,7 +24391,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isStoryQualityFullOnAccount() {
-        return getUserConfig().isPremium() && storyQualityFull;
+        return storyQualityFull;
     }
 
     public static boolean isStoryQualityFull() {
