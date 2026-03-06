@@ -6,6 +6,7 @@ import static org.telegram.messenger.LocaleController.getString;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -18,6 +19,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.text.Layout;
 import android.view.HapticFeedbackConstants;
@@ -54,7 +56,10 @@ import java.util.Set;
 @SuppressLint("ViewConstructor")
 public class ProfileActionsView extends View {
 
+    private static final int[] RIPPLE_PRESSED_STATE = {android.R.attr.state_enabled, android.R.attr.state_pressed};
+    private static final int[] RIPPLE_IDLE_STATE = {};
     private final List<Action> actions = new ArrayList<>();
+    private final Rect rippleBounds = new Rect();
     private final Paint paint = new Paint();
     private final Paint shaderPaint = new Paint();
     private float parentExpanded;
@@ -388,6 +393,11 @@ public class ProfileActionsView extends View {
         canvas.scale(fraction, fraction, cx, cy);
         canvas.clipRect(action.rect);
 
+        action.rect.round(rippleBounds);
+        action.ripple.setBounds(rippleBounds);
+        action.ripple.setAlpha((int) (255 * alpha));
+        action.ripple.draw(canvas);
+
         updateBounds(action);
 
         final float textY = action.bounds.bottom + action.bounds.top - action.text.getHeight() * action.textScale / 2.0f - dp(4.66f);
@@ -476,9 +486,27 @@ public class ProfileActionsView extends View {
     private float downX, downY;
     private long downTime;
 
+    private void clearPressedAction() {
+        if (hit != null) {
+            hit.bounce.setPressed(false);
+            hit.ripple.setState(RIPPLE_IDLE_STATE);
+            hit = null;
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        clearPressedAction();
+        for (Action action : actions) {
+            action.ripple.jumpToCurrentState();
+        }
+        super.onDetachedFromWindow();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (currentHeight < dp(8)) {
+            clearPressedAction();
             return false;
         }
 
@@ -487,7 +515,7 @@ public class ProfileActionsView extends View {
         int eventAction = event.getAction();
 
         if (eventAction == MotionEvent.ACTION_DOWN) {
-            hit = null;
+            clearPressedAction();
             int c = actions.size();
             for (int i = 0; i < c; i++) {
                 Action a = actions.get(i);
@@ -497,6 +525,10 @@ public class ProfileActionsView extends View {
                     downY = y;
                     downTime = System.currentTimeMillis();
                     hit.bounce.setPressed(true);
+                    final int rippleColor = isButtonColorLight() && parentExpanded <= 0.875f ? Color.BLACK : Color.WHITE;
+                    hit.ripple.setColor(ColorStateList.valueOf(Theme.multAlpha(rippleColor, 0.16f)));
+                    hit.ripple.setHotspot(x, y);
+                    hit.ripple.setState(RIPPLE_PRESSED_STATE);
 //                    try {
 //                        performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING);
 //                    } catch (Exception ignore) {}
@@ -506,13 +538,13 @@ public class ProfileActionsView extends View {
         } else if (eventAction == MotionEvent.ACTION_MOVE) {
             if (hit != null) {
                 if (Math.abs(x - downX) > 20 || Math.abs(y - downY) > 20) {
-                    hit.bounce.setPressed(false);
-                    hit = null;
+                    clearPressedAction();
                 }
             }
         } else if (eventAction == MotionEvent.ACTION_UP || eventAction == MotionEvent.ACTION_CANCEL) {
             if (hit != null) {
                 hit.bounce.setPressed(false);
+                hit.ripple.setState(RIPPLE_IDLE_STATE);
                 if (eventAction == MotionEvent.ACTION_UP && hit.rect.contains(x, y)) {
                     if (System.currentTimeMillis() - downTime > 250) {
                         try {
@@ -548,6 +580,11 @@ public class ProfileActionsView extends View {
 
     @Override
     protected boolean verifyDrawable(@NonNull Drawable who) {
+        for (Action action : actions) {
+            if (action.ripple == who) {
+                return true;
+            }
+        }
         return super.verifyDrawable(who) || who instanceof LoadingDrawable;
     }
 
@@ -954,6 +991,10 @@ public class ProfileActionsView extends View {
         int key;
 
         private final ButtonBounce bounce = new ButtonBounce(ProfileActionsView.this);
+        private final RippleDrawable ripple = (RippleDrawable) Theme.AdaptiveRipple.createRect(Color.TRANSPARENT, 16f);
+        {
+            ripple.setCallback(ProfileActionsView.this);
+        }
         final RectF prevRect = new RectF();
         final RectF rect = new RectF();
 
