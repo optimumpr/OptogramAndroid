@@ -4591,7 +4591,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             } else if (position == tonRow) {
                 presentFragment(new TONIntroActivity());
             } else if (position == businessRow) {
-                presentFragment(new PremiumPreviewFragment(PremiumPreviewFragment.FEATURES_BUSINESS, "settings"));
+                PremiumPreviewFragment business = new PremiumPreviewFragment(PremiumPreviewFragment.FEATURES_BUSINESS, "settings");
+                business.setCurrentAccount(currentAccount);
+                presentFragment(business);
             } else if (position == premiumGiftingRow) {
                 UserSelectorBottomSheet.open(0, BirthdayController.getInstance(currentAccount).getState());
             } else if (position == botPermissionLocation) {

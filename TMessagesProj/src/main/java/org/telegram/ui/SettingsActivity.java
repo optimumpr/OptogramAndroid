@@ -975,7 +975,9 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 presentSettingFragment(new WalletActivity());
                 break;
             case 15:
-                presentSettingFragment(new PremiumPreviewFragment(PremiumPreviewFragment.FEATURES_BUSINESS, "settings"));
+                PremiumPreviewFragment business = new PremiumPreviewFragment(PremiumPreviewFragment.FEATURES_BUSINESS, "settings");
+                business.setCurrentAccount(currentAccount);
+                presentSettingFragment(business);
                 break;
             case 16:
                 UserSelectorBottomSheet.open(0, BirthdayController.getInstance(UserConfig.selectedAccount).getState());

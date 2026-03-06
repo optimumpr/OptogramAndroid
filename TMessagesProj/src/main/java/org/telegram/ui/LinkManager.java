@@ -1222,7 +1222,9 @@ public class LinkManager {
         }
 
         if ("business".equalsIgnoreCase(first)) {
-            presentFragment(new PremiumPreviewFragment(PremiumPreviewFragment.FEATURES_BUSINESS, "link"));
+            PremiumPreviewFragment business = new PremiumPreviewFragment(PremiumPreviewFragment.FEATURES_BUSINESS, "link");
+            business.setCurrentAccount(currentAccount);
+            presentFragment(business);
             if ("do-not-hide-ads".equalsIgnoreCase(second)) {
                 scrollTo("showAdsRow");
             }

@@ -859,19 +859,19 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
             if (view instanceof PremiumFeatureCell) {
                 PremiumFeatureCell cell = (PremiumFeatureCell) view;
 
-                if (type == FEATURES_BUSINESS && getUserConfig().isPremium()) {
+                if (type == FEATURES_BUSINESS && canOpenBusinessFeature(cell.data.type)) {
                     if (cell.data.type == PREMIUM_FEATURE_BUSINESS_LOCATION) {
-                        presentFragment(new LocationActivity());
+                        presentBusinessFeature(new LocationActivity());
                     } else if (cell.data.type == PREMIUM_FEATURE_BUSINESS_GREETING_MESSAGES) {
-                        presentFragment(new GreetMessagesActivity());
+                        presentBusinessFeature(new GreetMessagesActivity());
                     } else if (cell.data.type == PREMIUM_FEATURE_BUSINESS_AWAY_MESSAGES) {
-                        presentFragment(new AwayMessagesActivity());
+                        presentBusinessFeature(new AwayMessagesActivity());
                     } else if (cell.data.type == PREMIUM_FEATURE_BUSINESS_OPENING_HOURS) {
-                        presentFragment(new OpeningHoursActivity());
+                        presentBusinessFeature(new OpeningHoursActivity());
                     } else if (cell.data.type == PREMIUM_FEATURE_BUSINESS_CHATBOTS) {
-                        presentFragment(new ChatbotsActivity());
+                        presentBusinessFeature(new ChatbotsActivity());
                     } else if (cell.data.type == PREMIUM_FEATURE_BUSINESS_QUICK_REPLIES) {
-                        presentFragment(new QuickRepliesActivity());
+                        presentBusinessFeature(new QuickRepliesActivity());
                     } else if (cell.data.type == PREMIUM_FEATURE_STORIES) {
                         Bundle args = new Bundle();
                         args.putLong("dialog_id", UserConfig.getInstance(currentAccount).getClientUserId());
@@ -897,9 +897,9 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
                     } else if (cell.data.type == PREMIUM_FEATURE_FOLDER_TAGS) {
                         presentFragment(new FiltersSetupActivity().highlightTags());
                     } else if (cell.data.type == PREMIUM_FEATURE_BUSINESS_INTRO) {
-                        presentFragment(new BusinessIntroActivity());
+                        presentBusinessFeature(new BusinessIntroActivity());
                     } else if (cell.data.type == PREMIUM_FEATURE_BUSINESS_CHAT_LINKS) {
-                        presentFragment(new BusinessLinksActivity());
+                        presentBusinessFeature(new BusinessLinksActivity());
                     }
                     return;
                 }
@@ -1092,8 +1092,24 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
         return type == FEATURES_PREMIUM && !getUserConfig().isPremium() && getUserConfig().hasLocalPremiumFeatures();
     }
 
+    private boolean isLocalBusinessPreview() {
+        return type == FEATURES_BUSINESS && !getUserConfig().isPremium() && getUserConfig().hasLocalPremiumFeatures();
+    }
+
+    private boolean canOpenBusinessFeature(int feature) {
+        return getUserConfig().isPremium() || isLocalBusinessPreview() && (
+                feature == PREMIUM_FEATURE_BUSINESS_LOCATION
+                || feature == PREMIUM_FEATURE_BUSINESS_OPENING_HOURS
+                || feature == PREMIUM_FEATURE_BUSINESS_INTRO);
+    }
+
+    private void presentBusinessFeature(BaseFragment fragment) {
+        fragment.setCurrentAccount(currentAccount);
+        presentFragment(fragment);
+    }
+
     private boolean shouldShowPurchaseFooter() {
-        return !isLocalPremiumPreview() && (!getUserConfig().isPremium()
+        return !isLocalPremiumPreview() && !isLocalBusinessPreview() && (!getUserConfig().isPremium()
                 || currentSubscriptionTier != null && currentSubscriptionTier.getMonths() < subscriptionTiers.get(selectedTierIndex).getMonths() && !forcePremium);
     }
 
@@ -2092,10 +2108,13 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
                 subtitleView.setText(AndroidUtilities.replaceTags(getString(subtitleResId)));
             } else if (type == FEATURES_BUSINESS) {
                 titleView.setText(getString(forcePremium ? R.string.TelegramPremiumSubscribedTitle : R.string.TelegramBusiness));
-                subtitleView.setText(AndroidUtilities.replaceTags(getString(getUserConfig().isPremium() || forcePremium ? R.string.TelegramBusinessSubscribedSubtitleTemp : R.string.TelegramBusinessSubtitleTemp)));
+                int subtitleResId = getUserConfig().isPremium() || forcePremium
+                        ? R.string.TelegramBusinessSubscribedSubtitleTemp : isLocalBusinessPreview()
+                        ? R.string.OptogramLocalPremiumPreviewSubtitle : R.string.TelegramBusinessSubtitleTemp;
+                subtitleView.setText(AndroidUtilities.replaceTags(getString(subtitleResId)));
             }
             subtitleView.getLayoutParams().width = Math.min(AndroidUtilities.displaySize.x - dp(42), HintView2.cutInFancyHalf(subtitleView.getText(), subtitleView.getPaint()));
-            boolean tierNotVisible = isLocalPremiumPreview() || forcePremium || BuildVars.IS_BILLING_UNAVAILABLE || IS_PREMIUM_TIERS_UNAVAILABLE || subscriptionTiers.size() <= 1;
+            boolean tierNotVisible = isLocalPremiumPreview() || isLocalBusinessPreview() || forcePremium || BuildVars.IS_BILLING_UNAVAILABLE || IS_PREMIUM_TIERS_UNAVAILABLE || subscriptionTiers.size() <= 1;
             if (!setTierListViewVisibility || !tierNotVisible) {
                 tierListView.setVisibility(tierNotVisible ? GONE : VISIBLE);
                 setTierListViewVisibility = true;
@@ -2193,6 +2212,10 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
         if (backgroundView != null && backgroundView.imageView != null) {
             backgroundView.imageView.setPaused(false);
             backgroundView.imageView.setDialogVisible(false);
+        }
+        if (type == FEATURES_BUSINESS && backgroundView != null && listView != null) {
+            backgroundView.updateText();
+            updateRows();
         }
         particlesView.setPaused(false);
         Bulletin.addDelegate(this, new Bulletin.Delegate() {
