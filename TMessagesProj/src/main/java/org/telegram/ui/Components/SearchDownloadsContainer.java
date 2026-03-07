@@ -782,13 +782,15 @@ public class SearchDownloadsContainer extends FrameLayout implements Notificatio
 
     public void showPremiumFloodWaitBulletin(final boolean isUpload) {
         if (parentFragment == null || !recyclerListView.isAttachedToWindow()) return;
+        final UserConfig accountConfig = UserConfig.getInstance(currentAccount);
+        if (!accountConfig.isPremium() && accountConfig.hasLocalPremiumFeatures()) return;
 
         final long now = System.currentTimeMillis();
         if (now - ConnectionsManager.lastPremiumFloodWaitShown < 1000L * MessagesController.getInstance(currentAccount).uploadPremiumSpeedupNotifyPeriod) {
             return;
         }
         ConnectionsManager.lastPremiumFloodWaitShown = now;
-        if (UserConfig.getInstance(currentAccount).isPremium() || MessagesController.getInstance(currentAccount).premiumFeaturesBlocked()) {
+        if (accountConfig.isPremium() || MessagesController.getInstance(currentAccount).premiumFeaturesBlocked()) {
             return;
         }
 
