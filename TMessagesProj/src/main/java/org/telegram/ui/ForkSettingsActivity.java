@@ -170,6 +170,7 @@ public class ForkSettingsActivity extends BaseFragment {
     private int disableAds;
     private int localPremium;
     private int disablePhoneSharePrompt;
+    private int disablePromo;
 
     private int stickerSizeRow;
 
@@ -219,6 +220,7 @@ public class ForkSettingsActivity extends BaseFragment {
         disableUnifiedPushRow = rowCount++;
         disableAds = rowCount++;
         localPremium = rowCount++;
+        disablePromo = rowCount++;
     
         emptyRows.add(rowCount++);
         sectionRows.add(rowCount++);
@@ -401,6 +403,8 @@ public class ForkSettingsActivity extends BaseFragment {
                 toggleGlobalMainSetting("disableAds", view, false);
             } else if (position == localPremium) {
                 toggleGlobalMainSetting("localPremium", view, false);
+            } else if (position == disablePromo) {
+                toggleGlobalMainSetting("disablePromo", view, false);
             } else if (position == customTitleRow) {
                 final String defaultValue = "Optogram Client";
                 org.telegram.messenger.forkgram.ForkDialogs.CreateFieldAlert(
@@ -585,6 +589,9 @@ public class ForkSettingsActivity extends BaseFragment {
                     } else if (position == localPremium) {
                         String t = LocaleController.getString("LocalPremium", R.string.LocalPremium);
                         textCell.setTextAndCheck(t, preferences.getBoolean("localPremium", false), false);
+                    } else if (position == disablePromo) {
+                        String t = LocaleController.getString("DisablePromo", R.string.DisablePromo);
+                        textCell.setTextAndCheck(t, preferences.getBoolean("disablePromo", false), false);
                     }
                     break;
                 }
@@ -638,6 +645,7 @@ public class ForkSettingsActivity extends BaseFragment {
                         || position == photoHasStickerRow
                         || position == disableUnifiedPushRow
                         || position == disableAds
+                        || position == disablePromo
                         || position == localPremium;
 
             return fork;
@@ -712,6 +720,7 @@ public class ForkSettingsActivity extends BaseFragment {
                 || position == showNotificationContent
                 || position == photoHasStickerRow
                 || position == disableAds
+                || position == disablePromo
                 || position == localPremium
                 || position == disableUnifiedPushRow) {
                 return 3;

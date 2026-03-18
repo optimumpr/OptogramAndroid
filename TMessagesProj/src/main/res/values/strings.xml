@@ -10481,5 +10481,6 @@
     <string name="IsFromChannel">From Channel</string>
     <string name="IsFromBot">From Bot</string>
     <string name="ShareGroupMediaMessage">Would You Like to Share</string>
+    <string name="DisablePromo">Disable Premium Promo</string>
 
 </resources>
