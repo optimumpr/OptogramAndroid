@@ -166,6 +166,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION = 107;
     public static final int ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON = 109;
     public static final int ID_OPTOGRAM_HIDE_PHONE_NUMBER = 110;
+    public static final int ID_OPTOGRAM_DISABLE_AUTOPLAY_NEXT_AUDIO = 111;
     public static final int ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL = 112;
     public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
@@ -567,6 +568,8 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableWebViewGeolocation", true)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN, "Disable Automatic Web Login", "Prevent automatic login tokens on Telegram-approved links")
             .setChecked(pref("disableAutowebLogin", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_AUTOPLAY_NEXT_AUDIO, "Disable Autoplay Next Audio Message", "Stop music playback at the end of each track")
+            .setChecked(pref("disableAutoPlayNextMessage", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL, LocaleController.getString(R.string.HideChatKeyboard), null)
             .setChecked(pref("hide_chat_keyboard", false)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_DEVICE_INFO, "Hide Device Information", "Report Unknown for the device model and Android version after restarting Optogram")
@@ -856,6 +859,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("disableDeviceInfo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT) {
             toggle("disablePhoneSharePrompt", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_AUTOPLAY_NEXT_AUDIO) {
+            toggle("disableAutoPlayNextMessage", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL) {
             toggle("hide_chat_keyboard", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES) {

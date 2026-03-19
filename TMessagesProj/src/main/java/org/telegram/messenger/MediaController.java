@@ -3078,7 +3078,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
     private void playNextMessageWithoutOrder(boolean byStop) {
         ArrayList<MessageObject> currentPlayList = SharedConfig.shuffleMusic ? shuffledPlaylist : playlist;
 
-        if (byStop && (SharedConfig.repeatMode == 2 || SharedConfig.repeatMode == 1 && currentPlayList.size() == 1) && !forceLoopCurrentPlaylist) {
+        final boolean stopAtTrackEnd = byStop && MessagesController.getGlobalMainSettings().getBoolean("disableAutoPlayNextMessage", false);
+        if (byStop && !stopAtTrackEnd && (SharedConfig.repeatMode == 2 || SharedConfig.repeatMode == 1 && currentPlayList.size() == 1) && !forceLoopCurrentPlaylist) {
             cleanupPlayer(false, false);
             if (currentPlaylistNum < 0 || currentPlaylistNum >= currentPlayList.size()) {
                 return;
@@ -3090,8 +3091,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
             return;
         }
 
-        boolean last = traversePlaylist(currentPlayList, isPlaylistOrderReversed() ? +1 : -1);
-        if (last && byStop && SharedConfig.repeatMode == 0 && !forceLoopCurrentPlaylist) {
+        boolean last = !stopAtTrackEnd && traversePlaylist(currentPlayList, isPlaylistOrderReversed() ? +1 : -1);
+        if (stopAtTrackEnd || (last && byStop && SharedConfig.repeatMode == 0 && !forceLoopCurrentPlaylist)) {
             if (audioPlayer != null || videoPlayer != null) {
                 if (audioPlayer != null) {
                     if (reporter != null) {
