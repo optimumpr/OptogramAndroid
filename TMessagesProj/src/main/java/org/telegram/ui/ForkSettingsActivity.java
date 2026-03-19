@@ -149,6 +149,7 @@ public class ForkSettingsActivity extends BaseFragment {
     private int openArchiveOnPull;
     private int hideBottomButton;
     private int disableFlipPhotos;
+    private int disableAutoPlayNextMessage;
     private int formatWithSeconds;
     private int disableThumbsInDialogList;
     private int disableGlobalSearch;
@@ -236,6 +237,7 @@ public class ForkSettingsActivity extends BaseFragment {
         emptyRows.add(rowCount++);
         sectionRows.add(rowCount++);
         disableFlipPhotos = rowCount++;
+        disableAutoPlayNextMessage = rowCount++;
         formatWithSeconds = rowCount++;
         mentionByName = rowCount++;
         replaceForward = rowCount++;
@@ -383,6 +385,8 @@ public class ForkSettingsActivity extends BaseFragment {
                 toggleGlobalMainSetting("hideStoriesInArchive", view, false);
             } else if (position == disableFlipPhotos) {
                 toggleGlobalMainSetting("disableFlipPhotos", view, false);
+            } else if (position == disableAutoPlayNextMessage) {
+                toggleGlobalMainSetting("disable AutoPlayNextMessage", view, false);
             } else if (position == formatWithSeconds) {
                 toggleGlobalMainSetting("formatWithSeconds", view, false);
             } else if (position == disableThumbsInDialogList) {
@@ -556,6 +560,9 @@ public class ForkSettingsActivity extends BaseFragment {
                     } else if (position == disableFlipPhotos) {
                         String t = LocaleController.getString("DisableFlipPhotos", R.string.DisableFlipPhotos);
                         textCell.setTextAndCheck(t, preferences.getBoolean("disableFlipPhotos", false), false);
+                    } else if (position == disableAutoPlayNextMessage) {
+                        String t = LocaleController.getString("DisableAutoPlayNextMessage", R.string.DisableAutoPlayNextMessage);
+                        textCell.setTextAndCheck(t, preferences.getBoolean("disableAutoPlayNextMessage", false), false);
                     } else if (position == formatWithSeconds) {
                         String t = LocaleController.getString("FormatWithSeconds", R.string.FormatWithSeconds);
                         textCell.setTextAndCheck(t, preferences.getBoolean("formatWithSeconds", false), false);
@@ -633,6 +640,7 @@ public class ForkSettingsActivity extends BaseFragment {
                         || position == openArchiveOnPull
                         || position == hideStoriesInArchiveRow
                         || position == disableFlipPhotos
+                        || position == disableAutoPlayNextMessage
                         || position == formatWithSeconds
                         || position == disableThumbsInDialogList
                         || position == disableGlobalSearch
@@ -711,6 +719,7 @@ public class ForkSettingsActivity extends BaseFragment {
                 || position == openArchiveOnPull
                 || position == hideStoriesInArchiveRow
                 || position == disableFlipPhotos
+                || position == disableAutoPlayNextMessage
                 || position == formatWithSeconds
                 || position == disableThumbsInDialogList
                 || position == disableGlobalSearch
