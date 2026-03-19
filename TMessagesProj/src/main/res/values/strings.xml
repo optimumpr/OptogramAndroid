@@ -10483,5 +10483,6 @@
     <string name="ShareGroupMediaMessage">Would You Like to Share</string>
     <string name="DisablePromo">Disable Premium Promo</string>
     <string name="DisableAutoPlayNextMessage">Disable AutoPlay of Next Audio Message</string>
+    <string name="DisableBirthdayReminder">Disable Birthday Reminders</string>
 
 </resources>
