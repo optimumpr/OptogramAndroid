@@ -10,9 +10,16 @@ uses publicly available (or your own) push servers.
 
 Credits: This application wouldn't be possible without F-Droid's TelegramFOSS, Forkgram and Mercurygram.
 
-## Additional Features:
+## Optogram Features:
 
 - Option to disable ads in channels
+- Option to hide OEM device model in Settings/Devices
+- Option to disable Host resolve to Google
+- Replace Google dns with Adguard
+- Disable geo location for webview
+- Option to disable AutoPlay of Next Audio Message
+- Option to disable birthday reminders
+- Notify user if messages are from Bot or Channels
 - Local Premium
 - Add Wav and Wav_x support
 - Show join date in chat menu
