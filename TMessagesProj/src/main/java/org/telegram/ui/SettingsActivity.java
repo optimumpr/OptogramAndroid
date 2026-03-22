@@ -1546,7 +1546,11 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     cpusInfo.append("\n");
                 }
                 StringBuilder info = new StringBuilder();
-                info.append(Build.MANUFACTURER).append(", ").append(Build.MODEL).append(" (").append(Build.PRODUCT).append(", ").append(Build.DEVICE).append(") ").append(" (android ").append(Build.VERSION.SDK_INT).append(")\n");
+                if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
+                    info.append("Unknown");
+                } else {
+                    info.append(Build.MANUFACTURER).append(", ").append(Build.MODEL).append(" (").append(Build.PRODUCT).append(", ").append(Build.DEVICE).append(") ").append(" (android ").append(Build.VERSION.SDK_INT).append(")\n");
+                }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     info.append("SoC: ").append(Build.SOC_MANUFACTURER).append(", ").append(Build.SOC_MODEL).append("\n");
                 }

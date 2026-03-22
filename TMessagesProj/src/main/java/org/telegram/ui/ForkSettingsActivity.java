@@ -170,6 +170,7 @@ public class ForkSettingsActivity extends BaseFragment {
     private int disablePlayVisibleVideoOnVolumeRow;
     private int disableAds;
     private int localPremium;
+    private int disableDeviceInfo;
     private int disablePhoneSharePrompt;
     private int disablePromo;
     private int disableBirthdayReminder;
@@ -220,6 +221,7 @@ public class ForkSettingsActivity extends BaseFragment {
         hideBottomButton = SharedConfig.isUserOwner() ? rowCount++ : -1;
         lockPremium = rowCount++;
         disableUnifiedPushRow = rowCount++;
+        disableDeviceInfo = rowCount++;
         disableAds = rowCount++;
         localPremium = rowCount++;
         disablePromo = rowCount++;
@@ -375,6 +377,8 @@ public class ForkSettingsActivity extends BaseFragment {
                 toggleGlobalMainSetting("botSkipFullscreen", view, false);
             } else if (position == lockPremium) {
                 toggleGlobalMainSetting("lockPremium", view, false);
+            } else if (position == disableDeviceInfo) {
+                toggleGlobalMainSetting("disableDeviceInfo", view, false);
             } else if (position == replaceForward) {
                 toggleGlobalMainSetting("replaceForward", view, true);
             } else if (position == mentionByName) {
@@ -546,6 +550,13 @@ public class ForkSettingsActivity extends BaseFragment {
                         String t = LocaleController.getString("LockPremium", R.string.LockPremium);
                         String info = LocaleController.getString("SquareAvatarsInfo", R.string.SquareAvatarsInfo);
                         textCell.setTextAndValueAndCheck(t, info, preferences.getBoolean("lockPremium", false), true, false);
+                    } else if (position == disableDeviceInfo) {
+                        String t = LocaleController.getString("DisableDeviceInfo", R.string.DisableDeviceInfo);
+                        String info = LocaleController.getString("SquareAvatarsInfo", R.string.SquareAvatarsInfo);
+                        textCell.setTextAndValueAndCheck(t, info, preferences.getBoolean("disableDeviceInfo", false), true, false);
+                    } else if (position == localPremium) {
+                        String t = LocaleController.getString("LocalPremium", R.string.LocalPremium);
+                        textCell.setTextAndCheck(t, preferences.getBoolean("localPremium", false), false);
                     } else if (position == replaceForward) {
                         String t = LocaleController.getString("ReplaceForward", R.string.ReplaceForward);
                         textCell.setTextAndCheck(t, preferences.getBoolean("replaceForward", true), false);
@@ -597,9 +608,14 @@ public class ForkSettingsActivity extends BaseFragment {
                     } else if (position == disableAds) {
                         String t = LocaleController.getString("DisableAds", R.string.DisableAds);
                         textCell.setTextAndCheck(t, preferences.getBoolean("disableAds", false), false);
-                    } else if (position == localPremium) {
-                        String t = LocaleController.getString("LocalPremium", R.string.LocalPremium);
-                        textCell.setTextAndCheck(t, preferences.getBoolean("localPremium", false), false);
+                    } else if (position == lockPremium) {
+                        String t = LocaleController.getString("LockPremium", R.string.LockPremium);
+                        String info = LocaleController.getString("SquareAvatarsInfo", R.string.SquareAvatarsInfo);
+                        textCell.setTextAndValueAndCheck(t, info, preferences.getBoolean("lockPremium", false), true, false);
+                    } else if (position == disableDeviceInfo) {
+                        String t = LocaleController.getString("DisableDeviceInfo", R.string.DisableDeviceInfo);
+                        String info = LocaleController.getString("SquareAvatarsInfo", R.string.SquareAvatarsInfo);
+                        textCell.setTextAndValueAndCheck(t, info, preferences.getBoolean("lockPremium", false), true, false);
                     } else if (position == disablePromo) {
                         String t = LocaleController.getString("DisablePromo", R.string.DisablePromo);
                         textCell.setTextAndCheck(t, preferences.getBoolean("disablePromo", false), false);
@@ -662,6 +678,7 @@ public class ForkSettingsActivity extends BaseFragment {
                         || position == disableAds
                         || position == disablePromo
                         || position == disableBirthdayReminder
+                        || position == disableDeviceInfo
                         || position == localPremium;
 
             return fork;
@@ -739,6 +756,7 @@ public class ForkSettingsActivity extends BaseFragment {
                 || position == disableAds
                 || position == disablePromo
                 || position == disableBirthdayReminder
+                || position == disableDeviceInfo
                 || position == localPremium
                 || position == disableUnifiedPushRow) {
                 return 3;

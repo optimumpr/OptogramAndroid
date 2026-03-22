@@ -190,7 +190,7 @@ public class SessionCell extends FrameLayout {
             imageView.setImageDrawable(createDrawable(42, session));
 
             StringBuilder stringBuilder = new StringBuilder();
-            if (session.device_model.length() != 0) {
+            if (session.device_model.length() != 0 && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
                 stringBuilder.append(session.device_model);
             }
             if (stringBuilder.length() == 0) {

@@ -213,7 +213,11 @@ public class ConnectionsManager extends BaseController {
         try {
             systemLangCode = LocaleController.getSystemLocaleStringIso639().toLowerCase();
             langCode = LocaleController.getLocaleStringIso639().toLowerCase();
-            deviceModel = Build.MANUFACTURER + Build.MODEL;
+            if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) { 
+                deviceModel = "Unknown";
+            } else {
+                deviceModel = Build.MANUFACTURER + Build.MODEL;
+            }
             PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(ApplicationLoader.applicationContext.getPackageName(), 0);
             appVersion = pInfo.versionName + " (" + pInfo.versionCode + ")";
             if (BuildVars.DEBUG_PRIVATE_VERSION) {
@@ -225,7 +229,7 @@ public class ConnectionsManager extends BaseController {
         } catch (Exception e) {
             systemLangCode = "en";
             langCode = "";
-            deviceModel = "Android unknown";
+            deviceModel = "Unknown";
             appVersion = "App version unknown";
             systemVersion = "SDK " + Build.VERSION.SDK_INT;
         }
@@ -233,7 +237,7 @@ public class ConnectionsManager extends BaseController {
             systemLangCode = "en";
         }
         if (deviceModel.trim().length() == 0) {
-            deviceModel = "Android unknown";
+            deviceModel = "Unknown";
         }
         if (appVersion.trim().length() == 0) {
             appVersion = "App version unknown";
