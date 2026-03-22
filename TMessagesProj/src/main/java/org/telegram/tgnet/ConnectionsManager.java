@@ -225,13 +225,22 @@ public class ConnectionsManager extends BaseController {
             } else if (BuildVars.DEBUG_VERSION) {
                 appVersion += " beta";
             }
-            systemVersion = "SDK " + Build.VERSION.SDK_INT;
+
+            if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) { 
+                systemVersion = "Unknown";
+            } else {
+                systemVersion = "SDK " + Build.VERSION.SDK_INT;
+            }
         } catch (Exception e) {
             systemLangCode = "en";
             langCode = "";
             deviceModel = "Unknown";
             appVersion = "App version unknown";
-            systemVersion = "SDK " + Build.VERSION.SDK_INT;
+            if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) { 
+                systemVersion = "Unknown";
+            } else {
+                systemVersion = "SDK " + Build.VERSION.SDK_INT;
+            }
         }
         if (systemLangCode.trim().length() == 0) {
             systemLangCode = "en";
