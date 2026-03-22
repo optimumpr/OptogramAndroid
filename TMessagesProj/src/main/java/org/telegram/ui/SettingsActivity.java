@@ -688,8 +688,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
         {
             items.add(UItem.asShadow(null));
-            items.add(UItem.asHeader("Optogram"));
-            items.add(SettingCell.Factory.of(98, 0xFF55CA47, 0xFF27B434, 0, getString(R.string.ForkSettingsTitle)));
+            items.add(SettingCell.Factory.of(98, 0xFF55CA47, 0xFF27B434, R.drawable.jaguars, getString(R.string.ForkSettingsTitle)));
         }
 
         items.add(UItem.asShadow(null));

@@ -10484,6 +10484,6 @@
     <string name="DisablePromo">Disable Premium Promo</string>
     <string name="DisableAutoPlayNextMessage">Disable AutoPlay of Next Audio Message</string>
     <string name="DisableBirthdayReminder">Disable Birthday Reminders</string>
-    <string name="DisableDeviceInfo">Enable Phone OEM Info</string>
+    <string name="DisableDeviceInfo">Disable Phone Model Info</string>
 
 </resources>
