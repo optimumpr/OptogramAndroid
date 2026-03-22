@@ -190,18 +190,26 @@ public class SessionCell extends FrameLayout {
             imageView.setImageDrawable(createDrawable(42, session));
 
             StringBuilder stringBuilder = new StringBuilder();
-            if (session.device_model.length() != 0 && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
-                stringBuilder.append(session.device_model);
+            if (session.device_model.length() != 0) {
+                if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
+                    stringBuilder.append("Unknown");
+                } else {
+                    stringBuilder.append(session.device_model);
+                }
             }
             if (stringBuilder.length() == 0) {
-                if (session.platform.length() != 0) {
+                if (session.platform.length() != 0 && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
+                    stringBuilder.append("Unknown");
+                } else {
                     stringBuilder.append(session.platform);
                 }
                 if (session.system_version.length() != 0) {
-                    if (session.platform.length() != 0) {
+                    if (session.platform.length() != 0 && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
+                        stringBuilder.append("Unknown");
+                    } else {
                         stringBuilder.append(" ");
+                        stringBuilder.append(session.system_version);
                     }
-                    stringBuilder.append(session.system_version);
                 }
             }
             nameTextView.setText(stringBuilder);

@@ -202,7 +202,7 @@ public class ConnectionsManager extends BaseController {
         String systemLangCode;
         String langCode;
         String appVersion;
-        String systemVersion;
+        String systemVersion = "Unknown";
         File config = ApplicationLoader.getFilesDirFixed();
         if (instance != 0) {
             config = new File(config, "account" + instance);
@@ -225,22 +225,13 @@ public class ConnectionsManager extends BaseController {
             } else if (BuildVars.DEBUG_VERSION) {
                 appVersion += " beta";
             }
-
-            if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) { 
-                systemVersion = "Unknown";
-            } else {
-                systemVersion = "SDK " + Build.VERSION.SDK_INT;
-            }
+            systemVersion = "Unknown";
         } catch (Exception e) {
             systemLangCode = "en";
             langCode = "";
             deviceModel = "Unknown";
             appVersion = "App version unknown";
-            if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) { 
-                systemVersion = "Unknown";
-            } else {
-                systemVersion = "SDK " + Build.VERSION.SDK_INT;
-            }
+            systemVersion = "Unknown";
         }
         if (systemLangCode.trim().length() == 0) {
             systemLangCode = "en";
