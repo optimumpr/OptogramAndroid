@@ -31,6 +31,7 @@ import org.telegram.tgnet.tl.TL_account;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
+import org.telegram.ui.Cells.SessionCell;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeBind;
 import org.telegram.ui.Components.BulletinFactory;
@@ -93,7 +94,9 @@ public class SessionBottomSheet extends BottomSheet {
         timeView.setText(timeText);
 
         StringBuilder stringBuilder = new StringBuilder();
-        if (session.device_model.length() != 0) {
+        if (SessionCell.isDeviceInfoHidden(session)) {
+            stringBuilder.append("Unknown");
+        } else if (session.device_model.length() != 0) {
             stringBuilder.append(session.device_model);
         }
         if (stringBuilder.length() == 0) {
@@ -320,7 +323,11 @@ public class SessionBottomSheet extends BottomSheet {
         boolean animation = true;
 
 
-        if (deviceModel.contains("safari")) {
+        if (SessionCell.isDeviceInfoHidden(session)) {
+            iconId = R.raw.windows_30;
+            colorKey = Theme.key_avatar_backgroundBlue;
+            colorKey2 = Theme.key_avatar_background2Blue;
+        } else if (deviceModel.contains("safari")) {
             iconId = R.raw.safari_30;
             colorKey = Theme.key_avatar_backgroundPink;
             colorKey2 = Theme.key_avatar_background2Pink;

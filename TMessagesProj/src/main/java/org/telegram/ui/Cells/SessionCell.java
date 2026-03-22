@@ -217,7 +217,9 @@ public class SessionCell extends FrameLayout {
             imageView.setImageDrawable(createDrawable(42, session));
 
             StringBuilder stringBuilder = new StringBuilder();
-            if (session.device_model.length() != 0) {
+            if (isDeviceInfoHidden(session)) {
+                stringBuilder.append("Unknown");
+            } else if (session.device_model.length() != 0) {
                 stringBuilder.append(session.device_model);
             }
             if (stringBuilder.length() == 0) {
@@ -325,6 +327,11 @@ public class SessionCell extends FrameLayout {
         return createDrawable(sz, auth);
     }
 
+    public static boolean isDeviceInfoHidden(TLRPC.TL_authorization session) {
+        return (session.flags & 1) != 0
+                && MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false);
+    }
+
     public static CombinedDrawable createDrawable(int sz, TLRPC.TL_authorization session) {
         String platform = session.platform.toLowerCase();
         if (platform.isEmpty()) {
@@ -333,7 +340,11 @@ public class SessionCell extends FrameLayout {
         String deviceModel = session.device_model.toLowerCase();
         int iconId;
         int colorKey, colorKey2;
-        if (deviceModel.contains("safari")) {
+        if (isDeviceInfoHidden(session)) {
+            iconId = R.drawable.device_desktop_win;
+            colorKey = Theme.key_avatar_backgroundCyan;
+            colorKey2 = Theme.key_avatar_background2Cyan;
+        } else if (deviceModel.contains("safari")) {
             iconId = R.drawable.device_web_safari;
             colorKey = Theme.key_avatar_backgroundPink;
             colorKey2 = Theme.key_avatar_background2Pink;
