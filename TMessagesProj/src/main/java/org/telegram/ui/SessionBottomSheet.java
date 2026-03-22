@@ -366,9 +366,9 @@ public class SessionBottomSheet extends BottomSheet {
             colorKey = Theme.key_avatar_backgroundCyan;
             colorKey2 = Theme.key_avatar_background2Cyan;
         } else if (platform.contains("android")) {
-            iconId = R.raw.android_30;
-            colorKey = Theme.key_avatar_backgroundGreen;
-            colorKey2 = Theme.key_avatar_background2Green;
+            iconId = iconId = R.raw.windows_30;
+            colorKey = Theme.key_avatar_backgroundBlue;
+            colorKey2 = Theme.key_avatar_background2Blue;
         } else {
             if (session.app_name.toLowerCase().contains("desktop")) {
                 iconId = R.raw.windows_30;
