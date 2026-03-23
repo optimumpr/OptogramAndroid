@@ -5,16 +5,15 @@ Optogram, a DeGoogled Telegram client for Android with Unified-Push, Extra Priva
 The application is for people who choose not to use Google services, including the Firebase Push, which is known 
 to expose metadata to various third parties. Without FCM/GCM push, most users must enable 'keep alive' and 
 'background connection' features, which cause excessive battery consumption. Not so with Optogram, which uses
-Unified Push, which is enabled automatically when using a [companion](https://github.com/optimumpr/ntfy-android/) application Ntfy that
-uses publicly available (or your own) push servers. 
+Unified Push, which is enabled automatically when using Ntfy or Sunup apps or even your own push servers. 
 
-Credits: This application wouldn't be possible without F-Droid's TelegramFOSS, Forkgram and Mercurygram.
+Credits: This application wouldn't be possible without F-Droid's TelegramFOSS and Forkgram.
 
 ## Optogram Features:
 
 - Option to disable ads in channels
 - Option to hide OEM device model in Settings/Devices
-- Option to disable Host resolve to Google
+- Disable Host resolve to Google
 - Replace Google dns with Adguard
 - Disable geo location for webview
 - Option to disable AutoPlay of Next Audio Message
