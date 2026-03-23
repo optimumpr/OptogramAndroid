@@ -28,6 +28,8 @@ Credits: This application wouldn't be possible without F-Droid's TelegramFOSS, F
 - View channel stats in message menu (for administrators)
 - Black interface and dark icons
 
+Latest app release is available on my [Telegram Group](https://t.me/Optogram_Android)
+
 Donations: If you want to support my project, please donate:
 
 | Paypal |
