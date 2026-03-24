@@ -123,7 +123,7 @@ public class TextSettingsCell extends FrameLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), AndroidUtilities.dp(50) + (needDivider ? 1 : 0));
 
-        int availableWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - AndroidUtilities.dp(34);
+        int availableWidth = Math.max(0, getMeasuredWidth() - getPaddingLeft() - getPaddingRight() - AndroidUtilities.dp(34));
         int width = betterLayout ? availableWidth : availableWidth / 2;
         if (valueImageView.getVisibility() == VISIBLE) {
             valueImageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
@@ -135,19 +135,23 @@ public class TextSettingsCell extends FrameLayout {
             } else {
                 imageView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.AT_MOST));
             }
-            if (betterLayout) width -= imageView.getMeasuredWidth() + AndroidUtilities.dp(8);
+            if (betterLayout) {
+                width = Math.max(0, width - imageView.getMeasuredWidth() - AndroidUtilities.dp(8));
+            }
         }
 
         if (valueBackupImageView != null) {
             valueBackupImageView.measure(MeasureSpec.makeMeasureSpec(valueBackupImageView.getLayoutParams().height, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(valueBackupImageView.getLayoutParams().width, MeasureSpec.EXACTLY));
-            if (betterLayout) width -= valueBackupImageView.getMeasuredWidth() + AndroidUtilities.dp(8);
+            if (betterLayout) {
+                width = Math.max(0, width - valueBackupImageView.getMeasuredWidth() - AndroidUtilities.dp(8));
+            }
         }
         if (valueTextView.getVisibility() == VISIBLE) {
             valueTextView.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.AT_MOST), MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));
             if (betterLayout) {
-                width -= valueTextView.getMeasuredWidth() + AndroidUtilities.dp(8);
+                width = Math.max(0, width - valueTextView.getMeasuredWidth() - AndroidUtilities.dp(8));
             } else {
-                width = availableWidth - valueTextView.getMeasuredWidth() - AndroidUtilities.dp(8);
+                width = Math.max(0, availableWidth - valueTextView.getMeasuredWidth() - AndroidUtilities.dp(8));
             }
 
             if (valueImageView.getVisibility() == VISIBLE) {
