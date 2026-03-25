@@ -6528,7 +6528,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         final float nameTextViewY = (1 - value) * (1 - value) * nameY + 2 * (1 - value) * value * nameTextViewCy + value * value * nameTextViewYEnd;
 
         final float onlineTextViewXEnd = AndroidUtilities.dpf2(16f) - ((FrameLayout.LayoutParams) onlineTextView.getLayoutParams()).leftMargin;
-        final float onlineTextViewYEnd = newTop + extraHeight - getActionsExtraHeight() - AndroidUtilities.dpf2(10f) - onlineTextView.getBottom();
+        final float onlineTextViewYEnd = newTop + extraHeight - getActionsExtraHeight() - AndroidUtilities.dpf2(getActionsExtraHeight() > 0 ? 10f : 14f) - onlineTextView.getBottom();
         final float onlineTextViewCx = kx + onlineX + (onlineTextViewXEnd - onlineX) / 2f;
         final float onlineTextViewCy = ky + onlineY + (onlineTextViewYEnd - onlineY) / 2f;
         final float onlineTextViewX = (1 - value) * (1 - value) * onlineX + 2 * (1 - value) * value * onlineTextViewCx + value * value * onlineTextViewXEnd;
@@ -8890,7 +8890,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         nameTextView.setTranslationX(AndroidUtilities.dpf2(18f) - nameTextView.getLeft());
                         nameTextView.setTranslationY(newTop + h - getActionsExtraHeight() - dpf2(30f) - nameTextView.getBottom() + additionalTranslationY);
                         onlineTextView.setTranslationX(getOnlineTextViewTranslationXWithOffsets(dpf2(16) - onlineTextView.getLeft(), 0));
-                        onlineTextView.setTranslationY(getOnlineTextViewTranslationYWithOffsets(newTop + h - getActionsExtraHeight() - dpf2(10) - onlineTextView.getBottom() + additionalTranslationY));
+                        onlineTextView.setTranslationY(getOnlineTextViewTranslationYWithOffsets(newTop + h - getActionsExtraHeight() - dpf2(getActionsExtraHeight() > 0 ? 10 : 14) - onlineTextView.getBottom() + additionalTranslationY));
                         updateCollectibleHint();
                     }
                 } else {
