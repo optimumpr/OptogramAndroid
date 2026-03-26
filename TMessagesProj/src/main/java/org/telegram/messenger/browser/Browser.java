@@ -373,7 +373,7 @@ public class Browser {
                 }
             }
             String host = AndroidUtilities.getHostAuthority(uri.toString().toLowerCase());
-            if (AccountInstance.getInstance(currentAccount).getMessagesController().autologinDomains.contains(host)) {
+            if (AccountInstance.getInstance(currentAccount).getMessagesController().autologinDomains.contains(host) && org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disable.AutowebLogin", false)) {
                 final String autologin_token = URLEncoder.encode(AccountInstance.getInstance(UserConfig.selectedAccount).getMessagesController().autologinToken, "UTF-8");
                 uri = uri.buildUpon()
                     .appendQueryParameter("autologin_token", autologin_token)

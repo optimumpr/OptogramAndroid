@@ -171,6 +171,7 @@ public class ForkSettingsActivity extends BaseFragment {
     private int disableAds;
     private int localPremium;
     private int disableDeviceInfo;
+    private int disableAutowebLogin;
     private int disablePhoneSharePrompt;
     private int disablePromo;
     private int disableBirthdayReminder;
@@ -224,6 +225,7 @@ public class ForkSettingsActivity extends BaseFragment {
         disableDeviceInfo = rowCount++;
         disableAds = rowCount++;
         localPremium = rowCount++;
+        disableAutowebLogin =  rowCount++;
         disablePromo = rowCount++;
         disableBirthdayReminder = rowCount++;
     
@@ -413,6 +415,8 @@ public class ForkSettingsActivity extends BaseFragment {
                 toggleGlobalMainSetting("disableAds", view, false);
             } else if (position == localPremium) {
                 toggleGlobalMainSetting("localPremium", view, false);
+            } else if (position == disableAutowebLogin) {
+                toggleGlobalMainSetting("disableAutowebLogin", view, false);
             } else if (position == disablePromo) {
                 toggleGlobalMainSetting("disablePromo", view, false);
             } else if (position == disableBirthdayReminder) {
@@ -557,6 +561,9 @@ public class ForkSettingsActivity extends BaseFragment {
                     } else if (position == localPremium) {
                         String t = LocaleController.getString("LocalPremium", R.string.LocalPremium);
                         textCell.setTextAndCheck(t, preferences.getBoolean("localPremium", false), false);
+                    } else if (position == disableAutowebLogin) {
+                        String t = LocaleController.getString("DisableAutowebLogin", R.string.DisableAutowebLogin);
+                        textCell.setTextAndCheck(t, preferences.getBoolean("disableAutowebLogin", false), false);
                     } else if (position == replaceForward) {
                         String t = LocaleController.getString("ReplaceForward", R.string.ReplaceForward);
                         textCell.setTextAndCheck(t, preferences.getBoolean("replaceForward", true), false);
@@ -679,6 +686,7 @@ public class ForkSettingsActivity extends BaseFragment {
                         || position == disablePromo
                         || position == disableBirthdayReminder
                         || position == disableDeviceInfo
+                        || position == disableAutowebLogin
                         || position == localPremium;
 
             return fork;
@@ -758,6 +766,7 @@ public class ForkSettingsActivity extends BaseFragment {
                 || position == disableBirthdayReminder
                 || position == disableDeviceInfo
                 || position == localPremium
+                || position == disableAutowebLogin
                 || position == disableUnifiedPushRow) {
                 return 3;
             } else if (sectionRows.contains(position)) {
