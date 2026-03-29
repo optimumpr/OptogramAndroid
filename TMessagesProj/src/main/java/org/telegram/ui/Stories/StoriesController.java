@@ -4172,7 +4172,7 @@ public class StoriesController {
         if (user == null) {
             return false;
         }
-        return user.premium;
+        return user.premium || org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false);
     }
 
     final Runnable sortStoriesRunnable;

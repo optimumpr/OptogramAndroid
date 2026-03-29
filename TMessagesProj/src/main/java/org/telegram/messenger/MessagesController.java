@@ -1627,6 +1627,9 @@ public class MessagesController extends BaseController implements NotificationCe
             if (getGlobalMainSettings().getBoolean("lockPremium", false)) {
                 premiumLocked = true;
             }
+            if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
+                premiumLocked = false;
+            }
         }, 10);
         starsLocked = mainPreferences.getBoolean("starsLocked", true);
         transcribeButtonPressed = mainPreferences.getInt("transcribeButtonPressed", 0);
@@ -2811,6 +2814,9 @@ public class MessagesController extends BaseController implements NotificationCe
                     if (value.value instanceof TLRPC.TL_jsonBool) {
                         if (premiumLocked != ((TLRPC.TL_jsonBool) value.value).value) {
                             premiumLocked = ((TLRPC.TL_jsonBool) value.value).value;
+                            if (org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
+                                premiumLocked = false;
+                            }
                             editor.putBoolean("premiumLocked", premiumLocked);
                             changed = true;
                         }
