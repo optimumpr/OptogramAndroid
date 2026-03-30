@@ -435,7 +435,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
             settings.setUseWideViewPort(true);
             settings.setLoadWithOverviewMode(true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                settings.setSafeBrowsingEnabled(true);
+                settings.setSafeBrowsingEnabled(false);
             }
         }
         if (isVerifyingAge()) {
