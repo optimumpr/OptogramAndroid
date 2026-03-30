@@ -10486,5 +10486,6 @@
     <string name="DisableBirthdayReminder">Disable Birthday Reminders</string>
     <string name="DisableDeviceInfo">Disable Phone Model Info</string>
     <string name="DisableAutowebLogin">Disable Auto Web Login</string>
+    <string name="DisableOpenBotButton">Disable Open Bot Button</string>
 
 </resources>

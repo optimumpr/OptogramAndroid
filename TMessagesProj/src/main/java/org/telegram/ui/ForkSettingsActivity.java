@@ -175,6 +175,7 @@ public class ForkSettingsActivity extends BaseFragment {
     private int disablePhoneSharePrompt;
     private int disablePromo;
     private int disableBirthdayReminder;
+    private int disableOpenBotButton;
 
     private int stickerSizeRow;
 
@@ -228,6 +229,7 @@ public class ForkSettingsActivity extends BaseFragment {
         disableAutowebLogin =  rowCount++;
         disablePromo = rowCount++;
         disableBirthdayReminder = rowCount++;
+        disableOpenBotButton = rowCount++;
     
         emptyRows.add(rowCount++);
         sectionRows.add(rowCount++);
@@ -421,6 +423,8 @@ public class ForkSettingsActivity extends BaseFragment {
                 toggleGlobalMainSetting("disablePromo", view, false);
             } else if (position == disableBirthdayReminder) {
                 toggleGlobalMainSetting("disableBirthdayReminder", view, false);
+            } else if (position == disableOpenBotButton) {
+                toggleGlobalMainSetting("disableOpenBotButton", view, false);
             } else if (position == customTitleRow) {
                 final String defaultValue = "Optogram Client";
                 org.telegram.messenger.forkgram.ForkDialogs.CreateFieldAlert(
@@ -629,6 +633,9 @@ public class ForkSettingsActivity extends BaseFragment {
                     } else if (position == disableBirthdayReminder) {
                         String t = LocaleController.getString("DisableBirthdayReminder", R.string.DisableBirthdayReminder);
                         textCell.setTextAndCheck(t, preferences.getBoolean("disableBirthdayReminder", false), false);
+                    } else if (position == disableOpenBotButton) {
+                        String t = LocaleController.getString("DisableOpenBotButton", R.string.DisableOpenBotButton);
+                        textCell.setTextAndCheck(t, preferences.getBoolean("disableOpenBotButton", false), false);
                     }
                     break;
                 }
@@ -685,6 +692,7 @@ public class ForkSettingsActivity extends BaseFragment {
                         || position == disableAds
                         || position == disablePromo
                         || position == disableBirthdayReminder
+                        || position == disableOpenBotButton
                         || position == disableDeviceInfo
                         || position == disableAutowebLogin
                         || position == localPremium;
@@ -764,6 +772,7 @@ public class ForkSettingsActivity extends BaseFragment {
                 || position == disableAds
                 || position == disablePromo
                 || position == disableBirthdayReminder
+                || position == disableOpenBotButton
                 || position == disableDeviceInfo
                 || position == localPremium
                 || position == disableAutowebLogin
