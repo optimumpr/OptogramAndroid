@@ -12,6 +12,7 @@ Credits: This application wouldn't be possible without F-Droid's TelegramFOSS an
 ## Optogram Features:
 
 - Option to disable ads in channels
+- Option to remove your own number from profile and visilibty to others
 - Option to hide OEM device model in Settings/Devices
 - Disable Host resolve to Google
 - Replace Google dns with Adguard
