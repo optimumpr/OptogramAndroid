@@ -13170,7 +13170,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         if (user != null && !TextUtils.isEmpty(vcardPhone)) {
                             text = PhoneFormat.getInstance().format("+" + vcardPhone);
                             phoneNumber = vcardPhone;
-                        } else if (user != null && !TextUtils.isEmpty(user.phone)) {
+                        } else if (user != null && !TextUtils.isEmpty(user.phone) && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("hidePhoneNumber", false)) {
                             text = PhoneFormat.getInstance().format("+" + user.phone);
                             phoneNumber = user.phone;
                         } else {
