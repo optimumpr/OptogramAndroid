@@ -10487,5 +10487,6 @@
     <string name="DisableDeviceInfo">Disable Phone Model Info</string>
     <string name="DisableAutowebLogin">Disable Auto Web Login</string>
     <string name="DisableOpenBotButton">Disable Open Bot Button</string>
+    <string name="HidePhoneNumber">Show Your Phone Number as Unknown</string>
 
 </resources>

@@ -462,7 +462,7 @@ public class PrivacyUsersActivity extends BaseFragment implements NotificationCe
                             String number;
                             if (user.bot) {
                                 number = LocaleController.getString(R.string.Bot).substring(0, 1).toUpperCase() + LocaleController.getString(R.string.Bot).substring(1);
-                            } else if (user.phone != null && user.phone.length() != 0) {
+                            } else if (user.phone != null && user.phone.length() != 0 && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("hidePhoneNumber", false)) {
                                 number = PhoneFormat.getInstance().format("+" + user.phone);
                             } else {
                                 number = LocaleController.getString(R.string.NumberUnknown);

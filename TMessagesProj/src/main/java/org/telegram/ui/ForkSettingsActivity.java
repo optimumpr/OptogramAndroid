@@ -169,6 +169,7 @@ public class ForkSettingsActivity extends BaseFragment {
     private int hideStoriesInArchiveRow;
     private int disablePlayVisibleVideoOnVolumeRow;
     private int disableAds;
+    private int hidePhoneNumber;
     private int localPremium;
     private int disableDeviceInfo;
     private int disableAutowebLogin;
@@ -219,6 +220,7 @@ public class ForkSettingsActivity extends BaseFragment {
         hideSensitiveDataRow = SharedConfig.isUserOwner() ? -1 : rowCount++;
         disableDeviceInfo = rowCount++;
         disableAds = rowCount++;
+        hidePhoneNumber = rowCount++;
         disableAutowebLogin =  rowCount++;
         disablePromo = rowCount++;
         disableBirthdayReminder = rowCount++;
@@ -415,6 +417,8 @@ public class ForkSettingsActivity extends BaseFragment {
                 toggleGlobalMainSetting("disableUnifiedPush", view, false);
             } else if (position == disableAds) {
                 toggleGlobalMainSetting("disableAds", view, false);
+            } else if (position == hidePhoneNumber) {
+                toggleGlobalMainSetting("hidePhoneNumber", view, false);
             } else if (position == localPremium) {
                 toggleGlobalMainSetting("localPremium", view, false);
             } else if (position == disableAutowebLogin) {
@@ -618,6 +622,9 @@ public class ForkSettingsActivity extends BaseFragment {
                     } else if (position == disableAds) {
                         String t = LocaleController.getString("DisableAds", R.string.DisableAds);
                         textCell.setTextAndCheck(t, preferences.getBoolean("disableAds", false), false);
+                    } else if (position == hidePhoneNumber) {
+                        String t = LocaleController.getString("HidePhoneNumber", R.string.HidePhoneNumber);
+                        textCell.setTextAndCheck(t, preferences.getBoolean("hidePhoneNumber", false), false);
                     } else if (position == lockPremium) {
                         String t = LocaleController.getString("LockPremium", R.string.LockPremium);
                         String info = LocaleController.getString("SquareAvatarsInfo", R.string.SquareAvatarsInfo);
@@ -689,6 +696,7 @@ public class ForkSettingsActivity extends BaseFragment {
                         || position == photoHasStickerRow
                         || position == disableUnifiedPushRow
                         || position == disableAds
+                        || position == hidePhoneNumber
                         || position == disablePromo
                         || position == disableBirthdayReminder
                         || position == disableOpenBotButton
@@ -769,6 +777,7 @@ public class ForkSettingsActivity extends BaseFragment {
                 || position == showNotificationContent
                 || position == photoHasStickerRow
                 || position == disableAds
+                || position == hidePhoneNumber
                 || position == disablePromo
                 || position == disableBirthdayReminder
                 || position == disableOpenBotButton

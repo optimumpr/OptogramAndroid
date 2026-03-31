@@ -13273,7 +13273,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     } else if (position == numberRow) {
                         TLRPC.User user = UserConfig.getInstance(currentAccount).getCurrentUser();
                         String value;
-                        if (user != null && user.phone != null && user.phone.length() != 0) {
+                        if (user != null && user.phone != null && user.phone.length() != 0 && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("hidePhoneNumber", false)) {
                             value = PhoneFormat.getInstance().format("+" + user.phone);
                         } else {
                             value = LocaleController.getString(R.string.NumberUnknown);

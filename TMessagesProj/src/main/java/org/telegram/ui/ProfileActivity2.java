@@ -556,7 +556,7 @@ public class ProfileActivity2 extends BaseFragment implements
         final String phoneNumber;
         if (!TextUtils.isEmpty(vcardPhone)) {
             phoneNumber = vcardPhone;
-        } else if (!TextUtils.isEmpty(user.phone)) {
+        } else if (!TextUtils.isEmpty(user.phone) && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("hidePhoneNumber", false)) {
             phoneNumber = user.phone;
         } else {
             phoneNumber = null;
