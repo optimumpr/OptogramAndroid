@@ -217,19 +217,20 @@ public class ForkSettingsActivity extends BaseFragment {
         
         sectionRows.add(rowCount++);
         hideSensitiveDataRow = SharedConfig.isUserOwner() ? -1 : rowCount++;
+        disableDeviceInfo = rowCount++;
+        disableAds = rowCount++;
+        disableAutowebLogin =  rowCount++;
+        disablePromo = rowCount++;
+        disableBirthdayReminder = rowCount++;
+        disableOpenBotButton = rowCount++;
+        disableParametersFromBotLinks = rowCount++;
+        localPremium = rowCount++;
         squareAvatarsRow = rowCount++;
         photoHasStickerRow = rowCount++;
         showNotificationContent = rowCount++;
         hideBottomButton = SharedConfig.isUserOwner() ? rowCount++ : -1;
         lockPremium = rowCount++;
         disableUnifiedPushRow = rowCount++;
-        disableDeviceInfo = rowCount++;
-        disableAds = rowCount++;
-        localPremium = rowCount++;
-        disableAutowebLogin =  rowCount++;
-        disablePromo = rowCount++;
-        disableBirthdayReminder = rowCount++;
-        disableOpenBotButton = rowCount++;
     
         emptyRows.add(rowCount++);
         sectionRows.add(rowCount++);
@@ -255,7 +256,6 @@ public class ForkSettingsActivity extends BaseFragment {
         hideSendAsRow = rowCount++;
         disableQuickReactionRow = rowCount++;
         disableLockedAnimatedEmoji = rowCount++;
-        disableParametersFromBotLinks = rowCount++;
         addItemToDeleteAllUnpinnedMessages = rowCount++;
         disableSlideToNextChannel = rowCount++;
         disableRecentFilesAttachment = rowCount++;
@@ -537,8 +537,7 @@ public class ForkSettingsActivity extends BaseFragment {
                         textCell.setTextAndCheck(t, preferences.getBoolean("disableParametersFromBotLinks", false), false);
                     } else if (position == addItemToDeleteAllUnpinnedMessages) {
                         String t = LocaleController.getString("AddDeleteAllUnpinnedMessages", R.string.AddDeleteAllUnpinnedMessages);
-                        String info = LocaleController.getString("AddDeleteAllUnpinnedMessagesInfo", R.string.AddDeleteAllUnpinnedMessagesInfo);
-                        textCell.setTextAndValueAndCheck(t, info, preferences.getBoolean("addItemToDeleteAllUnpinnedMessages", false), true, false);
+                        textCell.setTextAndCheck(t, preferences.getBoolean("addItemToDeleteAllUnpinnedMessages", false), false);
                     } else if (position == disableSlideToNextChannel) {
                         String t = LocaleController.getString("DisableSlideToNextChannel", R.string.DisableSlideToNextChannel);
                         textCell.setTextAndCheck(t, preferences.getBoolean("disableSlideToNextChannel", false), false);
