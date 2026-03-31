@@ -16,6 +16,9 @@ Credits: This application wouldn't be possible without F-Droid's TelegramFOSS an
 - Disable Host resolve to Google
 - Replace Google dns with Adguard
 - Disable geo location for webview
+- Option to disable Open Bot button
+- Disable Google Safe Browsing in in-app Browser
+- Option to disable AutoWeb Login
 - Option to disable AutoPlay of Next Audio Message
 - Option to disable birthday reminders
 - Notify user if messages are from Bot or Channels
