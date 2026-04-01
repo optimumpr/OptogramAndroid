@@ -468,7 +468,7 @@ public class ChatActivityEnterView extends FrameLayout implements
         private final RectF bgRect = new RectF();
         private final Paint gradientPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Drawable closeDrawable;
-        private boolean isPremiumMode = false;
+        private boolean isPremiumMode = true;
 
         public SlowModeBtn(@NonNull Context context) {
             super(context);

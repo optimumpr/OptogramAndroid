@@ -433,7 +433,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         boolean isPremium = false;
         if (object instanceof TLRPC.User) {
             TLRPC.User user = (TLRPC.User) object;
-            isPremium = user.premium;
+            isPremium = user.premium || org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false);
             if (user.photo != null) {
                 strippedBitmap = user.photo.strippedBitmap;
                 hasStripped = user.photo.stripped_thumb != null;
