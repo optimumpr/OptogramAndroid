@@ -4280,7 +4280,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
                         if (isBoost) {
                             TLRPC.Chat chat = MessagesController.getInstance(intentAccount).getChat(-peerId);
-                            if (ChatObject.isBoostSupported(chat)) {
+                            if (ChatObject.isBoostSupported(chat) || org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
                                 processBoostDialog(peerId, dismissLoading, progress);
                                 return;
                             }

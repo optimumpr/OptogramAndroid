@@ -4425,7 +4425,7 @@ public class StoriesController {
                                 return;
                             }
                             messagesController.getBoostsController().userCanBoostChannel(dialogId, boostsStatus, canApplyBoost -> {
-                                if (canApplyBoost == null) {
+                                if (canApplyBoost == null || !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
                                     consumer.accept(false);
                                     return;
                                 }
@@ -4635,7 +4635,7 @@ public class StoriesController {
     public boolean canPostStories(long dialogId) {
         if (dialogId < 0) {
             TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-dialogId);
-            if (chat == null || !ChatObject.isBoostSupported(chat)) {
+            if (chat == null || !ChatObject.isBoostSupported(chat) || !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
                 return false;
             }
             return chat.creator || chat.admin_rights != null && chat.admin_rights.post_stories;
