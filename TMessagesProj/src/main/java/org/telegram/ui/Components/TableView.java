@@ -38,6 +38,7 @@ import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
+import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.browser.Browser;
@@ -240,17 +241,6 @@ public class TableView extends TableLayout implements Theme.Colorable {
         }
         emojiStatusTextViews.add(textView);
         emojiStatusDrawables.add(emojiDrawable);
-        textView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(@NonNull View v) {
-                emojiDrawable.attach();
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(@NonNull View v) {
-                emojiDrawable.detach();
-            }
-        });
         final Drawable premiumDrawable = getContext().getResources().getDrawable(R.drawable.msg_premium_liststar).mutate();
         ThemeBind.drawableColorFilter(this, premiumDrawable, Theme.key_featuredStickers_addButton, resourcesProvider, PorterDuff.Mode.SRC_IN);
         final Utilities.Callback<Object[]> updateStatus = args -> {
@@ -262,7 +252,9 @@ public class TableView extends TableLayout implements Theme.Colorable {
             if (did > 0) {
                 TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(did);
                 emoji_status = user != null ? user.emoji_status : null;
-                isPremium = user != null && user.premium;
+                final UserConfig bindingConfig = UserConfig.getInstance(currentAccount);
+                isPremium = user != null && (user.premium
+                        || did == bindingConfig.getClientUserId() && bindingConfig.hasLocalPremiumFeatures());
             } else {
                 TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-did);
                 emoji_status = chat != null ? chat.emoji_status : null;
@@ -282,8 +274,22 @@ public class TableView extends TableLayout implements Theme.Colorable {
             }
             emojiDrawable.setColor(color);
         };
+        textView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(@NonNull View v) {
+                emojiDrawable.attach();
+                updateStatus.run(null);
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(@NonNull View v) {
+                emojiDrawable.detach();
+            }
+        });
         updateStatus.run(null);
-        textView.setRightDrawable(emojiDrawable);
+        if (did > 0 && did == UserConfig.getInstance(currentAccount).getClientUserId()) {
+            NotificationCenter.getGlobalInstance().listen(textView, NotificationCenter.premiumStatusChangedGlobal, updateStatus);
+        }
         NotificationCenter.getInstance(currentAccount).listen(textView, NotificationCenter.updateInterfaces, updateStatus);
         NotificationCenter.getInstance(currentAccount).listen(textView, NotificationCenter.userEmojiStatusUpdated, updateStatus);
         textView.setText(ssb);
