@@ -47,7 +47,7 @@ public class VectorAvatarThumbDrawable extends Drawable implements AnimatedEmoji
 
     public VectorAvatarThumbDrawable(TLRPC.VideoSize vectorImageMarkup, boolean isPremiumUser, int type) {
         this.type = type;
-        this.isPremium = isPremiumUser;
+        this.isPremium = isPremiumUser || org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false);
         int color1 = ColorUtils.setAlphaComponent(vectorImageMarkup.background_colors.get(0), 255);
         int color2 = vectorImageMarkup.background_colors.size() > 1 ? ColorUtils.setAlphaComponent(vectorImageMarkup.background_colors.get(1), 255) : 0;
         int color3 = vectorImageMarkup.background_colors.size() > 2 ? ColorUtils.setAlphaComponent(vectorImageMarkup.background_colors.get(2), 255) : 0;
