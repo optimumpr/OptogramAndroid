@@ -707,7 +707,7 @@ public class MessageObject {
     }
 
     public boolean isPremiumSticker() {
-        if (getMedia(messageOwner) != null && getMedia(messageOwner).nopremium) {
+        if (getMedia(messageOwner) != null && getMedia(messageOwner).nopremium && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
             return false;
         }
         return isPremiumSticker(getDocument());
