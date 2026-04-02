@@ -231,7 +231,7 @@ public class TableView extends TableLayout {
             if (did > 0) {
                 TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(did);
                 emoji_status = user != null ? user.emoji_status : null;
-                isPremium = user != null && user.premium;
+                isPremium = user != null && user.premium || org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false);
             } else {
                 TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-did);
                 emoji_status = chat != null ? chat.emoji_status : null;
