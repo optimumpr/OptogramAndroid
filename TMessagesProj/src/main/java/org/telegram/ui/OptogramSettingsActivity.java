@@ -65,6 +65,26 @@ public class OptogramSettingsActivity extends BaseFragment {
                 + "subscription-only server features.");
         layout.addView(information, LayoutHelper.createLinear(
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        TextCheckCell deviceInfoCell = new TextCheckCell(context);
+        deviceInfoCell.setTextAndCheck(
+                "Hide Device Information in Diagnostics",
+                preferences.getBoolean("disableDeviceInfo", false),
+                false);
+        layout.addView(deviceInfoCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        deviceInfoCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableDeviceInfo", false);
+            preferences.edit().putBoolean("disableDeviceInfo", enabled).apply();
+            deviceInfoCell.setChecked(enabled);
+        });
+
+        TextInfoPrivacyCell deviceInfoDescription = new TextInfoPrivacyCell(context);
+        deviceInfoDescription.setText(
+                "Replaces the device model line in the Settings diagnostics report "
+                + "with Unknown. This does not change device information sent to Telegram.");
+        layout.addView(deviceInfoDescription, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
         return fragmentView;
     }
 }
