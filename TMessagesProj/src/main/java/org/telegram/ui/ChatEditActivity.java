@@ -1321,7 +1321,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
             if (channelAffiliateProgramsCell != null) {
                 infoContainer.addView(channelAffiliateProgramsCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
             }
-            if (channelAffiliateProgramsCell != null && getMessagesController().starrefConnectAllowed && ChatObject.isChannelAndNotMegaGroup(currentChat)) {
+            if (channelAffiliateProgramsCell != null && getMessagesController().starrefConnectAllowed && ChatObject.hasAdminRights(currentChat) && ChatObject.isChannelAndNotMegaGroup(currentChat)) {
                 channelAffiliateProgramsCell.setVisibility(View.VISIBLE);
             }
             if (logCell != null) {
@@ -1777,7 +1777,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
         if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
             PhotoViewer.getInstance().checkCurrentImageVisibility();
         }
-        if (channelAffiliateProgramsCell != null && getMessagesController().starrefConnectAllowed && ChatObject.isChannelAndNotMegaGroup(currentChat)) {
+        if (channelAffiliateProgramsCell != null && getMessagesController().starrefConnectAllowed && ChatObject.hasAdminRights(currentChat) && ChatObject.isChannelAndNotMegaGroup(currentChat)) {
             channelAffiliateProgramsCell.setVisibility(View.VISIBLE);
         }
     }
@@ -2284,7 +2284,7 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
             availableReactions = info.available_reactions;
             preloadedReactions.clear();
             preloadedReactions.addAll(ReactionsUtils.startPreloadReactions(currentChat, info));
-            if (channelAffiliateProgramsCell != null && getMessagesController().starrefConnectAllowed && ChatObject.isChannelAndNotMegaGroup(currentChat)) {
+            if (channelAffiliateProgramsCell != null && getMessagesController().starrefConnectAllowed && ChatObject.hasAdminRights(currentChat) && ChatObject.isChannelAndNotMegaGroup(currentChat)) {
                 channelAffiliateProgramsCell.setVisibility(View.VISIBLE);
             }
         }
