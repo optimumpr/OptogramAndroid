@@ -112,6 +112,20 @@ public class OptogramSettingsActivity extends BaseFragment {
             disablePromoCell.setChecked(enabled);
         });
 
+
+        TextCheckCell hidePhoneCell = new TextCheckCell(context);
+        hidePhoneCell.setTextAndCheck(
+                "Hide Phone Number in Profiles",
+                preferences.getBoolean("hidePhoneNumber", false),
+                false);
+        layout.addView(hidePhoneCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        hidePhoneCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("hidePhoneNumber", false);
+            preferences.edit().putBoolean("hidePhoneNumber", enabled).apply();
+            hidePhoneCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
