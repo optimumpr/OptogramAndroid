@@ -172,6 +172,20 @@ public class OptogramSettingsActivity extends BaseFragment {
             disableAutoPlayCell.setChecked(enabled);
         });
 
+
+        TextCheckCell recentFilesCell = new TextCheckCell(context);
+        recentFilesCell.setTextAndCheck(
+                "Disable Recent Files in Attachments",
+                preferences.getBoolean("disableRecentFilesAttachment", false),
+                false);
+        layout.addView(recentFilesCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        recentFilesCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableRecentFilesAttachment", false);
+            preferences.edit().putBoolean("disableRecentFilesAttachment", enabled).apply();
+            recentFilesCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
