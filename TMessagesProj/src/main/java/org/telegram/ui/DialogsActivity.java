@@ -6238,6 +6238,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             StarsController.getInstance(currentAccount).loadStarGifts();
         } else if (
             folderId == 0 && communityId == 0 &&
+            !MessagesController.getGlobalMainSettings().getBoolean("disablePromo", false) &&
             MessagesController.getInstance(currentAccount).pendingSuggestions.contains("BIRTHDAY_SETUP") &&
             getMessagesController().getUserFull(getUserConfig().getClientUserId()) != null &&
             getMessagesController().getUserFull(getUserConfig().getClientUserId()).birthday == null
