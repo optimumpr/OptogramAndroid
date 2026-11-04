@@ -171,6 +171,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL = 112;
     public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
+    public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP_PROMO = 120;
     public static final int ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES = 118;
     public static final int ID_OPTOGRAM_LOCAL_PREMIUM = 105;
     public static final int ID_OPTOGRAM_HIDE_DEVICE_INFO = 106;
@@ -562,6 +563,8 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("hidePremiumSpeedPromo", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER, "Disable Birthday Reminder", null)
             .setChecked(pref("disableBirthdayReminder", false)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP_PROMO, "Disable Birthday Setup Promotion", null)
+            .setChecked(pref("disablePromo", false)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PHONE_NUMBER, "Hide Phone Number in Profiles", "Masks phone numbers in supported Optogram screens; does not change Telegram privacy settings")
             .setChecked(pref("hidePhoneNumber", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON, "Disable Open Bot Button", "Hide bot application buttons in chat lists and search results")
@@ -859,6 +862,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("hidePremiumSpeedPromo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER) {
             toggle("disableBirthdayReminder", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP_PROMO) {
+            toggle("disablePromo", item, view);
         } else if (id == ID_OPTOGRAM_LOCAL_PREMIUM) {
             toggle("localPremium", item, view);
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal);
