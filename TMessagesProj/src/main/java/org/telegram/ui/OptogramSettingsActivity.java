@@ -91,6 +91,25 @@ public class OptogramSettingsActivity extends BaseFragment {
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
 
+        TextCheckCell webLoginCell = new TextCheckCell(context);
+        webLoginCell.setTextAndCheck(
+                "Disable Automatic Web Login",
+                preferences.getBoolean("disableAutowebLogin", false),
+                false);
+        layout.addView(webLoginCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        webLoginCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableAutowebLogin", false);
+            preferences.edit().putBoolean("disableAutowebLogin", enabled).apply();
+            webLoginCell.setChecked(enabled);
+        });
+
+        TextInfoPrivacyCell webLoginDescription = new TextInfoPrivacyCell(context);
+        webLoginDescription.setText(
+                "Prevents automatic login tokens from being appended to links for Telegram-approved domains.");
+        layout.addView(webLoginDescription, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
         TextCheckCell birthdayReminderCell = new TextCheckCell(context);
         birthdayReminderCell.setTextAndCheck(
                 "Disable Birthday Reminder",
