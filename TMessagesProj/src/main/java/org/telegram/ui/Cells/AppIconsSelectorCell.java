@@ -109,7 +109,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
         setOnItemClickListener((view, position) -> {
             IconHolderView holderView = (IconHolderView) view;
             LauncherIconController.LauncherIcon icon = availableIcons.get(position);
-            if (icon.premium && !UserConfig.hasPremiumOnAccounts()) {
+            if (icon.premium && !UserConfig.hasPremiumOnAccounts() && !UserConfig.getInstance(currentAccount).hasLocalPremiumFeatures()) {
                 fragment.showDialog(new PremiumFeatureBottomSheet(fragment, PremiumPreviewFragment.PREMIUM_FEATURE_APPLICATION_ICONS, true));
                 return;
             }
@@ -275,7 +275,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             iconView.setImageResource(icon.background);
 
             MarginLayoutParams params = (MarginLayoutParams) titleView.getLayoutParams();
-            if (icon.premium && !UserConfig.hasPremiumOnAccounts()) {
+            if (icon.premium && !UserConfig.hasPremiumOnAccounts() && !UserConfig.getInstance(currentAccount).hasLocalPremiumFeatures()) {
                 SpannableString str = new SpannableString("d " + LocaleController.getString(icon.title));
                 ColoredImageSpan span = new ColoredImageSpan(R.drawable.msg_mini_premiumlock);
                 span.setTopOffset(1);
