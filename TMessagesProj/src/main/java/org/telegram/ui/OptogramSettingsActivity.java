@@ -200,6 +200,33 @@ public class OptogramSettingsActivity extends BaseFragment {
             botLinkParametersCell.setChecked(enabled);
         });
 
+
+        TextCheckCell disableDialogThumbnailsCell = new TextCheckCell(context);
+        disableDialogThumbnailsCell.setTextAndCheck(
+                "Disable Thumbnails in Dialog List",
+                preferences.getBoolean("disableThumbsInDialogList", false),
+                false);
+        layout.addView(disableDialogThumbnailsCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        disableDialogThumbnailsCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableThumbsInDialogList", false);
+            preferences.edit().putBoolean("disableThumbsInDialogList", enabled).apply();
+            disableDialogThumbnailsCell.setChecked(enabled);
+        });
+
+        TextCheckCell lastSeenDotsCell = new TextCheckCell(context);
+        lastSeenDotsCell.setTextAndCheck(
+                "Enable Last Seen Colored Dots",
+                preferences.getBoolean("enableLastSeenDots", true),
+                false);
+        layout.addView(lastSeenDotsCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        lastSeenDotsCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("enableLastSeenDots", true);
+            preferences.edit().putBoolean("enableLastSeenDots", enabled).apply();
+            lastSeenDotsCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
