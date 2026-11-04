@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
@@ -39,7 +40,11 @@ public class OptogramSettingsActivity extends BaseFragment {
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
-        fragmentView = layout;
+        ScrollView scrollView = new ScrollView(context);
+        scrollView.setFillViewport(true);
+        scrollView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundGray));
+        scrollView.addView(layout);
+        fragmentView = scrollView;
 
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         TextCheckCell localPremiumCell = new TextCheckCell(context);
