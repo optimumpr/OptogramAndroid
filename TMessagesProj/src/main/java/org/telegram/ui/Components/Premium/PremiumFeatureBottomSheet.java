@@ -450,11 +450,7 @@ public class PremiumFeatureBottomSheet extends BottomSheet implements Notificati
         ThemeBind.backgroundColor(buttonContainer, Theme.key_dialogBackground, resourcesProvider);
         linearLayout.addView(buttonContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 68, Gravity.BOTTOM));
 
-        if (startType == PremiumPreviewFragment.FEATURE_GIFTS) {
-            premiumButtonView.setOverlayText(replaceUnderstood(getString(R.string.Understood)), true, false);
-        } else if (UserConfig.getInstance(currentAccount).isPremium()) {
-            premiumButtonView.setOverlayText(LocaleController.getString(R.string.OK), false, false);
-        }
+        updateAcknowledgement(false);
 
         ScrollView scrollView = new ScrollView(getContext());
         scrollView.addView(linearLayout);
@@ -564,6 +560,16 @@ public class PremiumFeatureBottomSheet extends BottomSheet implements Notificati
         return this;
     }
 
+    private void updateAcknowledgement(boolean animated) {
+        if (!forceAbout && startType == PremiumPreviewFragment.FEATURE_GIFTS) {
+            premiumButtonView.setOverlayText(replaceUnderstood(getString(R.string.Understood)), true, animated);
+        } else if (!forceAbout && UserConfig.getInstance(currentAccount).hasLocalPremiumFeatures()) {
+            premiumButtonView.setOverlayText(LocaleController.getString(R.string.OK), false, animated);
+        } else if (animated) {
+            premiumButtonView.clearOverlayText();
+        }
+    }
+
     private void setButtonText() {
         if (forceAbout) {
             premiumButtonView.buttonTextView.setText(LocaleController.getString(R.string.AboutTelegramPremium));
@@ -593,6 +599,7 @@ public class PremiumFeatureBottomSheet extends BottomSheet implements Notificati
         super.onCreate(savedInstanceState);
 
         NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.billingProductDetailsUpdated);
+        NotificationCenter.getGlobalInstance().addWeakObserver(this, NotificationCenter.premiumStatusChangedGlobal);
         NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.premiumPromoUpdated);
         NotificationCenter.getInstance(currentAccount).addWeakObserver(this, NotificationCenter.currentUserPremiumStatusChanged);
 
@@ -652,6 +659,7 @@ public class PremiumFeatureBottomSheet extends BottomSheet implements Notificati
         super.dismiss();
 
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.billingProductDetailsUpdated);
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.premiumStatusChangedGlobal);
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.premiumPromoUpdated);
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.currentUserPremiumStatusChanged);
 
@@ -662,12 +670,8 @@ public class PremiumFeatureBottomSheet extends BottomSheet implements Notificati
     public void didReceivedNotification(int id, int account, Object... args) {
         if (id == NotificationCenter.billingProductDetailsUpdated || id == NotificationCenter.premiumPromoUpdated) {
             setButtonText();
-        } else if (id == NotificationCenter.currentUserPremiumStatusChanged) {
-            if (UserConfig.getInstance(currentAccount).isPremium()) {
-                premiumButtonView.setOverlayText(LocaleController.getString(R.string.OK), false, true);
-            } else {
-                premiumButtonView.clearOverlayText();
-            }
+        } else if (id == NotificationCenter.currentUserPremiumStatusChanged || id == NotificationCenter.premiumStatusChangedGlobal) {
+            updateAcknowledgement(true);
         }
     }
 
