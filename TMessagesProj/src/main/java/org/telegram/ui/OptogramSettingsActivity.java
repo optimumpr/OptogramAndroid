@@ -227,6 +227,20 @@ public class OptogramSettingsActivity extends BaseFragment {
             lastSeenDotsCell.setChecked(enabled);
         });
 
+
+        TextCheckCell disableAdsCell = new TextCheckCell(context);
+        disableAdsCell.setTextAndCheck(
+                "Hide Sponsored Messages",
+                preferences.getBoolean("disableAds", true),
+                false);
+        layout.addView(disableAdsCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        disableAdsCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableAds", true);
+            preferences.edit().putBoolean("disableAds", enabled).apply();
+            disableAdsCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
