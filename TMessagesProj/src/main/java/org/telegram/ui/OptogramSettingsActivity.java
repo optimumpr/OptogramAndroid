@@ -85,6 +85,33 @@ public class OptogramSettingsActivity extends BaseFragment {
         layout.addView(deviceInfoDescription, LayoutHelper.createLinear(
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
+
+        TextCheckCell birthdayReminderCell = new TextCheckCell(context);
+        birthdayReminderCell.setTextAndCheck(
+                "Disable Birthday Reminder",
+                preferences.getBoolean("disableBirthdayReminder", false),
+                false);
+        layout.addView(birthdayReminderCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        birthdayReminderCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableBirthdayReminder", false);
+            preferences.edit().putBoolean("disableBirthdayReminder", enabled).apply();
+            birthdayReminderCell.setChecked(enabled);
+        });
+
+        TextCheckCell disablePromoCell = new TextCheckCell(context);
+        disablePromoCell.setTextAndCheck(
+                "Disable Birthday Setup Promotion",
+                preferences.getBoolean("disablePromo", false),
+                false);
+        layout.addView(disablePromoCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        disablePromoCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disablePromo", false);
+            preferences.edit().putBoolean("disablePromo", enabled).apply();
+            disablePromoCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
