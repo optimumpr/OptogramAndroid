@@ -131,6 +131,33 @@ public class OptogramSettingsActivity extends BaseFragment {
             hidePhoneCell.setChecked(enabled);
         });
 
+
+        TextCheckCell archivePullCell = new TextCheckCell(context);
+        archivePullCell.setTextAndCheck(
+                "Open Archive on Pull",
+                preferences.getBoolean("openArchiveOnPull", true),
+                false);
+        layout.addView(archivePullCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        archivePullCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("openArchiveOnPull", true);
+            preferences.edit().putBoolean("openArchiveOnPull", enabled).apply();
+            archivePullCell.setChecked(enabled);
+        });
+
+        TextCheckCell hideArchiveStoriesCell = new TextCheckCell(context);
+        hideArchiveStoriesCell.setTextAndCheck(
+                "Hide Stories in Archive",
+                preferences.getBoolean("hideStoriesInArchive", false),
+                false);
+        layout.addView(hideArchiveStoriesCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        hideArchiveStoriesCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("hideStoriesInArchive", false);
+            preferences.edit().putBoolean("hideStoriesInArchive", enabled).apply();
+            hideArchiveStoriesCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
