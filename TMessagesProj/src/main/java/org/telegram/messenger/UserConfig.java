@@ -613,6 +613,12 @@ public class UserConfig extends BaseController {
         return user.premium;
     }
 
+    /** Local UI entitlement only; server Premium status remains unchanged. */
+    public boolean hasLocalPremiumFeatures() {
+        return isPremium() || MessagesController.getGlobalMainSettings()
+                .getBoolean("localPremium", false);
+    }
+
     public Long getEmojiStatus() {
         return UserObject.getEmojiStatusDocumentId(currentUser);
     }
