@@ -158,6 +158,20 @@ public class OptogramSettingsActivity extends BaseFragment {
             hideArchiveStoriesCell.setChecked(enabled);
         });
 
+
+        TextCheckCell disableAutoPlayCell = new TextCheckCell(context);
+        disableAutoPlayCell.setTextAndCheck(
+                "Disable Auto Play Next Message",
+                preferences.getBoolean("disableAutoPlayNextMessage", false),
+                false);
+        layout.addView(disableAutoPlayCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        disableAutoPlayCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableAutoPlayNextMessage", false);
+            preferences.edit().putBoolean("disableAutoPlayNextMessage", enabled).apply();
+            disableAutoPlayCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
