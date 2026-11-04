@@ -1448,7 +1448,7 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
             showAdsInfoRow = rowCount++;
         }
 
-        AndroidUtilities.updateViewVisibilityAnimated(buttonContainer, !getUserConfig().isPremium() || currentSubscriptionTier != null && currentSubscriptionTier.getMonths() < subscriptionTiers.get(selectedTierIndex).getMonths() && !forcePremium, 1f, false);
+        AndroidUtilities.updateViewVisibilityAnimated(buttonContainer, !getUserConfig().hasLocalPremiumFeatures() && (!getUserConfig().isPremium() || currentSubscriptionTier != null && selectedTierIndex >= 0 && selectedTierIndex < subscriptionTiers.size() && currentSubscriptionTier.getMonths() < subscriptionTiers.get(selectedTierIndex).getMonths() && !forcePremium), 1f, false);
 
         int buttonHeight = buttonContainer.getVisibility() == View.VISIBLE ? dp(64) : 0;
         layoutManager.setAdditionalHeight(buttonHeight + statusBarHeight - dp(16));
@@ -2072,7 +2072,7 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
                 subtitleView.setText(AndroidUtilities.replaceTags(getString(getUserConfig().isPremium() || forcePremium ? R.string.TelegramBusinessSubscribedSubtitleTemp : R.string.TelegramBusinessSubtitleTemp)));
             }
             subtitleView.getLayoutParams().width = Math.min(AndroidUtilities.displaySize.x - dp(42), HintView2.cutInFancyHalf(subtitleView.getText(), subtitleView.getPaint()));
-            boolean tierNotVisible = forcePremium || BuildVars.IS_BILLING_UNAVAILABLE || IS_PREMIUM_TIERS_UNAVAILABLE || subscriptionTiers.size() <= 1;
+            boolean tierNotVisible = getUserConfig().hasLocalPremiumFeatures() || forcePremium || BuildVars.IS_BILLING_UNAVAILABLE || IS_PREMIUM_TIERS_UNAVAILABLE || subscriptionTiers.size() <= 1;
             if (!setTierListViewVisibility || !tierNotVisible) {
                 tierListView.setVisibility(tierNotVisible ? GONE : VISIBLE);
                 setTierListViewVisibility = true;
