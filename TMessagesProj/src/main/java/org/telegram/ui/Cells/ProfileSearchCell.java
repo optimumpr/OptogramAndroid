@@ -175,7 +175,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
     private boolean allowBotOpenButton;
     private Utilities.Callback<TLRPC.User> onOpenButtonClick;
     public ProfileSearchCell allowBotOpenButton(boolean allow, Utilities.Callback<TLRPC.User> onOpenClick) {
-        allowBotOpenButton = allow;
+        allowBotOpenButton = allow && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("disableOpenBotButton", false);
         onOpenButtonClick = onOpenClick;
         return this;
     }
