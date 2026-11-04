@@ -6009,6 +6009,7 @@
     <string name="TelegramPremium">Telegram Premium</string>
     <string name="TelegramPremiumSubtitle">Go **beyond the limits**, get exclusive features and support us by subscribing to **Telegram Premium**.</string>
     <string name="TelegramPremiumSubscribedTitle">You are all set!</string>
+    <string name="OptogramLocalPremiumPreviewSubtitle">Local Premium is enabled in Optogram.</string>
     <string name="TelegramPremiumSubscribedSubtitle">Thank you for subscribing to **Telegram Premium**.\nHere’s what is now unlocked.</string>
     <string name="LimitReachedFavoriteStickers">Limit of %d Stickers Reached</string>
     <string name="LimitReachedFavoriteStickersSubtitle">An older sticker was replaced with this one. You can **increase the limit** to %d stickers</string>
