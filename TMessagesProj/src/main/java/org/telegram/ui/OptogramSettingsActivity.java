@@ -110,6 +110,19 @@ public class OptogramSettingsActivity extends BaseFragment {
         layout.addView(webLoginDescription, LayoutHelper.createLinear(
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
+        TextCheckCell botOpenCell = new TextCheckCell(context);
+        botOpenCell.setTextAndCheck(
+                "Disable Open Bot Button",
+                preferences.getBoolean("disableOpenBotButton", false),
+                false);
+        layout.addView(botOpenCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        botOpenCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableOpenBotButton", false);
+            preferences.edit().putBoolean("disableOpenBotButton", enabled).apply();
+            botOpenCell.setChecked(enabled);
+        });
+
         TextCheckCell birthdayReminderCell = new TextCheckCell(context);
         birthdayReminderCell.setTextAndCheck(
                 "Disable Birthday Reminder",
