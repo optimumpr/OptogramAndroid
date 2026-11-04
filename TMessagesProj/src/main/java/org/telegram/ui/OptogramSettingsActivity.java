@@ -67,7 +67,7 @@ public class OptogramSettingsActivity extends BaseFragment {
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         TextCheckCell deviceInfoCell = new TextCheckCell(context);
         deviceInfoCell.setTextAndCheck(
-                "Hide Device Information in Diagnostics",
+                "Hide Device Information",
                 preferences.getBoolean("disableDeviceInfo", false),
                 false);
         layout.addView(deviceInfoCell, LayoutHelper.createLinear(
@@ -80,8 +80,8 @@ public class OptogramSettingsActivity extends BaseFragment {
 
         TextInfoPrivacyCell deviceInfoDescription = new TextInfoPrivacyCell(context);
         deviceInfoDescription.setText(
-                "Replaces the device model line in the Settings diagnostics report "
-                + "with Unknown. This does not change device information sent to Telegram.");
+                "Reports Unknown instead of the device model and Android version "
+                + "when initializing Telegram connections. Restart Optogram after changing this setting.");
         layout.addView(deviceInfoDescription, LayoutHelper.createLinear(
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
