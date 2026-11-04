@@ -123,6 +123,25 @@ public class OptogramSettingsActivity extends BaseFragment {
             botOpenCell.setChecked(enabled);
         });
 
+        TextCheckCell webGeolocationCell = new TextCheckCell(context);
+        webGeolocationCell.setTextAndCheck(
+                "Disable WebView Geolocation",
+                preferences.getBoolean("disableWebViewGeolocation", true),
+                false);
+        layout.addView(webGeolocationCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        webGeolocationCell.setOnClickListener(v -> {
+            boolean disabled = !preferences.getBoolean("disableWebViewGeolocation", true);
+            preferences.edit().putBoolean("disableWebViewGeolocation", disabled).apply();
+            webGeolocationCell.setChecked(disabled);
+        });
+
+        TextInfoPrivacyCell webGeolocationDescription = new TextInfoPrivacyCell(context);
+        webGeolocationDescription.setText(
+                "Blocks geolocation requests from newly opened embedded bot webviews unless you enable them.");
+        layout.addView(webGeolocationDescription, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
         TextCheckCell birthdayReminderCell = new TextCheckCell(context);
         birthdayReminderCell.setTextAndCheck(
                 "Disable Birthday Reminder",
