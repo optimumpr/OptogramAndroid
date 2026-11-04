@@ -2066,7 +2066,7 @@ public class PremiumPreviewFragment extends BaseFragment implements Notification
         public void updateText() {
             if (type == FEATURES_PREMIUM) {
                 titleView.setText(getString(forcePremium ? R.string.TelegramPremiumSubscribedTitle : R.string.TelegramPremium));
-                subtitleView.setText(AndroidUtilities.replaceTags(getString(getUserConfig().isPremium() || forcePremium ? R.string.TelegramPremiumSubscribedSubtitle : R.string.TelegramPremiumSubtitle)));
+                subtitleView.setText(AndroidUtilities.replaceTags(getString(getUserConfig().hasLocalPremiumFeatures() || forcePremium ? R.string.TelegramPremiumSubscribedSubtitle : R.string.TelegramPremiumSubtitle)));
             } else if (type == FEATURES_BUSINESS) {
                 titleView.setText(getString(forcePremium ? R.string.TelegramPremiumSubscribedTitle : R.string.TelegramBusiness));
                 subtitleView.setText(AndroidUtilities.replaceTags(getString(getUserConfig().isPremium() || forcePremium ? R.string.TelegramBusinessSubscribedSubtitleTemp : R.string.TelegramBusinessSubtitleTemp)));
