@@ -275,7 +275,7 @@ public class AppIconsSelectorCell extends RecyclerListView implements Notificati
             iconView.setImageResource(icon.background);
 
             MarginLayoutParams params = (MarginLayoutParams) titleView.getLayoutParams();
-            if (icon.premium && !UserConfig.hasPremiumOnAccounts() && !UserConfig.getInstance(currentAccount).hasLocalPremiumFeatures()) {
+            if (icon.premium && !UserConfig.hasPremiumOnAccounts() && !MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
                 SpannableString str = new SpannableString("d " + LocaleController.getString(icon.title));
                 ColoredImageSpan span = new ColoredImageSpan(R.drawable.msg_mini_premiumlock);
                 span.setTopOffset(1);
