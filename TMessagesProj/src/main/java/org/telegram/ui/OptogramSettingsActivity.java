@@ -186,6 +186,20 @@ public class OptogramSettingsActivity extends BaseFragment {
             recentFilesCell.setChecked(enabled);
         });
 
+
+        TextCheckCell botLinkParametersCell = new TextCheckCell(context);
+        botLinkParametersCell.setTextAndCheck(
+                "Disable Parameters From Bot Links",
+                preferences.getBoolean("disableParametersFromBotLinks", false),
+                false);
+        layout.addView(botLinkParametersCell, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+        botLinkParametersCell.setOnClickListener(v -> {
+            boolean enabled = !preferences.getBoolean("disableParametersFromBotLinks", false);
+            preferences.edit().putBoolean("disableParametersFromBotLinks", enabled).apply();
+            botLinkParametersCell.setChecked(enabled);
+        });
+
         return fragmentView;
     }
 }
