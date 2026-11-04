@@ -11893,7 +11893,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     rightIconIsStatus = true;
                     nameTextView.setRightDrawable(getEmojiStatusDrawable(user.emoji_status, true, true));
                     nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
-                } else if (getMessagesController().isPremiumUser(user)) {
+                } else if (getMessagesController().isPremiumUser(user) || (user.self && getUserConfig().hasLocalPremiumFeatures())) {
                     rightIconIsPremium = true;
                     nameTextView.setRightDrawable(getEmojiStatusDrawable(null, true, true));
                     nameTextViewRightDrawableContentDescription = LocaleController.getString(R.string.AccDescrPremium);
