@@ -51,7 +51,7 @@ android {
     compileSdkVersion 36
     buildToolsVersion '36.0.0'
 
-    defaultConfig.applicationId = "org.forkclient.messenger"
+    defaultConfig.applicationId = "org.jaguar.optogram"
 
 
     lintOptions {
@@ -79,7 +79,7 @@ android {
     }
 
     def fdroid = Utils['isFdroid']()
-    def appSuffix = fdroid ? "" : ".beta"
+    def appSuffix = ""
     def flavorsConfig = fdroid ? "release" : "debug"
     if (fdroid) {
         defaultConfig.applicationId = "org.forkgram.messenger"
