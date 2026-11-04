@@ -35,6 +35,7 @@ import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
@@ -577,7 +578,7 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableDeviceInfo", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT, "Disable Contact Number Sharing Prompt", "Hide the prompt offering to share your phone number in chats")
             .setChecked(pref("disablePhoneSharePrompt", false)).setMultiline(true));
-        items.add(UItem.asButtonCheck(ID_OPTOGRAM_LOCAL_PREMIUM, "Local Premium", "Unlock Premium launcher icons on this device")
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_LOCAL_PREMIUM, "Local Premium", "Enable supported Premium interface features on this device")
             .setChecked(pref("localPremium", false)).setMultiline(true));
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
         if (!SharedConfig.isUserOwner()) {
@@ -860,6 +861,7 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("disableBirthdayReminder", item, view);
         } else if (id == ID_OPTOGRAM_LOCAL_PREMIUM) {
             toggle("localPremium", item, view);
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal);
         } else if (id == ID_OPTOGRAM_HIDE_DEVICE_INFO) {
             toggle("disableDeviceInfo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT) {
