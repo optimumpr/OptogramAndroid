@@ -720,9 +720,8 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
         passwordRow = rowCount++;
         autoDeleteMesages = rowCount++;
         passcodeRow = rowCount++;
-        if (Build.VERSION.SDK_INT >= 28 && BuildVars.SUPPORTS_PASSKEYS) {
-            passkeysRow = rowCount++;
-        }
+        // Passkey registration is restricted to official Telegram clients.
+        // Keep the protocol implementation, but do not advertise setup in Optogram.
         if (currentPassword != null ? currentPassword.login_email_pattern != null : SharedConfig.hasEmailLogin) {
             emailLoginRow = rowCount++;
         } else {
