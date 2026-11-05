@@ -93,6 +93,7 @@ public class ChannelRecommendationsCell {
     private LoadingDrawable loadingDrawable;
 
     private boolean loading;
+    private boolean localPremiumPresentation;
     private final AnimatedFloat loadingAlpha;
 
     private Text headerText;
@@ -104,6 +105,10 @@ public class ChannelRecommendationsCell {
     private final Paint closePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public void setMessageObject(MessageObject messageObject) {
+        setMessageObject(messageObject, false);
+    }
+
+    private void setMessageObject(MessageObject messageObject, boolean cachedOnly) {
         this.currentAccount = messageObject.currentAccount;
         this.msg = messageObject;
         this.dialogId = messageObject.getDialogId();
@@ -133,7 +138,10 @@ public class ChannelRecommendationsCell {
             channels.get(i).detach();
         }
         channels.clear();
-        MessagesController.ChannelRecommendations rec = MessagesController.getInstance(currentAccount).getChannelRecommendations(dialogId);
+        MessagesController controller = MessagesController.getInstance(currentAccount);
+        MessagesController.ChannelRecommendations rec = cachedOnly
+                ? controller.getCachedChannelRecommendations(dialogId)
+                : controller.getChannelRecommendations(dialogId);
         ArrayList<TLObject> chats = rec == null || rec.chats == null ? new ArrayList<>() : new ArrayList<>(rec.chats);
         for (int i = 0; i < chats.size(); ++i) {
             final TLObject obj = chats.get(i);
@@ -142,17 +150,20 @@ public class ChannelRecommendationsCell {
                 i--;
             }
         }
-        loading = chats.isEmpty() || !UserConfig.getInstance(currentAccount).isPremium() && chats.size() == 1;
+        UserConfig userConfig = UserConfig.getInstance(currentAccount);
+        final boolean isPremium = userConfig.isPremium();
+        localPremiumPresentation = !isPremium && userConfig.hasLocalPremiumFeatures();
+        loading = chats.isEmpty() || !isPremium && !localPremiumPresentation && chats.size() == 1;
         if (!loading) {
             int count = chats.size();
-            if (!UserConfig.getInstance(currentAccount).isPremium() && rec.more > 0) {
-                count = Math.min(count - 1, MessagesController.getInstance(currentAccount).recommendedChannelsLimitDefault);
+            if (!isPremium && !localPremiumPresentation && rec.more > 0) {
+                count = Math.min(count - 1, controller.recommendedChannelsLimitDefault);
             }
             count = Math.min(count, 10);
             for (int i = 0; i < count; ++i) {
                 channels.add(new ChannelBlock(currentAccount, cell, chats.get(i)));
             }
-            if (count < chats.size()) {
+            if (!localPremiumPresentation && count < chats.size()) {
                 TLObject[] _chats = new TLObject[3];
                 _chats[0] = count >= 0 && count < chats.size() ? chats.get(count) : null;
                 _chats[1] = count >= 0 && count + 1 < chats.size() ? chats.get(count + 1) : null;
@@ -184,6 +195,30 @@ public class ChannelRecommendationsCell {
         }
         setMessageObject(msg);
         cell.invalidateOutbounds();
+    }
+
+    void refreshLocalPremiumPresentation(MessageObject boundMessage) {
+        if (msg == null || msg != boundMessage) {
+            return;
+        }
+        UserConfig config = UserConfig.getInstance(currentAccount);
+        if (localPremiumPresentation != (!config.isPremium() && config.hasLocalPremiumFeatures())) {
+            if (longPressRunnable != null) {
+                AndroidUtilities.cancelRunOnUIThread(longPressRunnable);
+                longPressRunnable = null;
+            }
+            longPressedBlock = null;
+            scroller.abortAnimation();
+            scrolling = maybeScrolling = false;
+            closeBounce.setPressed(false);
+            if (velocityTracker != null) {
+                velocityTracker.recycle();
+                velocityTracker = null;
+            }
+            setMessageObject(msg, true);
+            cell.requestLayout();
+            cell.invalidateOutbounds();
+        }
     }
 
     public void onAttachedToWindow() {

@@ -1867,7 +1867,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         backgroundDrawable = new MessageBackgroundDrawable(this);
         avatarImage = new ImageReceiver();
         avatarImage.setCurrentAccount(currentAccount);
-        NotificationCenter.getGlobalInstance().listen(this, NotificationCenter.premiumStatusChangedGlobal, args -> refreshSelfAvatar());
+        NotificationCenter.getGlobalInstance().listen(this, NotificationCenter.premiumStatusChangedGlobal, args -> {
+            refreshSelfAvatar();
+            if (channelRecommendationsCell != null) {
+                channelRecommendationsCell.refreshLocalPremiumPresentation(currentMessageObject);
+            }
+        });
         avatarImage.setAllowLoadingOnAttachedOnly(true);
         avatarImage.setRoundRadius(dp(21));
         avatarDrawable = new AvatarDrawable();
@@ -6090,6 +6095,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
         if (channelRecommendationsCell != null) {
             channelRecommendationsCell.onAttachedToWindow();
+            channelRecommendationsCell.refreshLocalPremiumPresentation(currentMessageObject);
         }
         if (stickerSetIcons != null) {
             stickerSetIcons.attach(this);
