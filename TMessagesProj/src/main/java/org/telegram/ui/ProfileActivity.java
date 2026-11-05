@@ -7264,7 +7264,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     })
                     .setMinWidth(190);
             if (joined != 0) {
-                options.addGap();
+                if (!self || result) {
+                    options.addGap();
+                }
                 options.addText(LocaleController.formatJoined(joined), 13);
             }
             options.show();
