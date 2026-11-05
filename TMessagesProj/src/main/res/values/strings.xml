@@ -175,8 +175,8 @@
     <string name="ForkSettingsLockChangeCode">Change code</string>
     <string name="ForkSettingsLockRemoveCode">Remove code</string>
     <string name="ForkSettingsLockRemoveCodeConfirm">Fork Client Settings will open without a code.</string>
-    <string name="AppName">Fork Client</string>
-    <string name="AppNameBeta">Fork Client</string>
+    <string name="AppName">Optogram</string>
+    <string name="AppNameBeta">Optogram</string>
     <string name="AppNameFdroid">Forkgram</string>
     <string name="GoToTags">GoTo chats: %1$s</string>
     <string name="GoToNotFound">No GoTo chat found for #%1$s (%2$s)</string>
