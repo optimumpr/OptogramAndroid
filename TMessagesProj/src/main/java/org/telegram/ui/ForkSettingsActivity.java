@@ -164,6 +164,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN = 108;
     public static final int ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON = 109;
     public static final int ID_OPTOGRAM_HIDE_PHONE_NUMBER = 110;
+    public static final int ID_OPTOGRAM_DISABLE_AUTOPLAY_NEXT_AUDIO = 111;
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
@@ -719,6 +720,8 @@ public class ForkSettingsActivity extends BaseFragment {
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.ForkSectionVoice)));
         items.add(UItem.asSettingsCell(ID_VOICE_QUALITY, LocaleController.getString(R.string.VoiceMessageQuality), getVoiceQualityText()));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_AUTOPLAY_NEXT_AUDIO, "Disable Autoplay Next Audio Message", "Stop automatically advancing the audio/music playlist when playback ends")
+            .setChecked(pref("disableAutoPlayNextMessage", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_DISABLE_AUTOPLAY_NEXT_VOICE, LocaleController.getString(R.string.DisableAutoplayNextVoice), LocaleController.getString(R.string.DisableAutoplayNextVoiceInfo))
             .setChecked(pref("disableAutoplayNextVoice", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_VOICE_FILE_SIZE, LocaleController.getString(R.string.VoiceFileSize), LocaleController.getString(R.string.VoiceFileSizeInfo))
@@ -936,6 +939,8 @@ public class ForkSettingsActivity extends BaseFragment {
 
         } else if (id == ID_VOICE_QUALITY) {
             showVoiceQualityDialog();
+        } else if (id == ID_OPTOGRAM_DISABLE_AUTOPLAY_NEXT_AUDIO) {
+            toggle("disableAutoPlayNextMessage", item, view);
         } else if (id == ID_DISABLE_AUTOPLAY_NEXT_VOICE) {
             toggle("disableAutoplayNextVoice", item, view);
         } else if (id == ID_VOICE_FILE_SIZE) {
