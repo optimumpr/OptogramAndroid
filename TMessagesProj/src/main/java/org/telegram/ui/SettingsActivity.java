@@ -1515,7 +1515,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 getString("DebugMenuClearMediaCache", R.string.DebugMenuClearMediaCache),
                 getString(R.string.DebugMenuCallSettings),
                 null,
-                BuildVars.DEBUG_PRIVATE_VERSION || ApplicationLoader.isStandaloneBuild() || ApplicationLoader.isBetaBuild() ? getString("DebugMenuCheckAppUpdate", R.string.DebugMenuCheckAppUpdate) : null,
+                null, // Forkgram app update check disabled; preserve debug menu indices
                 getString("DebugMenuReadAllDialogs", R.string.DebugMenuReadAllDialogs),
                 BuildVars.DEBUG_PRIVATE_VERSION ? SharedConfig.disableVoiceAudioEffects ? "Enable voip audio effects" : "Disable voip audio effects" : null,
                 BuildVars.DEBUG_PRIVATE_VERSION ? "Clean app update" : null,
@@ -1624,8 +1624,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 VoIPHelper.showCallDebugSettings(getParentActivity());
             } else if (which == 8) { // ?
                 SharedConfig.toggleRoundCamera16to9();
-            } else if (which == 9) { // Check app update
-                ((LaunchActivity) getParentActivity()).checkAppUpdate(true, null);
+            } else if (which == 9) { // Forkgram app update check disabled
             } else if (which == 10) { // Read all chats
                 getMessagesStorage().readAllDialogs(-1);
             } else if (which == 11) { // Voip audio effects
