@@ -182,6 +182,12 @@ public class OptogramSettingsActivity extends BaseFragment {
             hidePhoneCell.setChecked(enabled);
         });
 
+        TextInfoPrivacyCell hidePhoneDescription = new TextInfoPrivacyCell(context);
+        hidePhoneDescription.setText(
+                "Masks phone numbers in supported Optogram screens only. This does not change your Telegram account's phone-number privacy or contact sharing settings.");
+        layout.addView(hidePhoneDescription, LayoutHelper.createLinear(
+                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
+
 
         TextCheckCell archivePullCell = new TextCheckCell(context);
         archivePullCell.setTextAndCheck(
