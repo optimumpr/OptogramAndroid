@@ -149,7 +149,6 @@ import org.telegram.messenger.voip.VoIPGroupNotification;
 import org.telegram.messenger.voip.VoIPPendingCall;
 import org.telegram.messenger.voip.VoIPPreNotificationService;
 import org.telegram.messenger.voip.VoIPService;
-import org.telegram.messenger.forkgram.AppUpdater;
 import org.telegram.messenger.forkgram.DeleteAfterSend;
 import org.telegram.messenger.forkgram.ForkSettings;
 import org.telegram.messenger.forkgram.GoTo;
@@ -286,8 +285,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
 
     private static final String EXTRA_ACTION_TOKEN = "actions.fulfillment.extra.ACTION_TOKEN";
     public ArrayList<INavigationLayout> sheetFragmentsStack = new ArrayList<>();
-
-    private static boolean clearedCachedInstallers = false;
 
     private boolean finished;
     final private Pattern locationRegex = Pattern.compile("geo: ?(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)(,|\\?z=)(-?\\d+)");
@@ -867,11 +864,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         //    refreshRateController = new RefreshRateController(this);
         //}
         checkFrameMetrics();
-
-        if (!clearedCachedInstallers) {
-            clearedCachedInstallers = true;
-            AppUpdater.clearCachedInstallers(getBaseContext());
-        }
     }
 
     public void checkFrameMetrics() {
