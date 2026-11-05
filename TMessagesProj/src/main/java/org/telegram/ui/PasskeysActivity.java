@@ -402,6 +402,13 @@ public class PasskeysActivity extends BaseFragment {
             });
         });
 
+        // Passkey registration is unavailable in this unofficial client.
+        // Keep the explanatory sheet and existing passkey management accessible.
+        button.setText("Disabled for non-official apps", false);
+        button.setEnabled(false);
+        button.setClickable(false);
+        button.setOnClickListener(null);
+
         if (withCreateButton) {
             linearLayout.addView(button, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, 0, 16, 0, 8));
         }
