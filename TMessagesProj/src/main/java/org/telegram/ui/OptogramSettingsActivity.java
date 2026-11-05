@@ -118,14 +118,14 @@ public class OptogramSettingsActivity extends BaseFragment {
             boolean gateTestPassed = !DialogsActivity.isOptogramBirthdayHintAllowed(true)
                     && DialogsActivity.isOptogramBirthdayHintAllowed(false);
             String report = "Today\u0027s birthdays available: " + birthdaysToday
-                    + "\\nBirthday reminder disabled: " + remindersDisabled
-                    + "\\nBirthday reminder gate: " + (reminderAllowed ? "ALLOW" : "SUPPRESS")
-                    + "\\n\\nBirthday setup suggested: " + setupSuggested
-                    + "\\nBirthday already configured: " + hasBirthday
-                    + "\\nBirthday setup disabled: " + setupDisabled
-                    + "\\nBirthday setup gate: " + (setupAllowed ? "ALLOW" : "SUPPRESS")
-                    + "\\n\\nSynthetic gate test (enabled and disabled): " + (gateTestPassed ? "PASS" : "FAIL")
-                    + "\\n\\nThis checks the same preference gates used by the chat-list banners. It does not create birthdays, request suggestions, or prove that a banner would otherwise appear.";
+                    + "\nBirthday reminder disabled: " + remindersDisabled
+                    + "\nBirthday reminder gate: " + (reminderAllowed ? "ALLOW" : "SUPPRESS")
+                    + "\n\nBirthday setup suggested: " + setupSuggested
+                    + "\nBirthday already configured: " + hasBirthday
+                    + "\nBirthday setup disabled: " + setupDisabled
+                    + "\nBirthday setup gate: " + (setupAllowed ? "ALLOW" : "SUPPRESS")
+                    + "\n\nSynthetic gate test (enabled and disabled): " + (gateTestPassed ? "PASS" : "FAIL")
+                    + "\n\nThis checks the same preference gates used by the chat-list banners. It does not create birthdays, request suggestions, or prove that a banner would otherwise appear.";
             showDialog(new AlertDialog.Builder(context)
                     .setTitle("Birthday Reminder Diagnostics")
                     .setMessage(report)
