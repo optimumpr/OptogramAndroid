@@ -21605,6 +21605,9 @@ public class ChatActivity extends BaseFragment implements
                 SendMessagesHelper.SendingMediaInfo info = new SendMessagesHelper.SendingMediaInfo();
                 if (!entry.isVideo && entry.imagePath != null) {
                     info.path = entry.imagePath;
+                    if (entry.editedInfo == null && entry.isHighQuality()) {
+                        info.originalPhotoEntry = entry.clone();
+                    }
                 } else if (entry.path != null) {
                     info.path = entry.path;
                 }
