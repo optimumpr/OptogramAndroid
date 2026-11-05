@@ -71,6 +71,7 @@ public class ContactsController extends BaseController {
     private HashMap<String, String> sectionsToReplace = new HashMap<>();
 
     private int loadingGlobalSettings;
+    private TLRPC.GlobalPrivacySettings pendingArchivePrivacySettings;
     private int loadingDeleteInfo;
     private int deleteAccountTTL;
     private int[] loadingPrivacyInfo = new int[PRIVACY_RULES_TYPE_COUNT];
@@ -328,6 +329,8 @@ public class ContactsController extends BaseController {
         contactsBookLoaded = false;
         lastContactsVersions = "";
         loadingGlobalSettings = 0;
+        pendingArchivePrivacySettings = null;
+        globalPrivacySettings = null;
         loadingDeleteInfo = 0;
         deleteAccountTTL = 0;
         Arrays.fill(loadingPrivacyInfo, 0);
@@ -2866,6 +2869,35 @@ public class ContactsController extends BaseController {
 
     public TLRPC.GlobalPrivacySettings getGlobalPrivacySettings() {
         return globalPrivacySettings;
+    }
+
+    public boolean isSavingArchivePrivacySettings() {
+        return pendingArchivePrivacySettings != null;
+    }
+
+    public void saveArchivePrivacySettings(TLRPC.GlobalPrivacySettings settings, Utilities.Callback<Boolean> callback) {
+        if (isSavingArchivePrivacySettings()) {
+            return;
+        }
+        pendingArchivePrivacySettings = settings;
+        final long userId = getUserConfig().getClientUserId();
+        TL_account.setGlobalPrivacySettings req = new TL_account.setGlobalPrivacySettings();
+        req.settings = settings;
+        getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+            if (pendingArchivePrivacySettings != settings) {
+                return;
+            }
+            pendingArchivePrivacySettings = null;
+            if (userId != getUserConfig().getClientUserId()) {
+                return;
+            }
+            final boolean saved = error == null && response instanceof TLRPC.GlobalPrivacySettings;
+            if (saved) {
+                globalPrivacySettings = (TLRPC.GlobalPrivacySettings) response;
+            }
+            getNotificationCenter().postNotificationName(NotificationCenter.privacyRulesUpdated);
+            callback.run(saved);
+        }), ConnectionsManager.RequestFlagFailOnServerErrors);
     }
 
     public ArrayList<TLRPC.PrivacyRule> getPrivacyRules(int type) {

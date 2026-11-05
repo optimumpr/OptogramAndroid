@@ -20,7 +20,6 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.tgnet.tl.TL_account;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
@@ -29,6 +28,7 @@ import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Components.Bulletin;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.ListView.AdapterWithDiffUtils;
@@ -42,9 +42,8 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
     private RecyclerListView listView;
     private ListAdapter adapter;
 
-    private boolean changed = false;
     private TLRPC.GlobalPrivacySettings settings;
-    
+
     private int shiftDp = -3;
 
     @Override
@@ -94,33 +93,54 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
                 return;
             }
             ItemInner item = items.get(position);
-            if (item.id == 1) {
-                settings.keep_archived_unmuted = !settings.keep_archived_unmuted;
-                ((TextCheckCell) view).setChecked(settings.keep_archived_unmuted);
-                changed = true;
-            } else if (item.id == 4) {
-                settings.keep_archived_folders = !settings.keep_archived_folders;
-                ((TextCheckCell) view).setChecked(settings.keep_archived_folders);
-                changed = true;
-            } else if (item.id == 7) {
-                if (!getUserConfig().isPremium() && !getMessagesController().autoarchiveAvailable && !settings.archive_and_mute_new_noncontact_peers) {
-                    final Bulletin.SimpleLayout layout = new Bulletin.SimpleLayout(getContext(), getResourceProvider());
-                    layout.textView.setText(AndroidUtilities.replaceSingleTag(LocaleController.getString(R.string.UnlockPremium), Theme.key_undo_cancelColor, 0, () -> {
-                        presentFragment(new PremiumPreviewFragment("settings"));
-                    }));
-                    layout.textView.setSingleLine(false);
-                    layout.textView.setPadding(0, dp(4), 0, dp(4));
-                    layout.imageView.setImageResource(R.drawable.msg_settings_premium);
-                    Bulletin.make(this, layout, 3500).show();
-
-                    AndroidUtilities.shakeViewSpring(view, shiftDp = -shiftDp);
-                    BotWebViewVibrationEffect.APP_ERROR.vibrate();
-                    return;
-                }
-                settings.archive_and_mute_new_noncontact_peers = !settings.archive_and_mute_new_noncontact_peers;
-                ((TextCheckCell) view).setChecked(settings.archive_and_mute_new_noncontact_peers);
-                changed = true;
+            if (getContactsController().getLoadingGlobalSettings()) {
+                getContactsController().loadGlobalPrivacySetting();
+                return;
             }
+            if (getContactsController().isSavingArchivePrivacySettings()) {
+                return;
+            }
+            if (item.id == 7 && !canEnableAutoarchive() && !settings.archive_and_mute_new_noncontact_peers) {
+                final Bulletin.SimpleLayout layout = new Bulletin.SimpleLayout(getContext(), getResourceProvider());
+                layout.textView.setText(AndroidUtilities.replaceSingleTag(LocaleController.getString(R.string.UnlockPremium), Theme.key_undo_cancelColor, 0, () -> {
+                    presentFragment(new PremiumPreviewFragment("settings"));
+                }));
+                layout.textView.setSingleLine(false);
+                layout.textView.setPadding(0, dp(4), 0, dp(4));
+                layout.imageView.setImageResource(R.drawable.msg_settings_premium);
+                Bulletin.make(this, layout, 3500).show();
+
+                AndroidUtilities.shakeViewSpring(view, shiftDp = -shiftDp);
+                BotWebViewVibrationEffect.APP_ERROR.vibrate();
+                return;
+            }
+            final TLRPC.GlobalPrivacySettings updated = new TLRPC.TL_globalPrivacySettings();
+            updated.flags = settings.flags;
+            updated.archive_and_mute_new_noncontact_peers = settings.archive_and_mute_new_noncontact_peers;
+            updated.keep_archived_unmuted = settings.keep_archived_unmuted;
+            updated.keep_archived_folders = settings.keep_archived_folders;
+            updated.hide_read_marks = settings.hide_read_marks;
+            updated.new_noncontact_peers_require_premium = settings.new_noncontact_peers_require_premium;
+            updated.display_gifts_button = settings.display_gifts_button;
+            updated.noncontact_peers_paid_stars = settings.noncontact_peers_paid_stars;
+            updated.disallowed_stargifts = settings.disallowed_stargifts;
+            if (item.id == 1) {
+                updated.keep_archived_unmuted = !updated.keep_archived_unmuted;
+            } else if (item.id == 4) {
+                updated.keep_archived_folders = !updated.keep_archived_folders;
+            } else if (item.id == 7) {
+                updated.archive_and_mute_new_noncontact_peers = !updated.archive_and_mute_new_noncontact_peers;
+            } else {
+                return;
+            }
+            final int account = currentAccount;
+            getContactsController().saveArchivePrivacySettings(updated, saved -> {
+                if (currentAccount == account && !isFinished && !isPaused() && getParentActivity() != null
+                        && (!saved || item.id == 7 && settings.archive_and_mute_new_noncontact_peers != updated.archive_and_mute_new_noncontact_peers)) {
+                    BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.ErrorOccurred)).show();
+                }
+            });
+            adapter.notifyDataSetChanged();
         });
 
         getContactsController().loadGlobalPrivacySetting();
@@ -131,6 +151,10 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
         updateItems(false);
 
         return fragmentView;
+    }
+
+    private boolean canEnableAutoarchive() {
+        return getUserConfig().hasLocalPremiumFeatures() || getMessagesController().autoarchiveAvailable;
     }
 
     private final ArrayList<ItemInner> oldItems = new ArrayList<>(), items = new ArrayList<>();
@@ -231,11 +255,12 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
                     cell.setCheckBoxIcon(0);
                 } else if (item.id == 7) {
                     checked = settings.archive_and_mute_new_noncontact_peers;
-                    cell.setCheckBoxIcon(getUserConfig().isPremium() || getMessagesController().autoarchiveAvailable ? 0 : R.drawable.permission_locked);
+                    cell.setCheckBoxIcon(checked || canEnableAutoarchive() ? 0 : R.drawable.permission_locked);
                 } else {
                     return;
                 }
                 cell.setTextAndCheck(item.text, checked, divider);
+                cell.setEnabled(!getContactsController().isSavingArchivePrivacySettings());
             }
         }
 
@@ -246,7 +271,8 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
 
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
-            return holder.getItemViewType() != VIEW_TYPE_SHADOW && holder.getItemViewType() != VIEW_TYPE_HEADER;
+            return holder.getItemViewType() == VIEW_TYPE_CHECK
+                    && !getContactsController().isSavingArchivePrivacySettings();
         }
 
         @Override
@@ -265,16 +291,17 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onFragmentDestroy() {
         getNotificationCenter().removeObserver(this, NotificationCenter.privacyRulesUpdated);
         super.onFragmentDestroy();
-
-        if (changed) {
-            TL_account.setGlobalPrivacySettings req = new TL_account.setGlobalPrivacySettings();
-            req.settings = settings;
-            getConnectionsManager().sendRequest(req, (response, error) -> {});
-            changed = false;
-        }
     }
 
     @Override
@@ -284,24 +311,9 @@ public class ArchiveSettingsActivity extends BaseFragment implements Notificatio
             if (settings == null) {
                 settings = new TLRPC.TL_globalPrivacySettings();
             }
-            if (listView != null) {
-                for (int i = 0; i < listView.getChildCount(); ++i) {
-                    View child = listView.getChildAt(i);
-                    int position = listView.getChildAdapterPosition(child);
-                    if (position < 0 || position >= items.size()) {
-                        continue;
-                    }
-                    ItemInner item = items.get(position);
-                    if (item.id == 1) {
-                        ((TextCheckCell) child).setChecked(settings.keep_archived_unmuted);
-                    } else if (item.id == 4) {
-                        ((TextCheckCell) child).setChecked(settings.keep_archived_folders);
-                    } else if (item.id == 7) {
-                        ((TextCheckCell) child).setChecked(settings.archive_and_mute_new_noncontact_peers);
-                    }
-                }
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
             }
-            changed = false;
         } else if (id == NotificationCenter.dialogFiltersUpdated) {
             updateItems(true);
         }
