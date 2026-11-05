@@ -7169,9 +7169,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             final String rank;
             final boolean isAdmin, isOwner;
             final TLRPC.ChannelParticipant channelParticipant;
+            final int joined;
 
             if (ChatObject.isChannel(currentChat)) {
                 channelParticipant = ((TLRPC.TL_chatChannelParticipant) participant).channelParticipant;
+                joined = channelParticipant != null ? channelParticipant.date : 0;
                 rank = channelParticipant.rank;
                 isAdmin = channelParticipant instanceof TLRPC.TL_channelParticipantCreator || channelParticipant instanceof TLRPC.TL_channelParticipantAdmin;
                 isOwner = channelParticipant instanceof TLRPC.TL_channelParticipantCreator;
@@ -7192,6 +7194,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 editingAdmin = channelParticipant instanceof TLRPC.TL_channelParticipantAdmin;
             } else {
                 channelParticipant = null;
+                joined = participant.date;
                 rank = participant.rank;
                 isAdmin = participant instanceof TLRPC.TL_chatParticipantAdmin || participant instanceof TLRPC.TL_chatParticipantCreator;
                 isOwner = participant instanceof TLRPC.TL_chatParticipantCreator;
@@ -7211,8 +7214,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
 
             boolean result = (canEditAdmin || canEditTag || canRestrict || allowKick);
-            if (resultOnly || !result) {
+            if (resultOnly) {
                 return result;
+            }
+            if (!result && joined == 0 && self) {
+                return false;
             }
 
             Utilities.Callback<Integer> openRightsEdit = action -> {
@@ -7228,7 +7234,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 bg = ((RecyclerListView) view.getParent()).getClipBackground(view);
             }
 
-            ItemOptions.makeOptions(this, view)
+            ItemOptions options = ItemOptions.makeOptions(this, view)
                     .setScrimViewBackground(bg)
                     .setLongPressSelectionEnabled(false)
                     .addIf(!self, R.drawable.msg_discussion, getString(R.string.SendMessage), () -> {
@@ -7256,8 +7262,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     .addIf(allowKick, R.drawable.msg_remove, LocaleController.getString(R.string.KickFromGroup), true, () -> {
                         kickUser(selectedUser, participant);
                     })
-                    .setMinWidth(190)
-                    .show();
+                    .setMinWidth(190);
+            if (joined != 0) {
+                options.addGap();
+                options.addText(LocaleController.formatJoined(joined), 13);
+            }
+            options.show();
         } else {
             if (participant.user_id == getUserConfig().getClientUserId()) {
                 return false;
