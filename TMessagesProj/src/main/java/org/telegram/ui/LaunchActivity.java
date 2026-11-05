@@ -148,7 +148,6 @@ import org.telegram.messenger.voip.VoIPGroupNotification;
 import org.telegram.messenger.voip.VoIPPendingCall;
 import org.telegram.messenger.voip.VoIPPreNotificationService;
 import org.telegram.messenger.voip.VoIPService;
-import org.telegram.messenger.forkgram.AppUpdater;
 import org.telegram.messenger.forkgram.GoTo;
 import org.telegram.messenger.forkgram.HiddenAccountHelper;
 import org.telegram.tgnet.ConnectionsManager;
@@ -277,7 +276,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     private static final String EXTRA_ACTION_TOKEN = "actions.fulfillment.extra.ACTION_TOKEN";
     public ArrayList<INavigationLayout> sheetFragmentsStack = new ArrayList<>();
 
-    private static boolean clearedCachedInstallers = false;
 
     private boolean finished;
     final private Pattern locationRegex = Pattern.compile("geo: ?(-?\\d+\\.\\d+),(-?\\d+\\.\\d+)(,|\\?z=)(-?\\d+)");
@@ -866,10 +864,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         //}
         checkFrameMetrics();
 
-        if (!clearedCachedInstallers) {
-            clearedCachedInstallers = true;
-            AppUpdater.clearCachedInstallers(getBaseContext());
-        }
     }
 
     public void checkFrameMetrics() {
@@ -6148,28 +6142,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
 
         return foundContacts;
-    }
-
-    private boolean firstAppUpdateCheck = true;
-    public void checkAppUpdate(boolean force, Browser.Progress progress) {
-        final int accountNum = currentAccount;
-        AppUpdater.checkNewVersion(this, getBaseContext(), (builder) -> {
-            showAlertDialog(builder);
-            return 0;
-        }, (update) -> {
-            if (update == null) {
-                return 0;
-            }
-            if (SharedConfig.pendingAppUpdate != null && SharedConfig.pendingAppUpdate.version != null
-                    && SharedConfig.pendingAppUpdate.version.equals(update.version)) {
-                return 0;
-            }
-            if (SharedConfig.setNewAppVersionAvailable(update)) {
-                ApplicationLoader.applicationLoaderInstance.showUpdateAppPopup(LaunchActivity.this, update, accountNum);
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
-            }
-            return 0;
-        }, force);
     }
 
     // Never be called.
