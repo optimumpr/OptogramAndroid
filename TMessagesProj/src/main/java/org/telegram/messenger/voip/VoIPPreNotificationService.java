@@ -358,7 +358,11 @@ public class VoIPPreNotificationService { // } extends Service implements AudioM
                                     .setUsage(VibrationAttributes.USAGE_RINGTONE) // required for background apps
                                     .build());
                     } else {
-                        vibrator.vibrate(pattern, 0);
+                        AudioAttributes ringtoneVibrationAttributes = new AudioAttributes.Builder()
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                                .build();
+                        vibrator.vibrate(pattern, 0, ringtoneVibrationAttributes);
                     }
                 }
             }
