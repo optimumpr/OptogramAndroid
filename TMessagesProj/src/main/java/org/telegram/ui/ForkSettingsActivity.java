@@ -27,6 +27,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.BirthdayController;
+import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.forkgram.FolderIcons;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BotWebViewVibrationEffect;
@@ -166,6 +168,10 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_HIDE_PHONE_NUMBER = 110;
     public static final int ID_OPTOGRAM_DISABLE_AUTOPLAY_NEXT_AUDIO = 111;
     public static final int ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL = 112;
+    public static final int ID_OPTOGRAM_LOCAL_PREMIUM = 113;
+    public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
+    public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP = 115;
+    public static final int ID_OPTOGRAM_BIRTHDAY_DIAGNOSTICS = 116;
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
@@ -559,10 +565,16 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("hidePhoneNumber", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL, "Hide Keyboard on Chat Scroll", "Dismiss the keyboard when manually scrolling messages")
             .setChecked(pref("hide_chat_keyboard", false)).setMultiline(true));
-        items.add(UItem.asSettingsCell(ID_OPTOGRAM_PREFERENCES, "More Optogram Preferences", "Additional privacy and customization"));
         items.add(UItem.asShadow(null));
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_LOCAL_PREMIUM, "Local Premium", "Local interface features only; does not unlock server-side Premium")
+            .setChecked(pref("localPremium", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER, "Disable Birthday Reminder", null)
+            .setChecked(pref("disableBirthdayReminder", false)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP, "Disable Birthday Setup Promotion", null)
+            .setChecked(pref("disablePromo", false)));
+        items.add(UItem.asSettingsCell(ID_OPTOGRAM_BIRTHDAY_DIAGNOSTICS, "Birthday Reminder Diagnostics", "Inspect birthday hint suppression without waiting for a birthday"));
         if (!SharedConfig.isUserOwner()) {
             items.add(UItem.asButtonCheck(ID_HIDE_SENSITIVE_DATA, LocaleController.getString(R.string.HideSensitiveData), LocaleController.getString(R.string.ForkRestartRequired))
                 .setChecked(pref("hideSensitiveData", false)).setMultiline(true));
@@ -842,8 +854,15 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("hidePhoneNumber", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL) {
             toggle("hide_chat_keyboard", item, view);
-        } else if (id == ID_OPTOGRAM_PREFERENCES) {
-            presentFragment(new OptogramSettingsActivity());
+        } else if (id == ID_OPTOGRAM_LOCAL_PREMIUM) {
+            toggle("localPremium", item, view);
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.premiumStatusChangedGlobal);
+        } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER) {
+            toggle("disableBirthdayReminder", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP) {
+            toggle("disablePromo", item, view);
+        } else if (id == ID_OPTOGRAM_BIRTHDAY_DIAGNOSTICS) {
+            showOptogramBirthdayDiagnostics();
         } else if (id == ID_HIDDEN_ACCOUNTS) {
             presentFragment(new HiddenAccountsActivity());
         } else if (id == ID_FORK_SETTINGS_LOCK) {
@@ -1242,6 +1261,40 @@ public class ForkSettingsActivity extends BaseFragment {
         if (button != null) {
             button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
         }
+    }
+
+    private void showOptogramBirthdayDiagnostics() {
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        boolean remindersDisabled = pref("disableBirthdayReminder", false);
+        boolean setupDisabled = pref("disablePromo", false);
+        MessagesController controller = MessagesController.getInstance(currentAccount);
+        boolean birthdaysToday = BirthdayController.getInstance(currentAccount).contains();
+        boolean setupSuggested = controller.pendingSuggestions.contains("BIRTHDAY_SETUP");
+        org.telegram.tgnet.TLRPC.UserFull userFull =
+            controller.getUserFull(UserConfig.getInstance(currentAccount).getClientUserId());
+        boolean hasBirthday = userFull != null && userFull.birthday != null;
+        boolean reminderAllowed = DialogsActivity.isOptogramBirthdayHintAllowed(remindersDisabled);
+        boolean setupAllowed = DialogsActivity.isOptogramBirthdayHintAllowed(setupDisabled);
+        boolean gateTestPassed = !DialogsActivity.isOptogramBirthdayHintAllowed(true)
+            && DialogsActivity.isOptogramBirthdayHintAllowed(false);
+        String report = "Today's birthdays available: " + birthdaysToday
+            + "\\nBirthday reminder disabled: " + remindersDisabled
+            + "\\nBirthday reminder gate: " + (reminderAllowed ? "ALLOW" : "SUPPRESS")
+            + "\\n\\nBirthday setup suggested: " + setupSuggested
+            + "\\nBirthday already configured: " + hasBirthday
+            + "\\nBirthday setup disabled: " + setupDisabled
+            + "\\nBirthday setup gate: " + (setupAllowed ? "ALLOW" : "SUPPRESS")
+            + "\\n\\nSynthetic gate test (enabled and disabled): " + (gateTestPassed ? "PASS" : "FAIL")
+            + "\\n\\nThis checks the same preference gates used by the chat-list banners. "
+            + "It does not create birthdays, request suggestions, or prove that a banner would otherwise appear.";
+        showDialog(new AlertDialog.Builder(context)
+            .setTitle("Birthday Reminder Diagnostics")
+            .setMessage(report)
+            .setPositiveButton("OK", null)
+            .create());
     }
 
     private void showCustomTitleDialog(View view) {
