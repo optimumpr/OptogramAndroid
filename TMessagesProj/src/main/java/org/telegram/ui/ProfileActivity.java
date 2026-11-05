@@ -7217,7 +7217,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (resultOnly) {
                 return result;
             }
-            if (!result && joined == 0 && self) {
+            if (!result && joined == 0) {
                 return false;
             }
 
