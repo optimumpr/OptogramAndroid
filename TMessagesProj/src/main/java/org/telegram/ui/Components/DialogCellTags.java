@@ -107,7 +107,7 @@ public class DialogCellTags {
         final AccountInstance account = AccountInstance.getInstance(currentAccount);
         final MessagesController controller = MessagesController.getInstance(currentAccount);
 
-        if (!(controller.folderTags && account.getUserConfig().isPremium())) {
+        if (!(controller.folderTags && account.getUserConfig().hasLocalPremiumFeatures())) {
             final boolean wasEmpty = tags.isEmpty();
             tags.clear();
             return !wasEmpty;
