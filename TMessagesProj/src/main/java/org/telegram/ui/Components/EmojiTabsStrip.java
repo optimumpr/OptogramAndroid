@@ -533,7 +533,9 @@ public class EmojiTabsStrip extends ScrollableHorizontalScrollView {
         }
         appearCount = emojiPacks.size();
         final boolean includeFeatured = doIncludeFeatured();
-        final boolean isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium() || allowEmojisForNonPremium();
+        final boolean isPremium = UserConfig.getInstance(UserConfig.selectedAccount).isPremium()
+                || org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)
+                || allowEmojisForNonPremium();
 
         ArrayList<EmojiTabButton> attachedEmojiPacks = new ArrayList<>();
 
