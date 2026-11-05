@@ -61,7 +61,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.os.Vibrator;
 import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
@@ -1509,6 +1508,9 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private void showAnonymShareAlert(boolean groupMedia) {
+        if (!MessageSelectionLimits.allowLegacyBulkAction(this, selectedMessageCount())) {
+            return;
+        }
         ArrayList<MessageObject> messages = new ArrayList<MessageObject>();
         for (int a = 1; a >= 0; a--) {
             ArrayList<Integer> ids = new ArrayList<>();
@@ -1985,14 +1987,9 @@ public class ChatActivity extends BaseFragment implements
             return;
         }
         MessageObject messageObject = messages.get(indexOfMessage);
-        final boolean unselect = selectedMessagesIds[0].get(messageObject.getId(), null) == null && selectedMessagesIds[1].get(messageObject.getId(), null) == null;
-        SparseArray<MessageObject> alreadySelectedMessagesIds = new SparseArray<>();
-        for (int i = 0; i < selectedMessagesIds[0].size(); i++) {
-            alreadySelectedMessagesIds.put(selectedMessagesIds[0].keyAt(i), selectedMessagesIds[0].valueAt(i));
-        }
-        for (int i = 0; i < selectedMessagesIds[1].size(); i++) {
-            alreadySelectedMessagesIds.put(selectedMessagesIds[1].keyAt(i), selectedMessagesIds[1].valueAt(i));
-        }
+        final boolean unselect = !isMessageSelected(messageObject);
+        final List<SparseArray<MessageObject>> alreadySelectedMessages = Arrays.asList(
+                selectedMessagesIds[0].clone(), selectedMessagesIds[1].clone());
         chatListView.startMultiselect(position, false, new RecyclerListView.onMultiSelectionChanged() {
             boolean limitReached;
             @Override
@@ -2003,18 +2000,18 @@ public class ChatActivity extends BaseFragment implements
                 }
                 if (i >= 0 && i < messages.size()) {
                     MessageObject messageObject = messages.get(i);
-                    if (selected && (selectedMessagesIds[0].indexOfKey(messageObject.getId()) >= 0 || selectedMessagesIds[1].indexOfKey(messageObject.getId()) >= 0)) {
-                        return;
-                    }
-                    if (!selected && selectedMessagesIds[0].indexOfKey(messageObject.getId()) < 0 && selectedMessagesIds[1].indexOfKey(messageObject.getId()) < 0) {
+                    if (selected == isMessageSelected(messageObject)) {
                         return;
                     }
                     if (messageObject.contentType == 0) {
-                        if (selected && selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 100) {
+                        if (selected && !canAddToMessageSelection(additionalAlbumSelections(messageObject))) {
+                            if (!limitReached) {
+                                showMessageSelectionLimit();
+                            }
                             limitReached = true;
-                        } else {
-                            limitReached = false;
+                            return;
                         }
+                        limitReached = false;
                         RecyclerView.ViewHolder holder = chatListView.findViewHolderForAdapterPosition(position);
                         if (holder != null && holder.itemView instanceof ChatMessageCell) {
                             processRowSelect(holder.itemView, false, x, y);
@@ -2033,12 +2030,9 @@ public class ChatActivity extends BaseFragment implements
                 if (i >= 0 && i < messages.size()) {
                     MessageObject messageObject = messages.get(i);
                     if (messageObject.contentType == 0) {
-                        if (!unselect && alreadySelectedMessagesIds.get(messageObject.getId(), null) == null) {
-                            return true;
-                        }
-                        if (unselect && alreadySelectedMessagesIds.get(messageObject.getId(), null) != null) {
-                            return true;
-                        }
+                        final boolean originallySelected = alreadySelectedMessages.get(selectionBucket(messageObject))
+                                .indexOfKey(messageObject.getId()) >= 0;
+                        return unselect == originallySelected;
                     }
                 }
                 return false;
@@ -4012,7 +4006,10 @@ public class ChatActivity extends BaseFragment implements
                         }
                     }
                     if (str.length() != 0) {
-                        AndroidUtilities.addToClipboard(str);
+                        if (!AndroidUtilities.addToClipboard(str)) {
+                            BulletinFactory.of(ChatActivity.this).createErrorBulletin(getString(R.string.ErrorOccurred)).show();
+                            return;
+                        }
                         createUndoView();
                         undoView.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null);
                     }
@@ -4030,17 +4027,25 @@ public class ChatActivity extends BaseFragment implements
                             ids.add(selectedMessagesIds[a].keyAt(b));
                         }
                     }
+                    if (ids.size() < 2) {
+                        return;
+                    }
                     Collections.sort(ids);
                     Integer begin = ids.get(0);
                     Integer end = ids.get(ids.size() - 1);
                     for (int i = 0; i < messages.size(); i++) {
-                        Integer msgId = messages.get(i).getId();
-                        if (msgId > begin && msgId < end && !selectedMessagesIds[0].withTouch.contains(msgId)) {
-                            addToSelectedMessages(messages.get(i), false);
-                            updateActionModeTitle();
-                            updateVisibleRows();
+                        MessageObject message = messages.get(i);
+                        int msgId = message.getId();
+                        if (msgId > begin && msgId < end && !isMessageSelected(message)) {
+                            if (!canAddToMessageSelection(1)) {
+                                showMessageSelectionLimit();
+                                break;
+                            }
+                            addToSelectedMessages(message, false);
                         }
                     }
+                    updateActionModeTitle();
+                    updateVisibleRows();
                 } else if (id == forward) {
                     // IS_ANONYMOUS_FORWARD = id == forward_anonym;
                     openForward(true);
@@ -4200,6 +4205,9 @@ public class ChatActivity extends BaseFragment implements
                 } else if (id == report) {
                     ReportBottomSheet.openChat(ChatActivity.this);
                 } else if (id == star) {
+                    if (!MessageSelectionLimits.allowLegacyBulkAction(ChatActivity.this, selectedMessageCount())) {
+                        return;
+                    }
                     for (int a = 0; a < 2; a++) {
                         for (int b = 0; b < selectedMessagesCanStarIds[a].size(); b++) {
                             MessageObject msg = selectedMessagesCanStarIds[a].valueAt(b);
@@ -4208,6 +4216,9 @@ public class ChatActivity extends BaseFragment implements
                     }
                     clearSelectionMode();
                 } else if (id == media_spoiler) {
+                    if (!MessageSelectionLimits.allowLegacyBulkAction(ChatActivity.this, selectedMessageCount())) {
+                        return;
+                    }
                     final boolean spoiler = hasUnspoileredSelected;
                     final ArrayList<MessageObject> messages = new ArrayList<>();
                     for (int a = 1; a >= 0; a--) {
@@ -8971,6 +8982,13 @@ public class ChatActivity extends BaseFragment implements
                 }
                 presentFragment(new ChatActivity(args));
             } else if (isReport()) {
+                if (!MessageSelectionLimits.allowLegacyBulkAction(this, selectedMessageCount())) {
+                    return;
+                }
+                if (selectedMessagesIds[1].size() != 0) {
+                    BulletinFactory.of(this).createErrorBulletin(getString(R.string.OptogramReportCurrentChatOnly)).show();
+                    return;
+                }
                 ArrayList<Integer> ids = new ArrayList<>();
                 for (int b = 0; b < selectedMessagesIds[0].size(); b++) {
                     ids.add(selectedMessagesIds[0].keyAt(b));
@@ -11332,6 +11350,9 @@ public class ChatActivity extends BaseFragment implements
             @Override
             public void onReactionClicked(View view, ReactionsLayoutInBubble.VisibleReaction visibleReaction, boolean longpress, boolean addToRecent) {
                 if (tagSelector == null) return;
+                if (!MessageSelectionLimits.allowLegacyBulkAction(ChatActivity.this, selectedMessageCount())) {
+                    return;
+                }
                 if (getDialogId() == getUserConfig().getClientUserId() && !getUserConfig().isPremium()) {
                     new PremiumFeatureBottomSheet(ChatActivity.this, PremiumPreviewFragment.PREMIUM_FEATURE_SAVED_TAGS, true).show();
                     clearSelectionMode(false);
@@ -12110,6 +12131,17 @@ public class ChatActivity extends BaseFragment implements
 
             @Override
             protected void selectAnotherChat(boolean forward) {
+                if (messagePreviewParams != null && messagePreviewParams.forwardMessages != null) {
+                    HashSet<Integer> newIds = new HashSet<>();
+                    for (MessageObject message : messagePreviewParams.forwardMessages.messages) {
+                        if (selectedMessagesIds[0].indexOfKey(message.getId()) < 0) {
+                            newIds.add(message.getId());
+                        }
+                    }
+                    if (!MessageSelectionLimits.allowLegacyBulkAction(ChatActivity.this, selectedMessageCount() + newIds.size())) {
+                        return;
+                    }
+                }
                 dismiss(false);
                 if (messagePreviewParams != null) {
                     if (!forward) {
@@ -13229,6 +13261,9 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private void share() {
+        if (selectedMessageCount() != 1) {
+            return;
+        }
         MessageObject msg = null;
         for (int a = 1; a >= 0; a--) {
             if (msg == null && selectedMessagesIds[a].size() != 0) {
@@ -13275,6 +13310,9 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private void publishSelectedToWeb() {
+        if (!MessageSelectionLimits.allowLegacyBulkAction(this, selectedMessageCount())) {
+            return;
+        }
         ArrayList<MessageObject> messageObjects = new ArrayList<>();
         for (int a = 1; a >= 0; a--) {
             for (int b = 0; b < selectedMessagesIds[a].size(); b++) {
@@ -13329,6 +13367,9 @@ public class ChatActivity extends BaseFragment implements
                 fwdRestrictedBottomHint.setText(str);
                 fwdRestrictedBottomHint.showForView(actionsButtonsLayout.getForwardButton(), true);
             }
+            return;
+        }
+        if (!MessageSelectionLimits.allowLegacyBulkAction(this, selectedMessageCount())) {
             return;
         }
         int hasPoll = 0;
@@ -20778,6 +20819,40 @@ public class ChatActivity extends BaseFragment implements
         }
     }
 
+    private int selectedMessageCount() {
+        return selectedMessagesIds[0].size() + selectedMessagesIds[1].size();
+    }
+
+    private int selectionBucket(MessageObject message) {
+        return message.getDialogId() == dialog_id ? 0 : 1;
+    }
+
+    private boolean isMessageSelected(MessageObject message) {
+        return selectedMessagesIds[selectionBucket(message)].indexOfKey(message.getId()) >= 0;
+    }
+
+    private int additionalAlbumSelections(MessageObject message) {
+        MessageObject.GroupedMessages album = getValidGroupedMessage(message);
+        if (album == null) {
+            return 1;
+        }
+        int additional = 0;
+        for (MessageObject item : album.messages) {
+            if (!isMessageSelected(item)) {
+                additional++;
+            }
+        }
+        return additional;
+    }
+
+    private boolean canAddToMessageSelection(int additional) {
+        return MessageSelectionLimits.canAdd(selectedMessageCount(), additional, MessageSelectionLimits.MAX_SELECTED_MESSAGES);
+    }
+
+    private void showMessageSelectionLimit() {
+        MessageSelectionLimits.showSelectionLimit(this, MessageSelectionLimits.MAX_SELECTED_MESSAGES);
+    }
+
     private void addToSelectedMessages(MessageObject messageObject, boolean outside) {
         addToSelectedMessages(messageObject, outside, true);
     }
@@ -20788,24 +20863,30 @@ public class ChatActivity extends BaseFragment implements
             if (threadMessageObjects != null && threadMessageObjects.contains(messageObject) && !isThreadChat()) {
                 return;
             }
-            int index = messageObject.getDialogId() == dialog_id ? 0 : 1;
+            int index = selectionBucket(messageObject);
             if (outside && messageObject.getGroupId() != 0) {
                 boolean hasUnselected = false;
                 MessageObject.GroupedMessages groupedMessages = groupedMessagesMap.get(messageObject.getGroupId());
                 if (groupedMessages != null) {
                     int lastNum = 0;
+                    int additional = 0;
                     for (int a = 0; a < groupedMessages.messages.size(); a++) {
                         MessageObject message = groupedMessages.messages.get(a);
-                        if (selectedMessagesIds[index].indexOfKey(message.getId()) < 0) {
+                        if (!isMessageSelected(message)) {
                             hasUnselected = true;
+                            additional++;
                             lastNum = a;
                         }
                     }
 
+                    if (hasUnselected && !canAddToMessageSelection(additional)) {
+                        showMessageSelectionLimit();
+                        return;
+                    }
                     for (int a = 0; a < groupedMessages.messages.size(); a++) {
                         MessageObject message = groupedMessages.messages.get(a);
                         if (hasUnselected) {
-                            if (selectedMessagesIds[index].indexOfKey(message.getId()) < 0) {
+                            if (!isMessageSelected(message)) {
                                 addToSelectedMessages(message, false, a == lastNum);
                             }
                         } else {
@@ -20855,12 +20936,8 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
             } else {
-                if (selectedMessagesIds[0].size() + selectedMessagesIds[1].size() >= 100) {
-                    AndroidUtilities.shakeView(selectedMessagesCountTextView);
-                    Vibrator vibrator = (Vibrator) ApplicationLoader.applicationContext.getSystemService(Context.VIBRATOR_SERVICE);
-                    if (vibrator != null) {
-                        vibrator.vibrate(200);
-                    }
+                if (!canAddToMessageSelection(1)) {
+                    showMessageSelectionLimit();
                     return;
                 }
                 selectedMessagesIds[index].put(messageObject.getId(), messageObject);
@@ -32560,7 +32637,8 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private void createDeleteMessagesAlert(final MessageObject finalSelectedObject, final MessageObject.GroupedMessages finalSelectedGroup, boolean hideDimAfter) {
-        if (finalSelectedObject == null && (selectedMessagesIds[0].size() + selectedMessagesIds[1].size()) == 0) {
+        if (finalSelectedObject == null && (selectedMessageCount() == 0
+                || !MessageSelectionLimits.allowLegacyBulkAction(this, selectedMessageCount()))) {
             return;
         }
         AlertsCreator.createDeleteMessagesAlert(this, currentUser, currentChat, currentEncryptedChat, chatInfo, mergeDialogId, finalSelectedObject, selectedMessagesIds, finalSelectedGroup, (int) getTopicId(), chatMode, null, () -> {
@@ -36592,6 +36670,9 @@ public class ChatActivity extends BaseFragment implements
     @Override
     public boolean didSelectDialogs(DialogsActivity fragment, ArrayList<MessagesStorage.TopicKey> dids, CharSequence message, boolean param, boolean notify, int scheduleDate, int scheduleRepeatPeriod, TopicsFragment topicsFragment) {
         if ((messagePreviewParams == null && (!fragment.isQuote || replyingMessageObject == null) || fragment.isQuote && replyingMessageObject == null) && forwardingMessage == null && selectedMessagesIds[0].size() == 0 && selectedMessagesIds[1].size() == 0) {
+            return false;
+        }
+        if (forwardingMessage == null && !MessageSelectionLimits.allowLegacyBulkAction(fragment, selectedMessageCount())) {
             return false;
         }
         ArrayList<MessageObject> fmessages = new ArrayList<>();

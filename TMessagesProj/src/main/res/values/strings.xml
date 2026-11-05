@@ -12007,4 +12007,7 @@
     <string name="TranslateMessageOffline">Translate Offline</string>
     <string name="OfflineTranslationUnsupportedMessage">Offline translation supports plain text and unformatted photo or video captions.</string>
     <string name="OfflineTranslationUnavailable">The Offline Translator app is unavailable.</string>
+    <string name="OptogramMessageSelectionLimit">This selection would exceed the %1$d-item limit.</string>
+    <string name="OptogramMessageBulkActionLimit">Select %1$d items or fewer for this action.</string>
+    <string name="OptogramReportCurrentChatOnly">Select only messages from this chat to report them together.</string>
 </resources>

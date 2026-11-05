@@ -585,4 +585,7 @@
     <string name="TranslateMessageOffline">Перевести офлайн</string>
     <string name="OfflineTranslationUnsupportedMessage">Офлайн-перевод поддерживает обычный текст и подписи к фото или видео без форматирования.</string>
     <string name="OfflineTranslationUnavailable">Приложение для офлайн-перевода недоступно.</string>
+    <string name="OptogramMessageSelectionLimit">Этот выбор превысит ограничение в %1$d элементов.</string>
+    <string name="OptogramMessageBulkActionLimit">Для этого действия выберите не более %1$d элементов.</string>
+    <string name="OptogramReportCurrentChatOnly">Чтобы отправить одну жалобу, выберите сообщения только из этого чата.</string>
 </resources>
