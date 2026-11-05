@@ -47317,6 +47317,18 @@ public class ChatActivity extends BaseFragment implements
                     options.add(OPTION_COPY_LINK);
                     icons.add(R.drawable.msg_link);
                 }
+                // The separate poll-statistics action retains its own eligibility checks.
+                if (chatMode == MODE_DEFAULT && !isThreadChat() && currentChat != null
+                        && ChatObject.isChannelAndNotMegaGroup(currentChat)
+                        && chatInfo != null && chatInfo.can_view_stats
+                        && selectedObject != null && selectedObject.getId() > 0
+                        && !selectedObject.isSponsored() && !selectedObject.isForwarded()
+                        && selectedObject.messageOwner != null && selectedObject.messageOwner.action == null
+                        && selectedObject.getDialogId() == dialog_id) {
+                    items.add(LocaleController.getString(R.string.Statistics));
+                    options.add(OPTION_STATISTICS);
+                    icons.add(R.drawable.msg_stats);
+                }
                 if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.action == null && currentChat != null && currentChat.forum && !isTopic && selectedObject.messageOwner != null && selectedObject.messageOwner.reply_to != null && selectedObject.messageOwner.reply_to.forum_topic) {
                     items.add(LocaleController.getString(R.string.ViewInTopic));
                     options.add(OPTION_VIEW_IN_TOPIC);
