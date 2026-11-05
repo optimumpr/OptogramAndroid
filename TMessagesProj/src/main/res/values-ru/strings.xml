@@ -582,4 +582,7 @@
     <string name="QuickAttachNewestFirst">Новые фото слева</string>
     <string name="QuickAttachNewestFirstInfo">Если выключено, последние фото идут от старых к новым слева направо.</string>
     <string name="PhotoSent">Фото отправлено</string>
+    <string name="TranslateMessageOffline">Перевести офлайн</string>
+    <string name="OfflineTranslationUnsupportedMessage">Офлайн-перевод поддерживает обычный текст и подписи к фото или видео без форматирования.</string>
+    <string name="OfflineTranslationUnavailable">Приложение для офлайн-перевода недоступно.</string>
 </resources>

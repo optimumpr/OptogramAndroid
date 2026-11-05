@@ -12004,4 +12004,7 @@
     <string name="PhotoSent">Photo sent</string>
     <string name="IsFromBot">From Bot</string>
     <string name="IsFromChannel">From Channel</string>
+    <string name="TranslateMessageOffline">Translate Offline</string>
+    <string name="OfflineTranslationUnsupportedMessage">Offline translation supports plain text and unformatted photo or video captions.</string>
+    <string name="OfflineTranslationUnavailable">The Offline Translator app is unavailable.</string>
 </resources>

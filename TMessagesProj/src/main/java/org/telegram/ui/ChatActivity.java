@@ -199,6 +199,7 @@ import org.telegram.messenger.VideoEditedInfo;
 import org.telegram.messenger.browser.Browser;
 import org.telegram.messenger.camera.CameraView;
 import org.telegram.messenger.forkgram.ForkUtils;
+import org.telegram.messenger.forkgram.ForkOfflineTranslate;
 import org.telegram.messenger.forkgram.ExtractMediaFromPreview;
 import org.telegram.messenger.forkgram.FormattingMenu;
 import org.telegram.messenger.forkgram.MediaSpoiler;
@@ -378,6 +379,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1323,6 +1325,7 @@ public class ChatActivity extends BaseFragment implements
     public final static int OPTION_SEND_MONEY = 117;
     public final static int OPTION_STOP_LIVE_LOCATION = 118;
     public final static int OPTION_VOICE_TIMECODES = 119;
+    private static final int OPTION_LOCAL_OFFLINE_TRANSLATE = 120;
 
     private final static int[] allowedNotificationsDuringChatListAnimations = new int[]{
             NotificationCenter.messagesRead,
@@ -3565,6 +3568,9 @@ public class ChatActivity extends BaseFragment implements
 
     @Override
     public void onFragmentDestroy() {
+        if (offlineTranslationDialog != null) {
+            offlineTranslationDialog.dismiss();
+        }
         super.onFragmentDestroy();
         if (messageMetricsView != null) {
             messageMetricsView.finish();
@@ -31905,6 +31911,9 @@ public class ChatActivity extends BaseFragment implements
 
     @Override
     public void onPause() {
+        if (offlineTranslationDialog != null) {
+            offlineTranslationDialog.dismiss();
+        }
         super.onPause();
         scrolling = false;
         if (scrimPopupWindow != null) {
@@ -33898,6 +33907,10 @@ public class ChatActivity extends BaseFragment implements
                                 if (selectedObject == null || i >= options.size() || getParentActivity() == null) {
                                     return;
                                 }
+                                if (usesLocalPremiumOfflineTranslation()) {
+                                    processSelectedOption(OPTION_LOCAL_OFFLINE_TRANSLATE);
+                                    return;
+                                }
                                 String toLangValue = fromLang != null && fromLang.equals(toLang) ? toLangDefault : toLang;
                                 TranslateAlert2 alert = TranslateAlert2.showAlert(getParentActivity(), this, currentAccount, inputPeer, messageIdToTranslate[0], fromLang, toLangValue, richMessageToTranslate, noforwardsOrPaidMedia, onLinkPress, () -> dimBehindView(false));
                                 alert.setDimBehind(false);
@@ -33924,6 +33937,10 @@ public class ChatActivity extends BaseFragment implements
                                     return;
                                 }
 
+                                if (usesLocalPremiumOfflineTranslation()) {
+                                    processSelectedOption(OPTION_LOCAL_OFFLINE_TRANSLATE);
+                                    return;
+                                }
                                 String toLangValue = fromLang != null && fromLang.equals(toLang) ? toLangDefault : toLang;
                                 ArrayList<TLRPC.MessageEntity> entities = selectedObject != null && selectedObject.messageOwner != null ? selectedObject.messageOwner.entities : null;
                                 TranslateAlert2 alert = TranslateAlert2.showAlert(getParentActivity(), this, currentAccount, inputPeer, messageIdToTranslate[0], selectedObject.summarized, fromLang, toLangValue, finalMessageText, entities, noforwardsOrPaidMedia, onLinkPress, () -> dimBehindView(false));
@@ -34018,6 +34035,10 @@ public class ChatActivity extends BaseFragment implements
                                     return;
                                 }
 
+                                if (usesLocalPremiumOfflineTranslation()) {
+                                    processSelectedOption(OPTION_LOCAL_OFFLINE_TRANSLATE);
+                                    return;
+                                }
                                 TranslateAlert2 alert = TranslateAlert2.showAlert(getParentActivity(), this, currentAccount, inputPeer, messageIdToTranslate[0], selectedObject.summarized, "und", toLang, finalMessageText, null, noforwardsOrPaidMedia, onLinkPress, () -> dimBehindView(false));
                                 alert.setDimBehind(false);
                                 closeMenu(false);
@@ -35338,8 +35359,119 @@ public class ChatActivity extends BaseFragment implements
         MediaController.saveFile(path, getParentActivity(), messageObject.isVideo() ? 1 : 0, null, null);
     }
 
+    private AlertDialog offlineTranslationDialog;
+
+    private boolean usesLocalPremiumOfflineTranslation() {
+        return !getUserConfig().isPremium() && getUserConfig().hasLocalPremiumFeatures()
+                && ForkOfflineTranslate.provider() == ForkOfflineTranslate.PROVIDER_OFFLINE;
+    }
+
+    private void addMessageTranslationOption(ArrayList<CharSequence> items, ArrayList<Integer> options, ArrayList<Integer> icons) {
+        final boolean offline = usesLocalPremiumOfflineTranslation();
+        if (offline && !getMessagesController().getTranslateController().isContextTranslateEnabled()) {
+            return;
+        }
+        items.add(getString(offline ? R.string.TranslateMessageOffline : R.string.TranslateMessage));
+        options.add(offline ? OPTION_LOCAL_OFFLINE_TRANSLATE : OPTION_TRANSLATE);
+        icons.add(R.drawable.msg_translate);
+    }
+
+    private String getOfflineTranslationSource(MessageObject message) {
+        if (message == null || message.messageOwner == null || message.currentAccount != currentAccount
+                || message.getDialogId() != dialog_id || message.getId() <= 0 || chatMode != 0
+                || DialogObject.isEncryptedDialog(dialog_id) || dialog_id == UserObject.VERIFY || isPeerNoForwards()
+                || message.messageOwner.noforwards || message.deleted || message.isRestrictedMessage || message.isSponsored()
+                || message.isEphemeral() || message.isSecretMedia() || message.hasMediaSpoilers() || message.summarized
+                || message.messageOwner.rich_message != null
+                || message.messageOwner.entities != null && !message.messageOwner.entities.isEmpty()
+                || message.type != MessageObject.TYPE_TEXT && message.type != MessageObject.TYPE_PHOTO
+                    && message.type != MessageObject.TYPE_VIDEO) {
+            return null;
+        }
+        String source = message.messageOwner.message;
+        return TextUtils.isEmpty(source) || source.trim().isEmpty() ? null : source;
+    }
+
+    private void showLocalOfflineTranslation(MessageObject message) {
+        final int account = currentAccount;
+        final long userId = getUserConfig().getClientUserId();
+        final long dialog = dialog_id;
+        final String source = getOfflineTranslationSource(message);
+        final String target = TranslateController.normalizeLanguage(TranslateAlert2.getToLanguage());
+        if (isFinished || isPaused()) {
+            return;
+        }
+        if (!usesLocalPremiumOfflineTranslation() || userId == 0 || TextUtils.isEmpty(target)
+                || !getMessagesController().getTranslateController().isContextTranslateEnabled()) {
+            BulletinFactory.of(this).createErrorBulletin(getString(R.string.TranslationFailedAlert2)).show();
+            return;
+        }
+        if (source == null || messagesDict[0].get(message.getId()) != message) {
+            BulletinFactory.of(this).createErrorBulletin(getString(R.string.OfflineTranslationUnsupportedMessage)).show();
+            return;
+        }
+        if (!ForkOfflineTranslate.isAvailable()) {
+            BulletinFactory.of(this).createErrorBulletin(getString(R.string.OfflineTranslationUnavailable)).show();
+            return;
+        }
+
+        final AlertDialog progress = new AlertDialog.Builder(getParentActivity(), getResourceProvider())
+                .setTitle(getString(R.string.TranslateMessageOffline))
+                .setMessage(getString(R.string.Loading))
+                .setPositiveButton(getString(R.string.Close), null)
+                .create();
+        final Future<?>[] task = new Future<?>[1];
+        final Runnable timeout = () -> {
+            if (task[0] != null) {
+                task[0].cancel(true);
+                task[0] = null;
+            }
+            if (progress.isShowing() && offlineTranslationDialog == progress) {
+                progress.setMessage(getString(R.string.TranslationFailedAlert2));
+            }
+        };
+        if (showDialog(progress, dismissed -> {
+            AndroidUtilities.cancelRunOnUIThread(timeout);
+            if (task[0] != null) {
+                task[0].cancel(true);
+                task[0] = null;
+            }
+            if (offlineTranslationDialog == dismissed) {
+                offlineTranslationDialog = null;
+            }
+        }) == null || !progress.isShowing()) {
+            return;
+        }
+        offlineTranslationDialog = progress;
+        final String from = message.messageOwner.originalLanguage;
+        task[0] = ForkOfflineTranslate.translateStrictAsync(source, "und".equals(from) ? null : from, target, result -> {
+            if (task[0] == null || !progress.isShowing() || offlineTranslationDialog != progress) {
+                return;
+            }
+            task[0] = null;
+            AndroidUtilities.cancelRunOnUIThread(timeout);
+            if (isFinished || isPaused() || currentAccount != account || getUserConfig().getClientUserId() != userId
+                    || dialog_id != dialog || !usesLocalPremiumOfflineTranslation()
+                    || !getMessagesController().getTranslateController().isContextTranslateEnabled()
+                    || !TextUtils.equals(target, TranslateController.normalizeLanguage(TranslateAlert2.getToLanguage()))
+                    || messagesDict[0].get(message.getId()) != message
+                    || !TextUtils.equals(source, getOfflineTranslationSource(message))) {
+                progress.dismiss();
+                return;
+            }
+            progress.setMessage(result == null ? getString(R.string.TranslationFailedAlert2) : result);
+        });
+        AndroidUtilities.runOnUIThread(timeout, 70_000);
+    }
+
     private void processSelectedOption(int option) {
         if (selectedObject == null || getParentActivity() == null) {
+            return;
+        }
+        if (option == OPTION_LOCAL_OFFLINE_TRANSLATE) {
+            final MessageObject message = selectedObject;
+            closeMenu();
+            showLocalOfflineTranslation(message);
             return;
         }
         boolean preserveDim = false;
@@ -47627,9 +47759,7 @@ public class ChatActivity extends BaseFragment implements
                     icons.add(R.drawable.msg_pin);
                 }
                 if (selectedObject != null && !selectedObject.isEphemeral() && selectedObject.contentType == 0 && ((!TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(groupedMessages, null)) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) || (selectedObject.type == MessageObject.TYPE_ARTICLE && selectedObject.messageOwner != null && selectedObject.messageOwner.rich_message != null && !selectedObject.translated))) {
-                    items.add(LocaleController.getString(R.string.TranslateMessage));
-                    options.add(OPTION_TRANSLATE);
-                    icons.add(R.drawable.msg_translate);
+                    addMessageTranslationOption(items, options, icons);
                 }
                 if (message.canEditMessage(currentChat) && message.type != MessageObject.TYPE_POLL || chatMode == MODE_WELCOME_MESSAGES) {
                     items.add(LocaleController.getString(R.string.Edit));
@@ -48004,9 +48134,7 @@ public class ChatActivity extends BaseFragment implements
                     }
                 }
                 if (selectedObject != null && !selectedObject.isEphemeral() && selectedObject.contentType == 0 && ((!TextUtils.isEmpty(selectedObject.getMessageTextToTranslate(selectedObjectGroup, null)) && !selectedObject.isAnimatedEmoji() && !selectedObject.isDice()) || (selectedObject.type == MessageObject.TYPE_ARTICLE && selectedObject.messageOwner != null && selectedObject.messageOwner.rich_message != null && !selectedObject.translated))) {
-                    items.add(LocaleController.getString(R.string.TranslateMessage));
-                    options.add(OPTION_TRANSLATE);
-                    icons.add(R.drawable.msg_translate);
+                    addMessageTranslationOption(items, options, icons);
                 }
                 if (allowEdit || chatMode == MODE_WELCOME_MESSAGES) {
                     items.add(LocaleController.getString(R.string.Edit));
