@@ -485,7 +485,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
             }
         }
         if (vectorImageMarkup != null && vectorType != 0) {
-            VectorAvatarThumbDrawable drawable = new VectorAvatarThumbDrawable(vectorImageMarkup, isPremium, vectorType);
+            VectorAvatarThumbDrawable drawable = new VectorAvatarThumbDrawable(currentAccount, vectorImageMarkup, isPremium, vectorType);
             setImageBitmap(drawable);
         } else {
             ImageLocation location;

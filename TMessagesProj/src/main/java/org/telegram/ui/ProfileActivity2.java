@@ -808,7 +808,7 @@ public class ProfileActivity2 extends BaseFragment implements
             if (userInfo != null) {
                 vectorAvatar = FileLoader.getVectorMarkupVideoSize(user.photo != null && user.photo.personal ? userInfo.personal_photo : userInfo.profile_photo);
                 if (vectorAvatar != null) {
-                    vectorAvatarThumbDrawable = new VectorAvatarThumbDrawable(vectorAvatar, user.premium, VectorAvatarThumbDrawable.TYPE_PROFILE);
+                    vectorAvatarThumbDrawable = new VectorAvatarThumbDrawable(currentAccount, vectorAvatar, user.premium, VectorAvatarThumbDrawable.TYPE_PROFILE);
                 }
             }
             final ImageLocation videoLocation = avatarsViewPager.getCurrentVideoLocation(thumbLocation, imageLocation);

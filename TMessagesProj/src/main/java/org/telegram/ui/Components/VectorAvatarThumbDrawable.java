@@ -19,7 +19,6 @@ import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.SvgHelper;
-import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 
@@ -33,7 +32,7 @@ public class VectorAvatarThumbDrawable extends Drawable implements AnimatedEmoji
     public final GradientTools gradientTools = new GradientTools();
     private final int type;
     float roundRadius;
-    boolean isPremium;
+    private final boolean isPremium;
 
     ImageReceiver currentParent;
     HashSet<ImageReceiver> parents = new HashSet<>();
@@ -41,11 +40,13 @@ public class VectorAvatarThumbDrawable extends Drawable implements AnimatedEmoji
     AnimatedEmojiDrawable animatedEmojiDrawable;
     ImageReceiver imageReceiver;
     ImageReceiver stickerPreloadImageReceiver = new ImageReceiver();
-    final int currentAccount = UserConfig.selectedAccount;
+    private final int currentAccount;
     boolean imageSeted;
     TLRPC.TL_videoSizeStickerMarkup sizeStickerMarkup;
 
-    public VectorAvatarThumbDrawable(TLRPC.VideoSize vectorImageMarkup, boolean isPremiumUser, int type) {
+    public VectorAvatarThumbDrawable(int currentAccount, TLRPC.VideoSize vectorImageMarkup, boolean isPremiumUser, int type) {
+        this.currentAccount = currentAccount;
+        stickerPreloadImageReceiver.setCurrentAccount(currentAccount);
         this.type = type;
         this.isPremium = isPremiumUser;
         int color1 = ColorUtils.setAlphaComponent(vectorImageMarkup.background_colors.get(0), 255);
@@ -62,7 +63,7 @@ public class VectorAvatarThumbDrawable extends Drawable implements AnimatedEmoji
                 cacheType = AnimatedEmojiDrawable.CACHE_TYPE_AVATAR_CONSTRUCTOR_PREVIEW2;
             }
 
-            animatedEmojiDrawable = new AnimatedEmojiDrawable(cacheType, UserConfig.selectedAccount, emojiMarkup.emoji_id);
+            animatedEmojiDrawable = new AnimatedEmojiDrawable(cacheType, currentAccount, emojiMarkup.emoji_id);
             animatedEmojiDrawable.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
         } else if (vectorImageMarkup instanceof TLRPC.TL_videoSizeStickerMarkup) {
             sizeStickerMarkup = (TLRPC.TL_videoSizeStickerMarkup) vectorImageMarkup;
@@ -72,6 +73,7 @@ public class VectorAvatarThumbDrawable extends Drawable implements AnimatedEmoji
                     VectorAvatarThumbDrawable.this.invalidate();
                 }
             };
+            imageReceiver.setCurrentAccount(currentAccount);
             imageReceiver.setInvalidateAll(true);
             if (type == TYPE_SMALL) {
                 imageReceiver.setAutoRepeatCount(2);
@@ -216,7 +218,8 @@ public class VectorAvatarThumbDrawable extends Drawable implements AnimatedEmoji
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         VectorAvatarThumbDrawable that = (VectorAvatarThumbDrawable) o;
-        if (type == that.type && gradientTools.color1 == that.gradientTools.color1 && gradientTools.color2 == that.gradientTools.color2 && gradientTools.color3 == that.gradientTools.color3 && gradientTools.color4 == that.gradientTools.color4) {
+        if (currentAccount == that.currentAccount && type == that.type && (type != TYPE_SMALL || isPremium == that.isPremium)
+                && gradientTools.color1 == that.gradientTools.color1 && gradientTools.color2 == that.gradientTools.color2 && gradientTools.color3 == that.gradientTools.color3 && gradientTools.color4 == that.gradientTools.color4) {
             if (animatedEmojiDrawable != null && that.animatedEmojiDrawable != null) {
                 return animatedEmojiDrawable.getDocumentId() == that.animatedEmojiDrawable.getDocumentId();
             }
