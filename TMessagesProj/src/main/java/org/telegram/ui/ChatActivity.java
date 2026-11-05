@@ -2348,7 +2348,7 @@ public class ChatActivity extends BaseFragment implements
 
         @Override
         public boolean checkCanRemoveRestrictionsByBoosts() {
-            return ChatActivity.this.checkCanRemoveRestrictionsByBoosts();
+            return ChatActivity.this.checkCanRemoveRestrictionsByBoosts() || MessagesController.getGlobalMainSettings().getBoolean("localPremium", false);
         }
 
         @Override
