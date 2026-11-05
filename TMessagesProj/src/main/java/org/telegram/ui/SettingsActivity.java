@@ -820,7 +820,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             items.add(UItem.asShadow(null));
             items.add(UItem.asHeader(getString(R.string.AppName)));
             items.add(SettingCell.Factory.of(98, 0xFF55CA47, 0xFF27B434, R.drawable.jaguars, "Optogram Settings"));
-            items.add(SettingCell.Factory.of(99, IconBackgroundColors.BLUE_DEEP.top, IconBackgroundColors.BLUE_DEEP.bottom, R.drawable.settings_check_update, getString(R.string.ForkCheckUpdate)));
         }
 
         items.add(UItem.asShadow(null));
@@ -984,9 +983,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
             case 98:
                 presentFragment(new ForkSettingsActivity());
-                break;
-            case 99:
-                ((LaunchActivity) getParentActivity()).checkAppUpdate(true, null);
                 break;
 
             case 17:
