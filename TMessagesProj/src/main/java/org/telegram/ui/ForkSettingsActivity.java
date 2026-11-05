@@ -561,10 +561,6 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableAds", true)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO, "Hide Premium Speed Promotion", "Hide the download-speed promotion in chat search")
             .setChecked(pref("hidePremiumSpeedPromo", false)).setMultiline(true));
-        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER, "Disable Birthday Reminder", null)
-            .setChecked(pref("disableBirthdayReminder", false)));
-        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP_PROMO, "Disable Birthday Setup Promotion", null)
-            .setChecked(pref("disablePromo", false)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PHONE_NUMBER, "Hide Phone Number in Profiles", "Masks phone numbers in supported Optogram screens; does not change Telegram privacy settings")
             .setChecked(pref("hidePhoneNumber", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON, "Disable Open Bot Button", "Hide bot application buttons in chat lists and search results")
@@ -581,9 +577,13 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableDeviceInfo", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT, "Disable Contact Number Sharing Prompt", "Hide the prompt offering to share your phone number in chats")
             .setChecked(pref("disablePhoneSharePrompt", false)).setMultiline(true));
+        items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_LOCAL_PREMIUM, "Local Premium", "Enable supported Premium interface features on this device")
             .setChecked(pref("localPremium", false)).setMultiline(true));
-        items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER, "Disable Birthday Reminder", null)
+            .setChecked(pref("disableBirthdayReminder", false)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP_PROMO, "Disable Birthday Setup Promotion", null)
+            .setChecked(pref("disablePromo", false)));
         if (!SharedConfig.isUserOwner()) {
             items.add(UItem.asButtonCheck(ID_HIDE_SENSITIVE_DATA, LocaleController.getString(R.string.HideSensitiveData), LocaleController.getString(R.string.ForkRestartRequired))
                 .setChecked(pref("hideSensitiveData", false)).setMultiline(true));
