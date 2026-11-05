@@ -4623,8 +4623,84 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         showAlertDialog(builder);
     }
 
+    private boolean offerShareGroupedMedia() {
+        if (currentMessageObject == null || parentChatActivity == null || currentMessageObject.getGroupId() == 0) {
+            return false;
+        }
+        MessageObject.GroupedMessages group = parentChatActivity.getGroup(currentMessageObject.getGroupId());
+        if (group == null || group.messages == null || group.messages.size() <= 1) {
+            return false;
+        }
+        ArrayList<MessageObject> messages = new ArrayList<>(group.messages);
+        boolean hasVideo = false;
+        boolean hasPhoto = false;
+        for (MessageObject message : messages) {
+            if (message == null) {
+                return false;
+            }
+            if (message.isVideo()) {
+                hasVideo = true;
+            } else {
+                hasPhoto = true;
+            }
+        }
+        final String mimeType = hasVideo && hasPhoto ? "*/*" : hasVideo ? "video/*" : "image/*";
+        final String allMediaLabel = LocaleController.formatPluralString(
+                hasVideo ? "AllNMedia" : "AllNPhotos", messages.size());
+        new AlertDialog.Builder(parentActivity, resourcesProvider)
+                .setTitle(getString("ShareFile", R.string.ShareFile))
+                .setMessage(allMediaLabel)
+                .setNegativeButton(getString("ThisMedia", R.string.ThisMedia), (dialog, which) -> onSharePressed(true))
+                .setPositiveButton(allMediaLabel, (dialog, which) -> {
+                    ArrayList<Uri> uris = new ArrayList<>(messages.size());
+                    for (MessageObject message : messages) {
+                        File file = null;
+                        if (!TextUtils.isEmpty(message.messageOwner.attachPath)) {
+                            file = new File(message.messageOwner.attachPath);
+                            if (!file.exists()) {
+                                file = null;
+                            }
+                        }
+                        if (file == null) {
+                            file = FileLoader.getInstance(currentAccount).getPathToMessage(message.messageOwner);
+                        }
+                        if (file != null && !file.exists()) {
+                            file = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), file.getName());
+                        }
+                        if (file == null || !file.exists()) {
+                            showDownloadAlert();
+                            return;
+                        }
+                        try {
+                            uris.add(FileProvider.getUriForFile(parentActivity,
+                                    ApplicationLoader.getApplicationId() + ".provider", file));
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                            showDownloadAlert();
+                            return;
+                        }
+                    }
+                    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+                    intent.setType(mimeType);
+                    intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    parentActivity.startActivityForResult(
+                            Intent.createChooser(intent, getString("ShareFile", R.string.ShareFile)), 500);
+                })
+                .setNeutralButton(getString("Cancel", R.string.Cancel), null)
+                .show();
+        return true;
+    }
+
     private void onSharePressed() {
+        onSharePressed(false);
+    }
+
+    private void onSharePressed(boolean skipGroupPrompt) {
         if (parentActivity == null || !allowShare) {
+            return;
+        }
+        if (!skipGroupPrompt && offerShareGroupedMedia()) {
             return;
         }
         try {
