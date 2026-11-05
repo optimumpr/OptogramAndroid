@@ -47318,10 +47318,11 @@ public class ChatActivity extends BaseFragment implements
                     icons.add(R.drawable.msg_link);
                 }
                 // The separate poll-statistics action retains its own eligibility checks.
-                if (chatMode == MODE_DEFAULT && !isThreadChat() && currentChat != null
+                if (chatMode == MODE_DEFAULT && !isThreadChat() && !isEphemeral && currentChat != null
                         && ChatObject.isChannelAndNotMegaGroup(currentChat)
                         && chatInfo != null && chatInfo.can_view_stats
                         && selectedObject != null && selectedObject.getId() > 0
+                        && selectedObject.type != MessageObject.TYPE_POLL
                         && !selectedObject.isSponsored() && !selectedObject.isForwarded()
                         && selectedObject.messageOwner != null && selectedObject.messageOwner.action == null
                         && selectedObject.getDialogId() == dialog_id) {
