@@ -172,6 +172,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP = 115;
     public static final int ID_OPTOGRAM_BIRTHDAY_DIAGNOSTICS = 116;
+    public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
@@ -553,6 +554,12 @@ public class ForkSettingsActivity extends BaseFragment {
         items.add(UItem.asHeader("Optogram"));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_ADS, "Hide Sponsored Messages", "Hide channel and bot sponsored messages")
             .setChecked(pref("disableAds", true)));
+        items.add(UItem.asButtonCheck(
+                ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO,
+                "Hide Premium Speed Promotion",
+                "Hide the Premium download-speed promotion in chat search")
+            .setChecked(pref("hidePremiumSpeedPromo", false))
+            .setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_DEVICE_INFO, "Hide Device Information", "Report Unknown device model and Android version; restart required")
             .setChecked(pref("disableDeviceInfo", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION, "Disable WebView Geolocation", "Block geolocation requests in newly opened bot webviews")
@@ -842,6 +849,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("dropScreenshotCaption", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_ADS) {
             toggle("disableAds", item, view);
+        } else if (id == ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO) {
+            toggle("hidePremiumSpeedPromo", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_DEVICE_INFO) {
             toggle("disableDeviceInfo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION) {
