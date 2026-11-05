@@ -3684,7 +3684,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 SpannableStringBuilder ssb = new SpannableStringBuilder(getString(R.string.AppName));
                 ssb.setSpan(new ImageSpan(logoDrawable), 0, ssb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 actionBar.setTitle(ssb, statusDrawable);
-                actionBar.setTitle(MessagesController.getGlobalMainSettings().getString("forkCustomTitle", getString(R.string.AppName)));
+                String customTitle = MessagesController.getGlobalMainSettings().getString("forkCustomTitle", getString(R.string.AppName));
+                if ("Fork Client".equals(customTitle) || "Optogram Client".equals(customTitle)) {
+                    customTitle = getString(R.string.AppName);
+                }
+                actionBar.setTitle(customTitle);
                 actionBar.setTitleLongClickListener(v -> {
                     boolean mainTabsHidden = !UserConfig.getInstance(currentAccount).getMainTabsHiddenFork();
                     UserConfig.getInstance(currentAccount).setMainTabsHiddenFork(mainTabsHidden);
