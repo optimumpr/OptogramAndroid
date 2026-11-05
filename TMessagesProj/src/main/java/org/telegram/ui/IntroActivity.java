@@ -663,7 +663,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             int size = dp(ICON_HEIGHT_DP);
             Bitmap bm = Bitmap.createBitmap(dp(ICON_WIDTH_DP), size, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(bm);
-            c.drawColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            c.drawColor(getIntroBackgroundColor());
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
             c.drawCircle(bm.getWidth() / 2f, bm.getHeight() / 2f, size / 2f, paint);
@@ -788,7 +788,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
             loadTexture(R.drawable.intro_knot_up, 14);
             loadTexture(R.drawable.intro_powerful_infinity_white, 15);
             loadTexture(R.drawable.intro_powerful_infinity, 16);
-            loadTexture(R.drawable.intro_powerful_mask, 17, Theme.getColor(Theme.key_windowBackgroundWhite), false);
+            loadTexture(R.drawable.intro_powerful_mask, 17, getIntroBackgroundColor(), false);
             loadTexture(R.drawable.intro_powerful_star, 18);
             loadTexture(R.drawable.intro_private_door, 19);
             loadTexture(R.drawable.intro_private_screw, 20);
@@ -965,23 +965,23 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
     private void updateColors(boolean fromTheme) {
         startMessagingButtonBackground.setColors(new int[]{getThemedColor(Theme.key_featuredStickers_addButton), getThemedColor(Theme.key_featuredStickers_addButton2)});
         logoDrawable.setColorFilter(Theme.multAlpha(getThemedColor(Theme.key_actionBarDefaultTitle), 0.9f), PorterDuff.Mode.MULTIPLY);
-        fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+        fragmentView.setBackgroundColor(getIntroBackgroundColor());
         switchLanguageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
         startMessagingButton.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
         startMessagingButton.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(24), Color.TRANSPARENT, Theme.getColor(Theme.key_featuredStickers_addButtonPressed)));
         darkThemeDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_featuredStickers_addButton), PorterDuff.Mode.SRC_IN));
         bottomPages.invalidate();
-        glTexturesColor = Theme.getColor(Theme.key_windowBackgroundWhite);
+        glTexturesColor = getIntroBackgroundColor();
         if (fromTheme) {
             if (eglThread != null) {
                 eglThread.postRunnable(()->{
-                    eglThread.loadTexture(R.drawable.intro_powerful_mask, 17, Theme.getColor(Theme.key_windowBackgroundWhite), true);
+                    eglThread.loadTexture(R.drawable.intro_powerful_mask, 17, getIntroBackgroundColor(), true);
                     eglThread.updatePowerfulTextures();
 
                     eglThread.loadTexture(eglThread.telegramMaskProvider, 23, true);
                     eglThread.updateTelegramTextures();
 
-                    Intro.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                    Intro.setBackgroundColor(getIntroBackgroundColor());
                 });
             }
             for (int i = 0; i < viewPager.getChildCount(); i++) {
@@ -991,7 +991,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 TextView messageTextView = ch.findViewWithTag(pagerMessageTag);
                 messageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
             }
-        } else Intro.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+        } else Intro.setBackgroundColor(getIntroBackgroundColor());
     }
 
     private int glTexturesColor;
@@ -1023,7 +1023,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                 lastLogoColor = logoColor;
                 logoDrawable.setColorFilter(logoColor, PorterDuff.Mode.MULTIPLY);
             }
-            fragmentView.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+            fragmentView.setBackgroundColor(getIntroBackgroundColor());
             if (switchLanguageTextView != null) {
                 switchLanguageTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText4));
             }
@@ -1052,7 +1052,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
                     }
                 }
             }
-            if (eglThread != null && glTexturesColor != Theme.getColor(Theme.key_windowBackgroundWhite)) {
+            if (eglThread != null && glTexturesColor != getIntroBackgroundColor()) {
                 // textures are heavy: reload once the theme animation settled
                 AndroidUtilities.cancelRunOnUIThread(reloadGlTexturesRunnable);
                 AndroidUtilities.runOnUIThread(reloadGlTexturesRunnable, 100);
@@ -1062,9 +1062,13 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
         }
     }
 
+    private static int getIntroBackgroundColor() {
+        return Theme.isCurrentThemeDark() ? Color.rgb(36, 36, 36) : Theme.getColor(Theme.key_windowBackgroundWhite);
+    }
+
     private void reloadGlTextures() {
         try {
-            final int color = Theme.getColor(Theme.key_windowBackgroundWhite);
+            final int color = getIntroBackgroundColor();
             final EGLThread eglThread = this.eglThread;
             if (eglThread == null || fragmentView == null || glTexturesColor == color) {
                 return;
@@ -1086,7 +1090,7 @@ public class IntroActivity extends BaseFragment implements NotificationCenter.No
 
     @Override
     public boolean isLightStatusBar() {
-        int color = Theme.getColor(Theme.key_windowBackgroundWhite, null, true);
+        int color = getIntroBackgroundColor();
         return ColorUtils.calculateLuminance(color) > 0.7f;
     }
 }
