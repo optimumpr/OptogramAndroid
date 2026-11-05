@@ -77,7 +77,7 @@ public class ProfileChannelCell extends FrameLayout implements Theme.Colorable {
         subscribersView.setGravity(Gravity.LEFT);
         headerLayout.addView(subscribersView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 17, Gravity.LEFT | Gravity.TOP, 4, 1, 4, 0));
 
-        dialogCell = new DialogCell(null, context, false, true, UserConfig.selectedAccount, resourcesProvider);
+        dialogCell = new DialogCell(null, context, false, true, fragment.getCurrentAccount(), resourcesProvider);
         dialogCell.setBackgroundColor(0);
         dialogCell.setDialogCellDelegate(new DialogCell.DialogCellDelegate() {
             @Override

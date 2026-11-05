@@ -440,12 +440,18 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
             if (user.photo != null) {
                 strippedBitmap = user.photo.strippedBitmap;
                 hasStripped = user.photo.stripped_thumb != null;
-                if (vectorType == VectorAvatarThumbDrawable.TYPE_STATIC) {
+                final UserConfig bindingConfig = UserConfig.getInstance(currentAccount);
+                final boolean localPremiumAvatar = vectorType == VectorAvatarThumbDrawable.TYPE_SMALL
+                        && animationEnabled && !user.premium
+                        && bindingConfig.getClientUserId() != 0 && user.id == bindingConfig.getClientUserId()
+                        && bindingConfig.hasLocalPremiumFeatures() && LiteMode.isEnabled(LiteMode.FLAG_AUTOPLAY_VIDEOS);
+                if (vectorType == VectorAvatarThumbDrawable.TYPE_STATIC || localPremiumAvatar) {
                     final TLRPC.UserFull userFull = MessagesController.getInstance(currentAccount).getUserFull(user.id);
                     if (userFull != null) {
                         TLRPC.Photo photo = user.photo.personal ? userFull.personal_photo : userFull.profile_photo;
                         if (photo != null) {
                             vectorImageMarkup = FileLoader.getVectorMarkupVideoSize(photo);
+                            isPremium |= localPremiumAvatar && vectorImageMarkup != null;
                         }
                     }
                 }

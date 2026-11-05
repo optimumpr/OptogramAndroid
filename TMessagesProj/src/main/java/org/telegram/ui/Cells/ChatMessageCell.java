@@ -343,6 +343,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         }
     }
 
+    private void refreshSelfAvatar() {
+        long selfId = UserConfig.getInstance(currentAccount).getClientUserId();
+        if (currentUser != null && !currentUser.premium && selfId != 0 && currentUser.id == selfId) {
+            setAvatar(currentMessageObject);
+        }
+    }
+
     public void setAvatar(MessageObject messageObject) {
         if (messageObject == null) {
             return;
@@ -1859,6 +1866,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
         backgroundDrawable = new MessageBackgroundDrawable(this);
         avatarImage = new ImageReceiver();
+        avatarImage.setCurrentAccount(currentAccount);
+        NotificationCenter.getGlobalInstance().listen(this, NotificationCenter.premiumStatusChangedGlobal, args -> refreshSelfAvatar());
         avatarImage.setAllowLoadingOnAttachedOnly(true);
         avatarImage.setRoundRadius(dp(21));
         avatarDrawable = new AvatarDrawable();
@@ -6018,6 +6027,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         updateTranslation();
 
         avatarImage.setParentView((View) getParent());
+        refreshSelfAvatar();
         avatarImage.onAttachedToWindow();
         if (compactForwardRow != null) {
             compactForwardRow.avatar.onAttachedToWindow();

@@ -5145,7 +5145,7 @@ public class GroupCallActivity extends BottomSheet implements NotificationCenter
                 }
             }
         };
-        avatarsViewPager = new ProfileGalleryView(context, actionBar, listView, avatarPagerIndicator) {
+        avatarsViewPager = new ProfileGalleryView(context, accountInstance.getCurrentAccount(), actionBar, listView, avatarPagerIndicator) {
             @Override
             public void invalidate() {
                 super.invalidate();

@@ -9676,7 +9676,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            DialogCell cell = new DialogCell(null, mContext, false, true) {
+            DialogCell cell = new DialogCell(null, mContext, false, true, profileActivity.getCurrentAccount(), resourcesProvider) {
                 @Override
                 public boolean isForumCell() {
                     return false;
@@ -9910,7 +9910,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            DialogCell cell = new DialogCell(null, mContext, false, true) {
+            DialogCell cell = new DialogCell(null, mContext, false, true, profileActivity.getCurrentAccount(), resourcesProvider) {
                 @Override
                 public boolean isForumCell() {
                     return false;

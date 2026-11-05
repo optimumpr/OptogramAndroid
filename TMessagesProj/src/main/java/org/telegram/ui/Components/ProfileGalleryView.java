@@ -62,7 +62,7 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
     private final boolean isProfileFragment;
     private ImageLocation uploadingImageLocation;
 
-    private int currentAccount = UserConfig.selectedAccount;
+    private final int currentAccount;
 
     Path path = new Path();
     RectF rect = new RectF();
@@ -143,8 +143,9 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
 
     private ProfileGalleryBlurView blurView;
 
-    public ProfileGalleryView(Context context, ActionBar parentActionBar, RecyclerListView parentListView, Callback callback) {
+    public ProfileGalleryView(Context context, int currentAccount, ActionBar parentActionBar, RecyclerListView parentListView, Callback callback) {
         super(context);
+        this.currentAccount = currentAccount;
         setOffscreenPageLimit(2);
         blurView = null;
 
@@ -270,8 +271,9 @@ public class ProfileGalleryView extends CircularViewPager implements Notificatio
         imagesLayerNum = value;
     }
 
-    public ProfileGalleryView(Context context, long dialogId, ActionBar parentActionBar, RecyclerListView parentListView, ProfileActivity.AvatarImageView parentAvatarImageView, int parentClassGuid, Callback callback, ProfileGalleryBlurView blurView) {
+    public ProfileGalleryView(Context context, int currentAccount, long dialogId, ActionBar parentActionBar, RecyclerListView parentListView, ProfileActivity.AvatarImageView parentAvatarImageView, int parentClassGuid, Callback callback, ProfileGalleryBlurView blurView) {
         super(context);
+        this.currentAccount = currentAccount;
         this.blurView = blurView;
         setPadding(0, 0, 0, blurView == null ? 0 : blurView.actionSize);
         if (blurView != null) {

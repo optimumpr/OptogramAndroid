@@ -1663,7 +1663,7 @@ public class FilteredSearchView extends FrameLayout implements Theme.Colorable, 
             View view;
             switch (viewType) {
                 case 0:
-                    view = new DialogCell(null, parent.getContext(), true, true) {
+                    view = new DialogCell(null, parent.getContext(), true, true, parentFragment.getCurrentAccount(), null) {
                         @Override
                         public boolean isForumCell() {
                             return false;

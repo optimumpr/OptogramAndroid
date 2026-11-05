@@ -543,6 +543,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     private boolean[] drawSpoiler = new boolean[3];
 
     public ImageReceiver avatarImage = new ImageReceiver(this);
+    private boolean smallUserAvatarBound;
     private PhotoBubbleClip bubbleClip;
     private AvatarDrawable avatarDrawable = new AvatarDrawable();
     private boolean animatingArchiveAvatar;
@@ -735,10 +736,6 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         }
     }
 
-    public DialogCell(DialogsActivity fragment, Context context, boolean needCheck, boolean forceThreeLines) {
-        this(fragment, context, needCheck, forceThreeLines, UserConfig.selectedAccount, null);
-    }
-
     private final Theme.ResourcesProvider resourcesProvider;
 
     public DialogCell(DialogsActivity fragment, Context context, boolean needCheck, boolean forceThreeLines, int account, Theme.ResourcesProvider resourcesProvider) {
@@ -758,6 +755,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         }
         useForceThreeLines = forceThreeLines;
         currentAccount = account;
+        avatarImage.setCurrentAccount(account);
+        NotificationCenter.getGlobalInstance().listen(this, NotificationCenter.premiumStatusChangedGlobal, args -> refreshSelfAvatar());
 
         emojiStatusView = new View(context) {
             @Override
@@ -1021,6 +1020,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        refreshSelfAvatar();
         avatarImage.onAttachedToWindow();
         for (int i = 0; i < thumbImage.length; ++i) {
             thumbImage[i].onAttachedToWindow();
@@ -3309,6 +3309,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         return currentDialogFolderId != 0;
     }
 
+    private void refreshSelfAvatar() {
+        long selfId = UserConfig.getInstance(currentAccount).getClientUserId();
+        if (smallUserAvatarBound && user != null && !user.premium && selfId != 0 && user.id == selfId) {
+            avatarImage.setForUserOrChat(user, avatarDrawable, null, true, VectorAvatarThumbDrawable.TYPE_SMALL, false);
+        }
+    }
+
     public boolean update(int mask) {
         return update(mask, true);
     }
@@ -3322,6 +3329,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         ttlPeriod = 0;
 
         if (customDialog != null) {
+            smallUserAvatarBound = false;
             lastMessageDate = customDialog.date;
             lastUnreadState = customDialog.unread_count != 0;
             unreadCount = customDialog.unread_count;
@@ -3658,6 +3666,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             }
 
             drawCommunityAvatar = !insideCommunityList && ChatObject.isCommunity(chat) && isDialogCell;
+            smallUserAvatarBound = false;
 
             if (currentDialogFolderId != 0) {
                 Theme.dialogs_archiveAvatarDrawable.setCallback(this);
@@ -3682,6 +3691,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                         avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                         avatarImage.setImage(null, null, avatarDrawable, null, user, 0);
                     } else {
+                        smallUserAvatarBound = true;
                         avatarImage.setForUserOrChat(user, avatarDrawable, null, true, VectorAvatarThumbDrawable.TYPE_SMALL, false);
                     }
                 } else if (chat != null) {

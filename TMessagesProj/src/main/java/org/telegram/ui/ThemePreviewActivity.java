@@ -4826,7 +4826,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
             View view;
             if (viewType == 0) {
-                view = new DialogCell(null, mContext, false, false);
+                view = new DialogCell(null, mContext, false, false, currentAccount, null);
             } else {
                 view = new LoadingCell(mContext);
             }

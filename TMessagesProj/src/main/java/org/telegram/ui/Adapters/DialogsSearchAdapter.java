@@ -1633,7 +1633,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                 break;
             case VIEW_TYPE_DIALOG_CELL:
             case VIEW_TYPE_PUBLIC_POST:
-                view = new DialogCell(null, mContext, false, true) {
+                view = new DialogCell(null, mContext, false, true, currentAccount, null) {
                     @Override
                     public boolean isForumCell() {
                         return false;

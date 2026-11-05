@@ -556,7 +556,7 @@ public class UniversalAdapter extends AdapterWithDiffUtils {
                 view = new ProfileSearchCell(context);
                 break;
             case VIEW_TYPE_SEARCH_MESSAGE:
-                view = new DialogCell(null, context, false, true);
+                view = new DialogCell(null, context, false, true, currentAccount, null);
                 break;
             case VIEW_TYPE_FLICKER:
                 FlickerLoadingView flickerLoadingView = new FlickerLoadingView(context, resourcesProvider);
