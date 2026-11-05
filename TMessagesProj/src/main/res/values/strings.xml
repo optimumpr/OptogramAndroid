@@ -11944,4 +11944,5 @@
     <string name="QuickAttachNewestFirstInfo">When off, recent photos are ordered from oldest to newest, left to right.</string>
     <string name="PhotoSent">Photo sent</string>
     <string name="IsFromBot">From Bot</string>
+    <string name="IsFromChannel">From Channel</string>
 </resources>
