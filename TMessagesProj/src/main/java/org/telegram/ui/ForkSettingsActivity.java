@@ -172,6 +172,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_SETUP = 115;
     public static final int ID_OPTOGRAM_BIRTHDAY_DIAGNOSTICS = 116;
     public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
+    public static final int ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT = 118;
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
@@ -554,6 +555,8 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableOpenBotButton", false)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PHONE_NUMBER, "Hide Phone Number in Profiles", "Masks phone numbers in supported Optogram screens; does not change Telegram privacy settings")
             .setChecked(pref("hidePhoneNumber", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT, "Disable Contact Number Sharing Prompt", "Hide the prompt offering to share your phone number in chats")
+            .setChecked(pref("disablePhoneSharePrompt", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL, "Hide Keyboard on Chat Scroll", "Dismiss the keyboard when manually scrolling messages")
             .setChecked(pref("hide_chat_keyboard", false)).setMultiline(true));
         items.add(UItem.asShadow(null));
@@ -844,6 +847,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("disableOpenBotButton", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_PHONE_NUMBER) {
             toggle("hidePhoneNumber", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT) {
+            toggle("disablePhoneSharePrompt", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL) {
             toggle("hide_chat_keyboard", item, view);
         } else if (id == ID_OPTOGRAM_LOCAL_PREMIUM) {
