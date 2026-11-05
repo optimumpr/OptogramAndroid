@@ -24,6 +24,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -4625,8 +4626,104 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         showAlertDialog(builder);
     }
 
+    private boolean canShareAlbumItem(MessageObject message, MessageObject selected) {
+        return message != null && message.messageOwner != null
+                && (message.isPhoto() || message.isVideo())
+                && message.currentAccount == selected.currentAccount
+                && message.getDialogId() == selected.getDialogId() && message.getGroupId() == selected.getGroupId()
+                && !DialogObject.isEncryptedDialog(message.getDialogId())
+                && !MessagesController.getInstance(message.currentAccount).isPeerNoForwards(message.getDialogId())
+                && !message.messageOwner.noforwards && message.messageOwner.ttl == 0
+                && !message.isSecretMedia() && !message.isEphemeral()
+                && !message.hasExtendedMediaPreview() && !message.hasRevealedExtendedMedia();
+    }
+
+    private boolean offerShareGroupedMedia() {
+        MessageObject selected = currentMessageObject;
+        if (selected == null || parentChatActivity == null || selected.getGroupId() == 0) {
+            return false;
+        }
+        MessageObject.GroupedMessages group = parentChatActivity.getGroup(selected.getGroupId());
+        if (group == null || group.messages.size() < 2 || !group.messages.contains(selected)) {
+            return false;
+        }
+        ArrayList<MessageObject> messages = new ArrayList<>(group.messages);
+        boolean hasPhoto = false;
+        boolean hasVideo = false;
+        for (MessageObject message : messages) {
+            if (!canShareAlbumItem(message, selected)) {
+                return false;
+            }
+            hasVideo |= message.isVideo();
+            hasPhoto |= !message.isVideo();
+        }
+        String mimeType = hasVideo && hasPhoto ? "*/*" : hasVideo ? "video/*" : "image/*";
+        String allLabel = LocaleController.formatPluralString(hasVideo ? "AllNMedia" : "AllNPhotos", messages.size());
+        AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity, resourcesProvider);
+        builder.setTitle(getString(R.string.ShareFile));
+        builder.setNegativeButton(getString(R.string.ThisMedia), (dialog, which) -> {
+            if (currentMessageObject == selected) {
+                onSharePressed(true);
+            }
+        });
+        builder.setPositiveButton(allLabel, (dialog, which) -> {
+            if (parentActivity != null && allowShare && currentMessageObject == selected) {
+                shareAlbum(messages, selected, mimeType);
+            }
+        });
+        showAlertDialog(builder);
+        return true;
+    }
+
+    private void shareAlbum(ArrayList<MessageObject> messages, MessageObject selected, String mimeType) {
+        try {
+            ArrayList<Uri> uris = new ArrayList<>(messages.size());
+            for (MessageObject message : messages) {
+                if (!canShareAlbumItem(message, selected)) {
+                    return;
+                }
+                File file = resolveShareMessageFile(message);
+                if (file != null && !file.isFile()) {
+                    file = new File(FileLoader.getDirectory(FileLoader.MEDIA_DIR_CACHE), file.getName());
+                }
+                if (file == null || !file.isFile()) {
+                    showDownloadAlert();
+                    return;
+                }
+                uris.add(FileProvider.getUriForFile(parentActivity, ApplicationLoader.getApplicationId() + ".provider", file));
+            }
+            ClipData clip = ClipData.newUri(parentActivity.getContentResolver(), getString(R.string.ShareFile), uris.get(0));
+            for (int i = 1; i < uris.size(); i++) {
+                clip.addItem(new ClipData.Item(uris.get(i)));
+            }
+            Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
+            intent.setType(mimeType);
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
+            intent.setClipData(clip);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            parentActivity.startActivityForResult(Intent.createChooser(intent, getString(R.string.ShareFile)), 500);
+        } catch (Exception e) {
+            FileLog.e(e);
+            showDownloadAlert();
+        }
+    }
+
+    private File resolveShareMessageFile(MessageObject message) {
+        if (!TextUtils.isEmpty(message.messageOwner.attachPath)) {
+            File file = new File(message.messageOwner.attachPath);
+            if (file.exists()) {
+                return file;
+            }
+        }
+        return FileLoader.getInstance(message.currentAccount).getPathToMessage(message.messageOwner);
+    }
+
     private void onSharePressed() {
-        if (parentActivity == null || !allowShare) {
+        onSharePressed(false);
+    }
+
+    private void onSharePressed(boolean skipGroupPrompt) {
+        if (parentActivity == null || !allowShare || (!skipGroupPrompt && offerShareGroupedMedia())) {
             return;
         }
         try {
@@ -4639,15 +4736,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                             AndroidUtilities.openUrl(parentActivity, currentMessageObject.messageOwner.media.webpage.url);
                             return;
                         }*/
-                if (!TextUtils.isEmpty(currentMessageObject.messageOwner.attachPath)) {
-                    f = new File(currentMessageObject.messageOwner.attachPath);
-                    if (!f.exists()) {
-                        f = null;
-                    }
-                }
-                if (f == null) {
-                    f = FileLoader.getInstance(currentAccount).getPathToMessage(currentMessageObject.messageOwner);
-                }
+                f = resolveShareMessageFile(currentMessageObject);
             } else if (currentFileLocationVideo != null) {
                 f = FileLoader.getInstance(currentAccount).getPathToAttach(getFileLocation(currentFileLocationVideo), getFileLocationExt(currentFileLocationVideo), avatarsDialogId != 0 || isEvent);
                 if (f == null || !f.exists()) {
