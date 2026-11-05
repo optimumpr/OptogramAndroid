@@ -2200,14 +2200,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                 protected boolean select(MessageObject messageObject) {
                     if (messageObject == null) return false;
                     final int loadIndex = messageObject.getDialogId() == dialog_id ? 0 : 1;
-                    if (selectedFiles[loadIndex].indexOfKey(messageObject.getId()) < 0) {
-                        if (selectedFiles[0].size() + selectedFiles[1].size() >= 100) {
-                            return false;
-                        }
-                        selectedFiles[loadIndex].put(messageObject.getId(), messageObject);
-                        if (!messageObject.canDeleteMessage(false, null)) {
-                            cantDeleteMessagesCount++;
-                        }
+                    if (tryAddSelectedFile(messageObject, loadIndex, TAB_BOT_PREVIEWS)) {
                         if (!isActionModeShowed) {
                             AndroidUtilities.hideKeyboard(profileActivity.getParentActivity().getCurrentFocus());
                             deleteItem.setVisibility(cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
@@ -2282,7 +2275,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                             animatorSet.start();
                             scrolling = false;
                             AndroidUtilities.runOnUIThread(() -> {
-                                if (isActionModeShowed) {
+                                if (isActionModeShowed && selectedFileCount() == 0) {
                                     showActionMode(false);
                                 }
                             }, 20);
@@ -4796,6 +4789,9 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
     }
 
     protected void onSelectedTabChanged() {
+        if (selectedFileCount() != 0 && selectedFileScope != selectionScopeForTab(getClosestTab())) {
+            closeActionMode();
+        }
         boolean pollerEnabled = isStoriesView() || isArchivedOnlyStoriesView();
         if (archivedStoriesAdapter.poller != null) {
             archivedStoriesAdapter.poller.start(pollerEnabled && getClosestTab() == TAB_ARCHIVED_STORIES);
@@ -5000,6 +4996,10 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
     }
 
     public void onActionBarItemClick(View v, int id) {
+        if ((id == delete || id == forward || id == pin || id == unpin)
+                && !MessageSelectionLimits.allowLegacyBulkAction(profileActivity, selectedFileCount())) {
+            return;
+        }
         if (id == delete) {
             if (isAnyStoryPageType(getSelectedTab()) || getSelectedTab() == TAB_BOT_PREVIEWS) {
                 if (selectedFiles[0] != null) {
@@ -5115,9 +5115,8 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                 currentChat = profileActivity.getMessagesController().getChat(-dialog_id);
             }
             AlertsCreator.createDeleteMessagesAlert(profileActivity, currentUser, currentChat, currentEncryptedChat, null, mergeDialogId, null, selectedFiles, null, 0, 0, null, () -> {
-                showActionMode(false);
+                closeActionMode(false);
                 closeHeaderSearchField();
-                cantDeleteMessagesCount = 0;
             }, null, resourcesProvider);
         } else if (id == forward) {
             if (userInfo != null) {
@@ -5154,6 +5153,9 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
             args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
             DialogsActivity fragment = new DialogsActivity(args);
             fragment.setDelegate((fragment1, dids, message, param, notify, scheduleDate, scheduleRepeatPeriod, topicsFragment) -> {
+                if (selectedFileCount() == 0 || !MessageSelectionLimits.allowLegacyBulkAction(fragment1, selectedFileCount())) {
+                    return false;
+                }
                 ArrayList<MessageObject> fmessages = new ArrayList<>();
                 for (int a = 1; a >= 0; a--) {
                     ArrayList<Integer> ids = new ArrayList<>();
@@ -6123,13 +6125,39 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
             }
             ArrayList<Integer> markAsDeletedMessages = (ArrayList<Integer>) args[0];
             boolean updated = false;
+            boolean selectionChanged = false;
             int type = -1;
             for (int a = 0, N = markAsDeletedMessages.size(); a < N; a++) {
+                if (selectedFileScope == TAB_PHOTOVIDEO) {
+                    int messageId = markAsDeletedMessages.get(a);
+                    MessageObject selected = selectedFiles[loadIndex].get(messageId);
+                    if (selected != null) {
+                        selectedFiles[loadIndex].remove(messageId);
+                        if (!selected.canDeleteMessage(false, null)) {
+                            cantDeleteMessagesCount--;
+                        }
+                        selectionChanged = true;
+                    }
+                }
                 for (int b = 0; b < sharedMediaData.length; b++) {
                     if (sharedMediaData[b].deleteMessage(markAsDeletedMessages.get(a), loadIndex) != null) {
                         type = b;
                         updated = true;
                     }
+                }
+            }
+            if (selectionChanged && isActionModeShowed) {
+                if (selectedFileCount() == 0) {
+                    closeActionMode(false);
+                } else {
+                    setSelectedMessagesCount(selectedFileCount(), true);
+                    deleteItem.setVisibility(cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
+                    if (gotoItem != null) {
+                        gotoItem.setVisibility(selectedFileCount() == 1 ? View.VISIBLE : View.GONE);
+                    }
+                    onActionModeSelectedUpdate(selectedFiles[0]);
+                    updateForwardItem();
+                    updateRowsSelection(false);
                 }
             }
             if (updated) {
@@ -7539,9 +7567,8 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
             return true;
         }
 
-        selectedFiles[item.getDialogId() == dialog_id ? 0 : 1].put(item.getId(), item);
-        if (!item.canDeleteMessage(false, null)) {
-            cantDeleteMessagesCount++;
+        if (!tryAddSelectedFile(item, item.getDialogId() == dialog_id ? 0 : 1, getClosestTab())) {
+            return false;
         }
         deleteItem.setVisibility(cantDeleteMessagesCount == 0 ? View.VISIBLE : View.GONE);
         if (gotoItem != null) {
@@ -7550,7 +7577,7 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
         if (forwardItem != null) {
             forwardItem.setVisibility(getClosestTab() != TAB_STORIES && getClosestTab() != TAB_BOT_PREVIEWS && getClosestTab() != TAB_GIFTS ? View.VISIBLE : View.GONE);
         }
-        setSelectedMessagesCount(1, false);
+        setSelectedMessagesCount(selectedFileCount(), false);
         AnimatorSet animatorSet = new AnimatorSet();
         ArrayList<Animator> animators = new ArrayList<>();
         for (int i = 0; i < actionModeViews.size(); i++) {
@@ -7583,6 +7610,45 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
         return true;
     }
 
+    private int selectedFileScope;
+
+    private int selectedFileCount() {
+        return selectedFiles[0].size() + selectedFiles[1].size();
+    }
+
+    private int selectionScopeForTab(int tab) {
+        if (isAnyStoryPageType(tab)) {
+            return TAB_STORIES;
+        }
+        if (tab == TAB_BOT_PREVIEWS || tab == TAB_GIFTS || tab == TAB_SAVED_DIALOGS) {
+            return tab;
+        }
+        return TAB_PHOTOVIDEO;
+    }
+
+    private boolean tryAddSelectedFile(MessageObject message, int bucket, int tab) {
+        if (selectedFiles[bucket].indexOfKey(message.getId()) >= 0) {
+            return false;
+        }
+        final int count = selectedFileCount();
+        final int scope = selectionScopeForTab(tab);
+        if (count != 0 && selectedFileScope != scope) {
+            return false;
+        }
+        final int limit = scope == TAB_PHOTOVIDEO
+                ? MessageSelectionLimits.MAX_SELECTED_MESSAGES : MessageSelectionLimits.LEGACY_BULK_LIMIT;
+        if (!MessageSelectionLimits.canAdd(count, 1, limit)) {
+            MessageSelectionLimits.showSelectionLimit(profileActivity, limit);
+            return false;
+        }
+        selectedFileScope = scope;
+        selectedFiles[bucket].put(message.getId(), message);
+        if (!message.canDeleteMessage(false, null)) {
+            cantDeleteMessagesCount++;
+        }
+        return true;
+    }
+
     private void onItemClick(int index, View view, MessageObject message, int a, int selectedMode) {
         if (message == null || photoVideoChangeColumnsAnimation) {
             return;
@@ -7600,14 +7666,8 @@ public class SharedMediaLayout extends FrameLayout implements Theme.Colorable, N
                 if (!message.canDeleteMessage(false, null)) {
                     cantDeleteMessagesCount--;
                 }
-            } else {
-                if (selectedFiles[0].size() + selectedFiles[1].size() >= 100) {
-                    return;
-                }
-                selectedFiles[loadIndex].put(message.getId(), message);
-                if (!message.canDeleteMessage(false, null)) {
-                    cantDeleteMessagesCount++;
-                }
+            } else if (!tryAddSelectedFile(message, loadIndex, selectedMode)) {
+                return;
             }
             onActionModeSelectedUpdate(selectedFiles[0]);
             if (selectedFiles[0].size() == 0 && selectedFiles[1].size() == 0) {
