@@ -89,6 +89,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
     public ArrayList<TL_account.Passkey> currentPasskeys;
 
     private int privacySectionRow;
+    private int disablePhoneSharePromptRow;
     @Keep
     private int blockedRow;
     @Keep
@@ -411,6 +412,12 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                 showDialog(builder.create());
             } else if (position == lastSeenRow) {
                 presentFragment(new PrivacyControlActivity(ContactsController.PRIVACY_RULES_TYPE_LASTSEEN));
+            } else if (position == disablePhoneSharePromptRow) {
+                boolean enabled = !MessagesController.getGlobalMainSettings().getBoolean("disablePhoneSharePrompt", false);
+                MessagesController.getGlobalMainSettings().edit().putBoolean("disablePhoneSharePrompt", enabled).apply();
+                if (view instanceof TextCheckCell) {
+                    ((TextCheckCell) view).setChecked(enabled);
+                }
             } else if (position == phoneNumberRow) {
                 presentFragment(new PrivacyControlActivity(ContactsController.PRIVACY_RULES_TYPE_PHONE));
             } else if (position == groupsRow) {
@@ -734,6 +741,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
 
         privacySectionRow = rowCount++;
         phoneNumberRow = rowCount++;
+        disablePhoneSharePromptRow = rowCount++;
         lastSeenRow = rowCount++;
         profilePhotoRow = rowCount++;
         forwardsRow = rowCount++;
@@ -1036,7 +1044,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                     position == deleteAccountRow && !getContactsController().getLoadingDeleteInfo() ||
                     position == newChatsRow && !getContactsController().getLoadingGlobalSettings() ||
                     position == emailLoginRow || position == paymentsClearRow || position == secretMapRow ||
-                    position == contactsSyncRow || position == passportRow || position == contactsDeleteRow ||
+                    position == contactsSyncRow || position == disablePhoneSharePromptRow || position == passportRow || position == contactsDeleteRow ||
                     position == contactsSuggestRow || position == autoDeleteMesages || position == botsBiometryRow;
         }
 
@@ -1276,7 +1284,9 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                     break;
                 case 3:
                     TextCheckCell textCheckCell = (TextCheckCell) holder.itemView;
-                    if (position == secretWebpageRow) {
+                    if (position == disablePhoneSharePromptRow) {
+                        textCheckCell.setTextAndCheck("Disable phone number sharing prompt", MessagesController.getGlobalMainSettings().getBoolean("disablePhoneSharePrompt", false), false);
+                    } else if (position == secretWebpageRow) {
                         textCheckCell.setTextAndCheck(getString("SecretWebPage", R.string.SecretWebPage), getMessagesController().secretWebpagePreview == 1, false);
                     } else if (position == contactsSyncRow) {
                         textCheckCell.setTextAndCheck(getString("SyncContacts", R.string.SyncContacts), newSync, true);
@@ -1397,7 +1407,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                 return 1;
             } else if (position == securitySectionRow || position == advancedSectionRow || position == privacySectionRow || position == secretSectionRow || position == botsSectionRow || position == contactsSectionRow || position == newChatsHeaderRow) {
                 return 2;
-            } else if (position == secretWebpageRow || position == contactsSyncRow || position == contactsSuggestRow || position == newChatsRow) {
+            } else if (position == secretWebpageRow || position == disablePhoneSharePromptRow || position == contactsSyncRow || position == contactsSuggestRow || position == newChatsRow) {
                 return 3;
             } else if (position == botsAndWebsitesShadowRow) {
                 return 4;
