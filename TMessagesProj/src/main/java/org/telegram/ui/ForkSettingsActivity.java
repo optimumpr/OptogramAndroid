@@ -150,7 +150,6 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_DISABLE_DEFAULT_IN_APP_BROWSER = 73;
     public static final int ID_QUICK_REPEAT = 74;
 
-    public static final int ID_UNIFIED_PUSH = 80;
     public static final int ID_UPDATE_CHECK_INTERVAL = 81;
     public static final int ID_DISABLE_TABLET_MODE = 82;
     public static final int ID_LOCK_PREMIUM = 83;

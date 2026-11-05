@@ -252,7 +252,6 @@ object ForkSettings {
         "quickAttach" to ForkSettingsActivity.ID_QUICK_ATTACH,
         "offlineStt" to ForkSettingsActivity.ID_OFFLINE_STT,
         "cloudflareCredentials" to ForkSettingsActivity.ID_CLOUDFLARE_CREDENTIALS,
-        "unifiedPush" to ForkSettingsActivity.ID_UNIFIED_PUSH,
         "updateCheckInterval" to ForkSettingsActivity.ID_UPDATE_CHECK_INTERVAL,
         "disableTabletMode" to ForkSettingsActivity.ID_DISABLE_TABLET_MODE,
         "webPublish" to ForkSettingsActivity.ID_WEB_PUBLISH,
