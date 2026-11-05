@@ -25,7 +25,6 @@ import org.telegram.messenger.MediaDataController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
-import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.AdjustPanLayoutHelper;
@@ -88,7 +87,7 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
         }
     }
 
-    private final int currentAccount = UserConfig.selectedAccount;
+    private final int currentAccount;
 
     private final Delegate delegate;
     private final TLRPC.StickerSetCovered[] primaryInstallingStickerSets;
@@ -119,12 +118,13 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
     private TLRPC.StickerSetCovered scrollToSet;
     private final Theme.ResourcesProvider resourcesProvider;
 
-    public TrendingStickersLayout(@NonNull Context context, Delegate delegate) {
-        this(context, delegate, new TLRPC.StickerSetCovered[10], new LongSparseArray<>(), new LongSparseArray<>(), null, null);
+    public TrendingStickersLayout(@NonNull Context context, int currentAccount, Delegate delegate) {
+        this(context, currentAccount, delegate, new TLRPC.StickerSetCovered[10], new LongSparseArray<>(), new LongSparseArray<>(), null, null);
     }
 
-    public TrendingStickersLayout(@NonNull Context context, Delegate delegate, TLRPC.StickerSetCovered[] primaryInstallingStickerSets, LongSparseArray<TLRPC.StickerSetCovered> installingStickerSets, LongSparseArray<TLRPC.StickerSetCovered> removingStickerSets, TLRPC.StickerSetCovered scrollToSet, Theme.ResourcesProvider resourcesProvider) {
+    public TrendingStickersLayout(@NonNull Context context, int currentAccount, Delegate delegate, TLRPC.StickerSetCovered[] primaryInstallingStickerSets, LongSparseArray<TLRPC.StickerSetCovered> installingStickerSets, LongSparseArray<TLRPC.StickerSetCovered> removingStickerSets, TLRPC.StickerSetCovered scrollToSet, Theme.ResourcesProvider resourcesProvider) {
         super(context);
+        this.currentAccount = currentAccount;
         this.delegate = delegate;
         this.primaryInstallingStickerSets = primaryInstallingStickerSets;
         this.installingStickerSets = installingStickerSets;
@@ -727,7 +727,19 @@ public class TrendingStickersLayout extends FrameLayout implements NotificationC
                     view = new GraySectionCell(context, resourcesProvider);
                     break;
                 case 5:
-                    final FeaturedStickerSetCell2 stickerSetCell = new FeaturedStickerSetCell2(context, resourcesProvider);
+                    final FeaturedStickerSetCell2 stickerSetCell = new FeaturedStickerSetCell2(context, currentAccount, resourcesProvider);
+                    stickerSetCell.setPreviewOnClickListener(v -> {
+                        TLRPC.StickerSetCovered pack = stickerSetCell.getStickerSet();
+                        if (pack != null && pack.set != null && pack.set.emojis && parentFragment != null
+                                && parentFragment.getParentActivity() != null && parentFragment.getCurrentAccount() == currentAccount) {
+                            TLRPC.TL_inputStickerSetID input = new TLRPC.TL_inputStickerSetID();
+                            input.id = pack.set.id;
+                            input.access_hash = pack.set.access_hash;
+                            ArrayList<TLRPC.InputStickerSet> sets = new ArrayList<>(1);
+                            sets.add(input);
+                            parentFragment.showDialog(new EmojiPacksAlert(parentFragment, getContext(), resourcesProvider, sets));
+                        }
+                    });
                     stickerSetCell.setAddOnClickListener(v -> {
                         final FeaturedStickerSetCell2 cell = (FeaturedStickerSetCell2) v.getParent();
                         TLRPC.StickerSetCovered pack = cell.getStickerSet();

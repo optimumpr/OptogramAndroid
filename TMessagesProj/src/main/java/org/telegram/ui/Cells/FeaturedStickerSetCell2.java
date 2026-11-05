@@ -60,7 +60,9 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
 
     private boolean rippleDark = Theme.isCurrentThemeDark();
 
-    private final int currentAccount = UserConfig.selectedAccount;
+    private final int currentAccount;
+    private OnClickListener previewOnClickListener;
+    private boolean showingPreviewAction;
 
     private final TextView textView;
     private final TextView valueTextView;
@@ -81,8 +83,9 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
     private boolean unread;
     private boolean forceInstalled;
 
-    public FeaturedStickerSetCell2(Context context, Theme.ResourcesProvider resourcesProvider) {
+    public FeaturedStickerSetCell2(Context context, int currentAccount, Theme.ResourcesProvider resourcesProvider) {
         super(context);
+        this.currentAccount = currentAccount;
         this.resourcesProvider = resourcesProvider;
 
         textView = new TextView(context);
@@ -106,6 +109,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, LocaleController.isRTL ? 100 : 71, 35, LocaleController.isRTL ? 71 : 100, 0));
 
         imageView = new BackupImageView(context);
+        imageView.getImageReceiver().setCurrentAccount(currentAccount);
         imageView.setAspectFit(true);
         imageView.setLayerNum(1);
         addView(imageView, LayoutHelper.createFrame(48, 48, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 0 : 12, 8, LocaleController.isRTL ? 12 : 0, 0));
@@ -126,6 +130,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         unlockButton = new PremiumButtonView(context, AndroidUtilities.dp(4), false, resourcesProvider);
         unlockButton.setIcon(R.raw.unlock_icon);
         unlockButton.setButton(LocaleController.getString(R.string.Unlock), e -> onPremiumButtonClick());
+        NotificationCenter.getGlobalInstance().listen(this, NotificationCenter.premiumStatusChangedGlobal, args -> updatePreviewAction());
         unlockButton.setVisibility(View.GONE);
         try {
             MarginLayoutParams iconLayout = (MarginLayoutParams) unlockButton.getIconView().getLayoutParams();
@@ -146,7 +151,33 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
     }
 
     protected void onPremiumButtonClick() {
+        if (showingPreviewAction && canPreviewLockedPack()) {
+            previewOnClickListener.onClick(this);
+        }
+    }
 
+    private boolean canPreviewLockedPack() {
+        UserConfig config = UserConfig.getInstance(currentAccount);
+        return isLocked && !config.isPremium() && config.hasLocalPremiumFeatures() && previewOnClickListener != null;
+    }
+
+    private void updatePreviewAction() {
+        boolean preview = canPreviewLockedPack();
+        if (showingPreviewAction == preview) {
+            return;
+        }
+        showingPreviewAction = preview;
+        if (preview) {
+            unlockButton.hideIcon();
+        } else {
+            unlockButton.setIcon(R.raw.unlock_icon);
+        }
+        unlockButton.setButton(LocaleController.getString(preview ? R.string.ViewPackPreview : R.string.Unlock), e -> onPremiumButtonClick());
+    }
+
+    public void setPreviewOnClickListener(OnClickListener listener) {
+        previewOnClickListener = listener;
+        updatePreviewAction();
     }
 
     @Override
@@ -305,6 +336,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
         this.forceInstalled = forceInstalled;
         isInstalled = forceInstalled || MediaDataController.getInstance(currentAccount).isStickerPackInstalled(set.set.id);
         isLocked = !UserConfig.getInstance(currentAccount).isPremium() && MessageObject.isPremiumEmojiPack(set);
+        updatePreviewAction();
         if (animated) {
             if (isLocked) {
                 unlockButton.setVisibility(VISIBLE);
@@ -476,6 +508,12 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        updatePreviewAction();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         if (bindedObserver) {
@@ -502,7 +540,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
 
         @Override
         public FeaturedStickerSetCell2 createView(Context context, RecyclerListView listView, int currentAccount, int classGuid, Theme.ResourcesProvider resourcesProvider) {
-            return new FeaturedStickerSetCell2(context, resourcesProvider);
+            return new FeaturedStickerSetCell2(context, currentAccount, resourcesProvider);
         }
 
         @Override
@@ -512,6 +550,7 @@ public class FeaturedStickerSetCell2 extends FrameLayout implements Notification
             cell.setStickersSet(set, divider, false, item.locked, false);
             cell.setDrawProgress(item.locked, false);
             cell.setAddOnClickListener(item.clickCallback);
+            cell.setPreviewOnClickListener(item.clickCallback2);
         }
 
         public static UItem of(TLRPC.StickerSetCovered set) {

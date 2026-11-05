@@ -442,6 +442,7 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                 final UItem featuredItem =
                     FeaturedStickerSetCell2.Factory.of(set)
                         .setClickCallback(this::onFeaturedAddClick)
+                        .setClickCallback2(view -> openFeaturedPackPreview(((FeaturedStickerSetCell2) view).getStickerSet()))
                         .setLocked(loadingFeaturedStickerSets.contains(set.set.id));
                 items.add(featuredItem);
             }
@@ -480,17 +481,7 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
             return;
         }
         if (item.object instanceof TLRPC.StickerSetCovered) {
-            final TLRPC.StickerSetCovered set = (TLRPC.StickerSetCovered) item.object;
-            final TLRPC.TL_inputStickerSetID inputStickerSetID = new TLRPC.TL_inputStickerSetID();
-            inputStickerSetID.id = set.set.id;
-            inputStickerSetID.access_hash = set.set.access_hash;
-            if (currentType == TYPE_EMOJIPACKS) {
-                final ArrayList<TLRPC.InputStickerSet> inputStickerSets = new ArrayList<>(1);
-                inputStickerSets.add(inputStickerSetID);
-                showDialog(new EmojiPacksAlert(StickersActivity.this, getParentActivity(), getResourceProvider(), inputStickerSets));
-            } else {
-                showDialog(new StickersAlert(getParentActivity(), StickersActivity.this, inputStickerSetID, null, null, false));
-            }
+            openFeaturedPackPreview((TLRPC.StickerSetCovered) item.object);
             return;
         }
         switch (item.id) {
@@ -552,7 +543,7 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                             MediaDataController.getInstance(currentAccount).toggleStickerSet(getParentActivity(), stickerSet, 0, StickersActivity.this, false, false);
                         }
                     };
-                    trendingStickersAlert = new TrendingStickersAlert(getContext(), this, new TrendingStickersLayout(getContext(), trendingDelegate), null);
+                    trendingStickersAlert = new TrendingStickersAlert(getContext(), this, new TrendingStickersLayout(getContext(), currentAccount, trendingDelegate), null);
                     trendingStickersAlert.show();
                 }
                 break;
@@ -692,6 +683,22 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
             MediaDataController.getInstance(currentAccount).toggleStickerSet(getParentActivity(), set, 0, this, false, true);
         } else if (cell.premiumButtonView == view) {
             showDialog(new PremiumFeatureBottomSheet(this, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false));
+        }
+    }
+
+    private void openFeaturedPackPreview(TLRPC.StickerSetCovered set) {
+        if (set == null || set.set == null || getParentActivity() == null) {
+            return;
+        }
+        final TLRPC.TL_inputStickerSetID inputStickerSetID = new TLRPC.TL_inputStickerSetID();
+        inputStickerSetID.id = set.set.id;
+        inputStickerSetID.access_hash = set.set.access_hash;
+        if (currentType == TYPE_EMOJIPACKS) {
+            final ArrayList<TLRPC.InputStickerSet> inputStickerSets = new ArrayList<>(1);
+            inputStickerSets.add(inputStickerSetID);
+            showDialog(new EmojiPacksAlert(StickersActivity.this, getParentActivity(), getResourceProvider(), inputStickerSets));
+        } else {
+            showDialog(new StickersAlert(getParentActivity(), StickersActivity.this, inputStickerSetID, null, null, false));
         }
     }
 

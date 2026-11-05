@@ -4564,7 +4564,7 @@ public class EmojiView extends FrameLayout implements
                 return delegate.isInScheduleMode();
             }
         };
-        this.delegate.showTrendingStickersAlert(new TrendingStickersLayout(getContext(), trendingDelegate, primaryInstallingStickerSets, installingStickerSets, removingStickerSets, set, resourcesProvider));
+        this.delegate.showTrendingStickersAlert(new TrendingStickersLayout(getContext(), currentAccount, trendingDelegate, primaryInstallingStickerSets, installingStickerSets, removingStickerSets, set, resourcesProvider));
     }
 
     @Override

@@ -237,6 +237,9 @@ public class EmojiPacksAlert extends BottomSheet implements NotificationCenter.N
     private EmojiPacksAlert(BaseFragment fragment, Context context, Theme.ResourcesProvider resourceProvider, ArrayList<TLRPC.InputStickerSet> stickerSets, TLObject parentObject) {
         super(context, false, resourceProvider = fragment != null && fragment.getResourceProvider() != null ? fragment.getResourceProvider() : resourceProvider);
         this.fragment = fragment;
+        if (fragment != null) {
+            currentAccount = fragment.getCurrentAccount();
+        }
         fixNavigationBar();
 
         if (stickerSets != null) {
