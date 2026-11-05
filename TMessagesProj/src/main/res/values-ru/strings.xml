@@ -272,8 +272,8 @@
     <string name="ForkSettingsLockChangeCode">Изменить код</string>
     <string name="ForkSettingsLockRemoveCode">Удалить код</string>
     <string name="ForkSettingsLockRemoveCodeConfirm">Настройки Fork Client будут открываться без кода.</string>
-    <string name="AppName">Fork Client</string>
-    <string name="AppNameBeta">Fork Client</string>
+    <string name="AppName">Optogram</string>
+    <string name="AppNameBeta">Optogram</string>
     <string name="LanguageName">Русский</string>
     <string name="English">Английский</string>
     <string name="LanguageNameInEnglish">Russian</string>

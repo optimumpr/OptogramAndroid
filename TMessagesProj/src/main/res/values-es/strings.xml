@@ -271,8 +271,8 @@
     <string name="LinkReplacementReplaceWith">Reemplazar con</string>
     <string name="LinkReplacementInvalid">Expresión no válida</string>
     <string name="LinkReplacedOnPaste">Enlace reemplazado</string>
-    <string name="AppName">Fork Client</string>
-    <string name="AppNameBeta">Fork Client</string>
+    <string name="AppName">Optogram</string>
+    <string name="AppNameBeta">Optogram</string>
     <string name="LanguageName">Español</string>
     <string name="English">Inglés</string>
     <string name="LanguageNameInEnglish">Spanish</string>
