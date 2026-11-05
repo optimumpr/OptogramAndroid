@@ -149,7 +149,6 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_DISABLE_PARAMETERS_FROM_BOT_LINKS = 72;
     public static final int ID_DISABLE_DEFAULT_IN_APP_BROWSER = 73;
 
-    public static final int ID_UNIFIED_PUSH = 80;
     public static final int ID_DISABLE_TABLET_MODE = 82;
     public static final int ID_LOCK_PREMIUM = 83;
     public static final int ID_WEBSOCKET_TRANSPORT = 84;
@@ -759,7 +758,6 @@ public class ForkSettingsActivity extends BaseFragment {
         if (pref("webSocketTransport", false)) {
             items.add(UItem.asSettingsCell(ID_WEBSOCKET_DOMAIN, LocaleController.getString(R.string.WebSocketDomain), getWebSocketDomainText()));
         }
-        items.add(UItem.asSettingsCell(ID_UNIFIED_PUSH, LocaleController.getString(R.string.UnifiedPush), null));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             items.add(UItem.asButtonCheck(ID_SATELLITE_DATA_SAVING, LocaleController.getString(R.string.SatelliteDataSaving), LocaleController.getString(R.string.SatelliteDataSavingInfo))
                 .setChecked(pref("satelliteDataSaving", true)).setMultiline(true));
@@ -996,8 +994,6 @@ public class ForkSettingsActivity extends BaseFragment {
             listView.adapter.update(true);
         } else if (id == ID_WEBSOCKET_DOMAIN) {
             showWebSocketDomainDialog();
-        } else if (id == ID_UNIFIED_PUSH) {
-            presentFragment(new NotificationsSettingsActivity().highlightUnifiedPush());
         } else if (id == ID_SATELLITE_DATA_SAVING) {
             ApplicationLoader.setSatelliteDataSavingEnabled(toggle("satelliteDataSaving", item, view));
         } else if (id == ID_DISABLE_TABLET_MODE) {
