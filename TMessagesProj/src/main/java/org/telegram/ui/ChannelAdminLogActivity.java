@@ -2914,7 +2914,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                     public void didPressAppUpdateButton() {
                         if (ApplicationLoader.isStandaloneBuild()) {
                             if (LaunchActivity.instance != null) {
-                                LaunchActivity.instance.checkAppUpdate(true, null);
+                                LaunchActivity.instance.checkTelegramAppUpdate(true, null);
                             }
                         } else if (BuildVars.isHuaweiStoreApp()) {
                         } else {
@@ -3404,7 +3404,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                     public void didPressAppUpdateButton() {
                         if (ApplicationLoader.isStandaloneBuild()) {
                             if (LaunchActivity.instance != null) {
-                                LaunchActivity.instance.checkAppUpdate(true, null);
+                                LaunchActivity.instance.checkTelegramAppUpdate(true, null);
                             }
                         } else if (BuildVars.isHuaweiStoreApp()) {
                         } else {

@@ -43736,7 +43736,7 @@ public class ChatActivity extends BaseFragment implements
                         }
                     };
                     */
-                    LaunchActivity.instance.checkAppUpdate(true, null);
+                    LaunchActivity.instance.checkTelegramAppUpdate(true, null);
                 }
             } else if (BuildVars.isHuaweiStoreApp()) {
             } else {
