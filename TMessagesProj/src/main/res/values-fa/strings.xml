@@ -84,7 +84,6 @@
     <string name="CopyWithoutProtocol">کپی بدون پروتکل</string>
     <!--fork settings view-->
     <string name="ForkSettingsTitle">تنظیمات Fork Client</string>
-    <string name="ForkCheckUpdate">بررسی به‌روزرسانی‌ها</string>
     <string name="InAppCamera">فعال کردن دوربین داخلی</string>
     <string name="InAppCameraInfo">در پیوست‌ها</string>
     <string name="SquareAvatars">نمایه‌های مربعی</string>

@@ -72,7 +72,6 @@
     <string name="CopyWithoutProtocol">Copy without protocol</string>
     <!--fork settings view-->
     <string name="ForkSettingsTitle">Fork Client Settings</string>
-    <string name="ForkCheckUpdate">Check updates</string>
     <string name="InAppCamera">Enable In-App Camera</string>
     <string name="InAppCameraInfo">In Attachments</string>
     <string name="SquareAvatars">Square Avatars</string>

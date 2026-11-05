@@ -170,7 +170,6 @@
     <string name="CopyWithoutProtocol">Ohne Protokoll kopieren</string>
     <!--fork settings view-->
     <string name="ForkSettingsTitle">Einstellungen des Fork-Clients</string>
-    <string name="ForkCheckUpdate">Updates überprüfen</string>
     <string name="SquareAvatars">Quadratische Avatare</string>
     <string name="AvatarShape">Avatar-Form</string>
     <string name="AvatarShapeRound">Rund</string>

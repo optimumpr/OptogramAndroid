@@ -170,7 +170,6 @@
     <string name="CopyWithoutProtocol">Копіювати без протоколу</string>
     <!--fork settings view-->
     <string name="ForkSettingsTitle">Налаштування клієнта Fork</string>
-    <string name="ForkCheckUpdate">Перевірити оновлення</string>
     <string name="SquareAvatars">Квадратні аватари</string>
     <string name="AvatarShape">Форма аватара</string>
     <string name="AvatarShapeRound">Кругла</string>
