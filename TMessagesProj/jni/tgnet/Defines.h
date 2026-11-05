@@ -28,7 +28,9 @@
 #define UPLOAD_CONNECTIONS_COUNT 4
 #define CONNECTION_BACKGROUND_KEEP_TIME 10000
 #define MAX_ACCOUNT_COUNT 90
-#define USE_DELEGATE_HOST_RESOLVE
+// Resolve WebSocket and proxy hostnames through Android's system DNS.
+// Keep native gethostbyname() rather than delegating to Java's remote resolver.
+// #define USE_DELEGATE_HOST_RESOLVE
 
 #define USE_IPV4_ONLY 0
 #define USE_IPV6_ONLY 1
