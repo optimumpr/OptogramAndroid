@@ -69,7 +69,6 @@ public class DebugSettingsActivity extends UniversalFragment {
     private static final int ID_INAPP_CAMERA = 7;
     private static final int ID_CLEAR_MEDIA_CACHE = 8;
     private static final int ID_CALL_SETTINGS = 9;
-    private static final int ID_CHECK_APP_UPDATE = 10;
     private static final int ID_VOIP_AUDIO_EFFECTS = 11;
     private static final int ID_CLEAN_APP_UPDATE = 12;
     private static final int ID_RESET_SUGGESTIONS = 13;
@@ -166,9 +165,6 @@ public class DebugSettingsActivity extends UniversalFragment {
         items.add(UItem.asHeader("App"));
         if (!BuildVars.DEBUG_VERSION) {
             items.add(UItem.asCheck(ID_LOGS, getString(R.string.DebugMenuEnableLogs)).setChecked(BuildVars.LOGS_ENABLED));
-        }
-        if (BuildVars.DEBUG_PRIVATE_VERSION || ApplicationLoader.isStandaloneBuild() || ApplicationLoader.isBetaBuild()) {
-            items.add(UItem.asButton(ID_CHECK_APP_UPDATE, getString(R.string.DebugMenuCheckAppUpdate)));
         }
         if (BuildVars.DEBUG_PRIVATE_VERSION) {
             items.add(UItem.asButton(ID_CLEAN_APP_UPDATE, "Clean app update"));
@@ -282,9 +278,6 @@ public class DebugSettingsActivity extends UniversalFragment {
                 break;
             case ID_CALL_SETTINGS:
                 VoIPHelper.showCallDebugSettings(getParentActivity());
-                break;
-            case ID_CHECK_APP_UPDATE:
-                ((LaunchActivity) getParentActivity()).checkAppUpdate(true, null);
                 break;
             case ID_READ_ALL_DIALOGS:
                 getMessagesStorage().readAllDialogs(-1);

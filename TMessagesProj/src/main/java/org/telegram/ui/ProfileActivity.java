@@ -4683,7 +4683,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 getString("DebugMenuClearMediaCache", R.string.DebugMenuClearMediaCache),
                                 getString(R.string.DebugMenuCallSettings),
                                 "Set ignoreSetOnline = true.",
-                                BuildVars.DEBUG_PRIVATE_VERSION || ApplicationLoader.isStandaloneBuild() || ApplicationLoader.isBetaBuild() ? getString("DebugMenuCheckAppUpdate", R.string.DebugMenuCheckAppUpdate) : null,
+                                null, // Preserve positional debug menu handlers.
                                 getString("DebugMenuReadAllDialogs", R.string.DebugMenuReadAllDialogs),
                                 BuildVars.DEBUG_PRIVATE_VERSION ? SharedConfig.disableVoiceAudioEffects ? "Enable voip audio effects" : "Disable voip audio effects" : null,
                                 BuildVars.DEBUG_PRIVATE_VERSION ? "Clean app update" : null,
@@ -4789,8 +4789,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 MessagesController.getInstance(currentAccount).ignoreSetOnline = true;
                                 Toast.makeText(getParentActivity(), "ignoreSetOnline = true;", Toast.LENGTH_SHORT).show();
                                 // SharedConfig.toggleRoundCamera16to9();
-                            } else if (which == 9) { // Check app update
-                                ((LaunchActivity) getParentActivity()).checkAppUpdate(true, null);
                             } else if (which == 10) { // Read all chats
                                 getMessagesStorage().readAllDialogs(-1);
                             } else if (which == 11) { // Voip audio effects
