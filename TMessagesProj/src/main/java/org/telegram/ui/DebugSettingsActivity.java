@@ -70,7 +70,6 @@ public class DebugSettingsActivity extends UniversalFragment {
     private static final int ID_CLEAR_MEDIA_CACHE = 8;
     private static final int ID_CALL_SETTINGS = 9;
     private static final int ID_VOIP_AUDIO_EFFECTS = 11;
-    private static final int ID_CLEAN_APP_UPDATE = 12;
     private static final int ID_RESET_SUGGESTIONS = 13;
     private static final int ID_CLEAR_WEBVIEW_CACHE = 14;
     private static final int ID_CLEAR_WEBVIEW_COOKIES = 15;
@@ -167,7 +166,6 @@ public class DebugSettingsActivity extends UniversalFragment {
             items.add(UItem.asCheck(ID_LOGS, getString(R.string.DebugMenuEnableLogs)).setChecked(BuildVars.LOGS_ENABLED));
         }
         if (BuildVars.DEBUG_PRIVATE_VERSION) {
-            items.add(UItem.asButton(ID_CLEAN_APP_UPDATE, "Clean app update"));
             items.add(UItem.asButton(ID_SHARE_DEVICE_INFO, "Share device info"));
             items.add(UItem.asButton(ID_PERFORMANCE_CLASS, "Force performance class"));
         }
@@ -284,11 +282,6 @@ public class DebugSettingsActivity extends UniversalFragment {
                 break;
             case ID_VOIP_AUDIO_EFFECTS:
                 SharedConfig.toggleDisableVoiceAudioEffects();
-                break;
-            case ID_CLEAN_APP_UPDATE:
-                SharedConfig.pendingAppUpdate = null;
-                SharedConfig.saveConfig();
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
                 break;
             case ID_RESET_SUGGESTIONS: {
                 Set<String> suggestions = getMessagesController().pendingSuggestions;
