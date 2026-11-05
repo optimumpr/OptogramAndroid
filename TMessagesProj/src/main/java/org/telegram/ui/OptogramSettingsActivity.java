@@ -6,11 +6,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import org.telegram.messenger.BirthdayController;
 import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.UserConfig;
-import org.telegram.ui.ActionBar.AlertDialog;
-import org.telegram.ui.Cells.TextCell;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBar;
@@ -100,38 +96,6 @@ public class OptogramSettingsActivity extends BaseFragment {
             disablePromoCell.setChecked(enabled);
         });
 
-
-        TextCell diagnosticCell = new TextCell(context);
-        diagnosticCell.setText("Birthday Reminder Diagnostics", false);
-        layout.addView(diagnosticCell, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        diagnosticCell.setOnClickListener(v -> {
-            boolean remindersDisabled = preferences.getBoolean("disableBirthdayReminder", false);
-            boolean setupDisabled = preferences.getBoolean("disablePromo", false);
-            boolean birthdaysToday = BirthdayController.getInstance(currentAccount).contains();
-            MessagesController controller = MessagesController.getInstance(currentAccount);
-            boolean setupSuggested = controller.pendingSuggestions.contains("BIRTHDAY_SETUP");
-            boolean hasBirthday = controller.getUserFull(UserConfig.getInstance(currentAccount).getClientUserId()) != null
-                    && controller.getUserFull(UserConfig.getInstance(currentAccount).getClientUserId()).birthday != null;
-            boolean reminderAllowed = DialogsActivity.isOptogramBirthdayHintAllowed(remindersDisabled);
-            boolean setupAllowed = DialogsActivity.isOptogramBirthdayHintAllowed(setupDisabled);
-            boolean gateTestPassed = !DialogsActivity.isOptogramBirthdayHintAllowed(true)
-                    && DialogsActivity.isOptogramBirthdayHintAllowed(false);
-            String report = "Today\u0027s birthdays available: " + birthdaysToday
-                    + "\nBirthday reminder disabled: " + remindersDisabled
-                    + "\nBirthday reminder gate: " + (reminderAllowed ? "ALLOW" : "SUPPRESS")
-                    + "\n\nBirthday setup suggested: " + setupSuggested
-                    + "\nBirthday already configured: " + hasBirthday
-                    + "\nBirthday setup disabled: " + setupDisabled
-                    + "\nBirthday setup gate: " + (setupAllowed ? "ALLOW" : "SUPPRESS")
-                    + "\n\nSynthetic gate test (enabled and disabled): " + (gateTestPassed ? "PASS" : "FAIL")
-                    + "\n\nThis checks the same preference gates used by the chat-list banners. It does not create birthdays, request suggestions, or prove that a banner would otherwise appear.";
-            showDialog(new AlertDialog.Builder(context)
-                    .setTitle("Birthday Reminder Diagnostics")
-                    .setMessage(report)
-                    .setPositiveButton("OK", null)
-                    .create());
-        });
 
         return fragmentView;
     }
