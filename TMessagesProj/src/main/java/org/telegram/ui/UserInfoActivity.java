@@ -431,7 +431,7 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
                 items.add(SettingsActivity.AccountCell.Factory.of(account, account, accountNumbers.size() > 1));
             }
             adapter.reorderSectionEnd();
-            if (!UserConfig.hasPremiumOnAccounts()) {
+            if (!UserConfig.hasPremiumOnAccounts() && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
                 final int moreAccounts = Math.max(0, UserConfig.getMaxAccountCount() - UserConfig.getActivatedAccountsCount());
                 items.add(UItem.asShadow(
                     TextUtils.concat(
@@ -486,12 +486,12 @@ public class UserInfoActivity extends UniversalFragment implements NotificationC
                     }
                 }
             }
-            if (!UserConfig.hasPremiumOnAccounts()) {
+            if (!UserConfig.hasPremiumOnAccounts() && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
                 freeAccounts -= (UserConfig.MAX_ACCOUNT_COUNT - UserConfig.MAX_ACCOUNT_DEFAULT_COUNT);
             }
             if (freeAccounts > 0 && availableAccount != null) {
                 presentFragment(new LoginActivity(availableAccount));
-            } else if (!UserConfig.hasPremiumOnAccounts()) {
+            } else if (!UserConfig.hasPremiumOnAccounts() && !org.telegram.messenger.MessagesController.getGlobalMainSettings().getBoolean("localPremium", false)) {
                 showDialog(new LimitReachedBottomSheet(this, getContext(), TYPE_ACCOUNTS, currentAccount, null));
             }
         } else if (item.id == BUTTON_BIRTHDAY || item.id == INFO_BIRTHDAY) {
