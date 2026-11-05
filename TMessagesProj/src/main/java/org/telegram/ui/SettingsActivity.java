@@ -1518,7 +1518,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 null, // Forkgram app update check disabled; preserve debug menu indices
                 getString("DebugMenuReadAllDialogs", R.string.DebugMenuReadAllDialogs),
                 BuildVars.DEBUG_PRIVATE_VERSION ? SharedConfig.disableVoiceAudioEffects ? "Enable voip audio effects" : "Disable voip audio effects" : null,
-                BuildVars.DEBUG_PRIVATE_VERSION ? "Clean app update" : null,
+                null, // App update debug action removed; preserve menu indices
                 BuildVars.DEBUG_PRIVATE_VERSION ? "Reset suggestions" : null,
                 BuildVars.DEBUG_PRIVATE_VERSION ? getString(R.string.DebugMenuClearWebViewCache) : null,
                 getString(R.string.DebugMenuClearWebViewCookies),
@@ -1629,10 +1629,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 getMessagesStorage().readAllDialogs(-1);
             } else if (which == 11) { // Voip audio effects
                 SharedConfig.toggleDisableVoiceAudioEffects();
-            } else if (which == 12) { // Clean app update
-                SharedConfig.pendingAppUpdate = null;
-                SharedConfig.saveConfig();
-                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
+            } else if (which == 12) { // App update debug action removed
             } else if (which == 13) { // Reset suggestions
                 Set<String> suggestions = getMessagesController().pendingSuggestions;
                 suggestions.add("VALIDATE_PHONE_NUMBER");
