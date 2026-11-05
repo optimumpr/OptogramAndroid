@@ -1325,7 +1325,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
 
     @Override
     public boolean onBackPressed(boolean invoked) {
-        if (simpleActionBar.isSearchFieldVisible()) {
+        if (simpleActionBar != null && simpleActionBar.isSearchFieldVisible()) {
             if (invoked) simpleActionBar.closeSearchField();
             return false;
         }
