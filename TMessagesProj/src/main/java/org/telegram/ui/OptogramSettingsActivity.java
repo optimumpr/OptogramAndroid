@@ -70,38 +70,6 @@ public class OptogramSettingsActivity extends BaseFragment {
                 + "subscription-only server features.");
         layout.addView(information, LayoutHelper.createLinear(
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        TextCheckCell webLoginCell = new TextCheckCell(context);
-        webLoginCell.setTextAndCheck(
-                "Disable Automatic Web Login",
-                preferences.getBoolean("disableAutowebLogin", false),
-                false);
-        layout.addView(webLoginCell, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        webLoginCell.setOnClickListener(v -> {
-            boolean enabled = !preferences.getBoolean("disableAutowebLogin", false);
-            preferences.edit().putBoolean("disableAutowebLogin", enabled).apply();
-            webLoginCell.setChecked(enabled);
-        });
-
-        TextInfoPrivacyCell webLoginDescription = new TextInfoPrivacyCell(context);
-        webLoginDescription.setText(
-                "Prevents automatic login tokens from being appended to links for Telegram-approved domains.");
-        layout.addView(webLoginDescription, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-
-        TextCheckCell botOpenCell = new TextCheckCell(context);
-        botOpenCell.setTextAndCheck(
-                "Disable Open Bot Button",
-                preferences.getBoolean("disableOpenBotButton", false),
-                false);
-        layout.addView(botOpenCell, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        botOpenCell.setOnClickListener(v -> {
-            boolean enabled = !preferences.getBoolean("disableOpenBotButton", false);
-            preferences.edit().putBoolean("disableOpenBotButton", enabled).apply();
-            botOpenCell.setChecked(enabled);
-        });
-
         TextCheckCell birthdayReminderCell = new TextCheckCell(context);
         birthdayReminderCell.setTextAndCheck(
                 "Disable Birthday Reminder",
@@ -127,26 +95,6 @@ public class OptogramSettingsActivity extends BaseFragment {
             preferences.edit().putBoolean("disablePromo", enabled).apply();
             disablePromoCell.setChecked(enabled);
         });
-
-
-        TextCheckCell hidePhoneCell = new TextCheckCell(context);
-        hidePhoneCell.setTextAndCheck(
-                "Hide Phone Number in Profiles",
-                preferences.getBoolean("hidePhoneNumber", false),
-                false);
-        layout.addView(hidePhoneCell, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        hidePhoneCell.setOnClickListener(v -> {
-            boolean enabled = !preferences.getBoolean("hidePhoneNumber", false);
-            preferences.edit().putBoolean("hidePhoneNumber", enabled).apply();
-            hidePhoneCell.setChecked(enabled);
-        });
-
-        TextInfoPrivacyCell hidePhoneDescription = new TextInfoPrivacyCell(context);
-        hidePhoneDescription.setText(
-                "Masks phone numbers in supported Optogram screens only. This does not change your Telegram account's phone-number privacy or contact sharing settings.");
-        layout.addView(hidePhoneDescription, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
 
         TextCheckCell archivePullCell = new TextCheckCell(context);

@@ -161,6 +161,9 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_DISABLE_ADS = 105;
     public static final int ID_OPTOGRAM_HIDE_DEVICE_INFO = 106;
     public static final int ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION = 107;
+    public static final int ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN = 108;
+    public static final int ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON = 109;
+    public static final int ID_OPTOGRAM_HIDE_PHONE_NUMBER = 110;
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
@@ -546,6 +549,12 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableDeviceInfo", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION, "Disable WebView Geolocation", "Block geolocation requests in newly opened bot webviews")
             .setChecked(pref("disableWebViewGeolocation", true)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN, "Disable Automatic Web Login", "Prevent automatic login tokens on Telegram-approved links")
+            .setChecked(pref("disableAutowebLogin", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON, "Disable Open Bot Button", null)
+            .setChecked(pref("disableOpenBotButton", false)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PHONE_NUMBER, "Hide Phone Number in Profiles", "Masks phone numbers in supported Optogram screens; does not change Telegram privacy settings")
+            .setChecked(pref("hidePhoneNumber", false)).setMultiline(true));
         items.add(UItem.asSettingsCell(ID_OPTOGRAM_PREFERENCES, "More Optogram Preferences", "Additional privacy and customization"));
         items.add(UItem.asShadow(null));
 
@@ -819,6 +828,12 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("disableDeviceInfo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION) {
             toggle("disableWebViewGeolocation", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN) {
+            toggle("disableAutowebLogin", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON) {
+            toggle("disableOpenBotButton", item, view);
+        } else if (id == ID_OPTOGRAM_HIDE_PHONE_NUMBER) {
+            toggle("hidePhoneNumber", item, view);
         } else if (id == ID_OPTOGRAM_PREFERENCES) {
             presentFragment(new OptogramSettingsActivity());
         } else if (id == ID_HIDDEN_ACCOUNTS) {
