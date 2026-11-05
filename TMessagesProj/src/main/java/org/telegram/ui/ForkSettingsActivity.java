@@ -158,6 +158,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_LASTFM_LOGIN = 90;
 
     public static final int ID_OPTOGRAM_PREFERENCES = 104;
+    public static final int ID_OPTOGRAM_DISABLE_ADS = 105;
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
@@ -537,7 +538,9 @@ public class ForkSettingsActivity extends BaseFragment {
 
     private void fillSettings(ArrayList<UItem> items) {
         items.add(UItem.asHeader("Optogram"));
-        items.add(UItem.asSettingsCell(ID_OPTOGRAM_PREFERENCES, "Optogram Preferences", "Privacy and customization"));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_ADS, "Hide Sponsored Messages", "Hide channel and bot sponsored messages")
+            .setChecked(pref("disableAds", true)));
+        items.add(UItem.asSettingsCell(ID_OPTOGRAM_PREFERENCES, "More Optogram Preferences", "Additional privacy and customization"));
         items.add(UItem.asShadow(null));
 
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
@@ -804,6 +807,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("showNotificationContent", item, view);
         } else if (id == ID_DROP_SCREENSHOT_CAPTION) {
             toggle("dropScreenshotCaption", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_ADS) {
+            toggle("disableAds", item, view);
         } else if (id == ID_OPTOGRAM_PREFERENCES) {
             presentFragment(new OptogramSettingsActivity());
         } else if (id == ID_HIDDEN_ACCOUNTS) {
