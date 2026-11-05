@@ -774,7 +774,6 @@ public class ForkSettingsActivity extends BaseFragment {
         if (pref("webSocketTransport", false)) {
             items.add(UItem.asSettingsCell(ID_WEBSOCKET_DOMAIN, LocaleController.getString(R.string.WebSocketDomain), getWebSocketDomainText()));
         }
-        items.add(UItem.asSettingsCell(ID_UNIFIED_PUSH, LocaleController.getString(R.string.UnifiedPush), null));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
             items.add(UItem.asButtonCheck(ID_SATELLITE_DATA_SAVING, LocaleController.getString(R.string.SatelliteDataSaving), LocaleController.getString(R.string.SatelliteDataSavingInfo))
                 .setChecked(pref("satelliteDataSaving", true)).setMultiline(true));
@@ -1011,8 +1010,6 @@ public class ForkSettingsActivity extends BaseFragment {
             listView.adapter.update(true);
         } else if (id == ID_WEBSOCKET_DOMAIN) {
             showWebSocketDomainDialog();
-        } else if (id == ID_UNIFIED_PUSH) {
-            presentFragment(new NotificationsSettingsActivity().highlightUnifiedPush());
         } else if (id == ID_SATELLITE_DATA_SAVING) {
             ForkSettings.applyEffect(currentAccount, "satelliteDataSaving", toggle("satelliteDataSaving", item, view));
         } else if (id == ID_UPDATE_CHECK_INTERVAL) {
