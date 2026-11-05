@@ -735,12 +735,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         items.add(SettingCell.Factory.of(10, IconBackgroundColors.PURPLE.top, IconBackgroundColors.PURPLE.bottom, R.drawable.settings_language, getString(R.string.SettingsLanguage), LocaleController.getCurrentLanguageName()));
         items.add(SettingCell.Factory.of(27, 0xFF55CA47, 0xFF27B434, R.drawable.jaguars, "Optogram Settings", "Privacy, customization, and advanced settings"));
 
-        {
-            items.add(UItem.asShadow(null));
-            items.add(UItem.asHeader("Updates"));
-            items.add(SettingCell.Factory.of(99, IconBackgroundColors.BLUE_DEEP.top, IconBackgroundColors.BLUE_DEEP.bottom, R.drawable.settings_check_update, getString(R.string.ForkCheckUpdate)));
-        }
-
         items.add(UItem.asShadow(null));
         if (!walletAbove && getMessagesController().config.walletAvailable.get()) {
             final GramWallet wallet = GramWallet.getInstance(currentAccount);
@@ -905,10 +899,6 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             case 98:
                 presentFragment(new ForkSettingsActivity());
                 break;
-            case 99:
-                ((LaunchActivity) getParentActivity()).checkAppUpdate(true, null);
-                break;
-
             case 17:
                 showDialog(AlertsCreator.createSupportAlert(this, resourceProvider));
                 break;
