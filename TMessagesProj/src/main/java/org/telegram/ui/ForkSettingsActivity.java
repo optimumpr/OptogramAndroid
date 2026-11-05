@@ -159,6 +159,8 @@ public class ForkSettingsActivity extends BaseFragment {
 
     public static final int ID_OPTOGRAM_PREFERENCES = 104;
     public static final int ID_OPTOGRAM_DISABLE_ADS = 105;
+    public static final int ID_OPTOGRAM_HIDE_DEVICE_INFO = 106;
+    public static final int ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION = 107;
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
@@ -540,6 +542,10 @@ public class ForkSettingsActivity extends BaseFragment {
         items.add(UItem.asHeader("Optogram"));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_ADS, "Hide Sponsored Messages", "Hide channel and bot sponsored messages")
             .setChecked(pref("disableAds", true)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_DEVICE_INFO, "Hide Device Information", "Report Unknown device model and Android version; restart required")
+            .setChecked(pref("disableDeviceInfo", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION, "Disable WebView Geolocation", "Block geolocation requests in newly opened bot webviews")
+            .setChecked(pref("disableWebViewGeolocation", true)).setMultiline(true));
         items.add(UItem.asSettingsCell(ID_OPTOGRAM_PREFERENCES, "More Optogram Preferences", "Additional privacy and customization"));
         items.add(UItem.asShadow(null));
 
@@ -809,6 +815,10 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("dropScreenshotCaption", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_ADS) {
             toggle("disableAds", item, view);
+        } else if (id == ID_OPTOGRAM_HIDE_DEVICE_INFO) {
+            toggle("disableDeviceInfo", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION) {
+            toggle("disableWebViewGeolocation", item, view);
         } else if (id == ID_OPTOGRAM_PREFERENCES) {
             presentFragment(new OptogramSettingsActivity());
         } else if (id == ID_HIDDEN_ACCOUNTS) {

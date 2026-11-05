@@ -70,27 +70,6 @@ public class OptogramSettingsActivity extends BaseFragment {
                 + "subscription-only server features.");
         layout.addView(information, LayoutHelper.createLinear(
                 LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        TextCheckCell deviceInfoCell = new TextCheckCell(context);
-        deviceInfoCell.setTextAndCheck(
-                "Hide Device Information",
-                preferences.getBoolean("disableDeviceInfo", false),
-                false);
-        layout.addView(deviceInfoCell, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        deviceInfoCell.setOnClickListener(v -> {
-            boolean enabled = !preferences.getBoolean("disableDeviceInfo", false);
-            preferences.edit().putBoolean("disableDeviceInfo", enabled).apply();
-            deviceInfoCell.setChecked(enabled);
-        });
-
-        TextInfoPrivacyCell deviceInfoDescription = new TextInfoPrivacyCell(context);
-        deviceInfoDescription.setText(
-                "Reports Unknown instead of the device model and Android version "
-                + "when initializing Telegram connections. Restart Optogram after changing this setting.");
-        layout.addView(deviceInfoDescription, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-
-
         TextCheckCell webLoginCell = new TextCheckCell(context);
         webLoginCell.setTextAndCheck(
                 "Disable Automatic Web Login",
@@ -122,25 +101,6 @@ public class OptogramSettingsActivity extends BaseFragment {
             preferences.edit().putBoolean("disableOpenBotButton", enabled).apply();
             botOpenCell.setChecked(enabled);
         });
-
-        TextCheckCell webGeolocationCell = new TextCheckCell(context);
-        webGeolocationCell.setTextAndCheck(
-                "Disable WebView Geolocation",
-                preferences.getBoolean("disableWebViewGeolocation", true),
-                false);
-        layout.addView(webGeolocationCell, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-        webGeolocationCell.setOnClickListener(v -> {
-            boolean disabled = !preferences.getBoolean("disableWebViewGeolocation", true);
-            preferences.edit().putBoolean("disableWebViewGeolocation", disabled).apply();
-            webGeolocationCell.setChecked(disabled);
-        });
-
-        TextInfoPrivacyCell webGeolocationDescription = new TextInfoPrivacyCell(context);
-        webGeolocationDescription.setText(
-                "Blocks geolocation requests from newly opened embedded bot webviews unless you enable them.");
-        layout.addView(webGeolocationDescription, LayoutHelper.createLinear(
-                LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
         TextCheckCell birthdayReminderCell = new TextCheckCell(context);
         birthdayReminderCell.setTextAndCheck(
