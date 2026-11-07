@@ -2669,10 +2669,16 @@ public class ImageLoader {
             file.write(buffer);
             file.close();
             file = null;
-            boolean canRename = srcFile.renameTo(dstFile);
+            // On scoped-storage Android versions, renaming between app cache and
+            // media directories may trigger a denied SELinux relabel operation.
+            // Test the transfer using a copy instead; the destination gets its
+            // own filesystem label and no relabel permission is required.
+            boolean canTransfer = Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+                    ? AndroidUtilities.copyFile(srcFile, dstFile)
+                    : srcFile.renameTo(dstFile);
             srcFile.delete();
             dstFile.delete();
-            if (canRename) {
+            if (canTransfer) {
                 return true;
             }
         } catch (Exception e) {
