@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.InstallSourceInfo;
 import android.content.pm.PackageInfo;
+import android.net.ConnectivityManager;
+import android.net.LinkAddress;
+import android.net.LinkProperties;
+import android.net.Network;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.SystemClock;
@@ -1387,6 +1391,58 @@ public class ConnectionsManager extends BaseController {
 
     @SuppressLint("NewApi")
     protected byte getIpStrategy() {
+        // NetworkInterface enumeration can issue privileged netlink requests on
+        // Android 11+, which are denied to ordinary application processes.
+        // Query the active network through ConnectivityManager instead.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                ConnectivityManager connectivityManager = (ConnectivityManager)
+                        ApplicationLoader.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+                if (connectivityManager != null) {
+                    Network activeNetwork = connectivityManager.getActiveNetwork();
+                    LinkProperties properties = activeNetwork != null
+                            ? connectivityManager.getLinkProperties(activeNetwork) : null;
+                    if (properties != null) {
+                        boolean hasIpv4 = false;
+                        boolean hasIpv6 = false;
+                        boolean hasStrangeIpv4 = false;
+                        for (LinkAddress linkAddress : properties.getLinkAddresses()) {
+                            InetAddress address = linkAddress.getAddress();
+                            if (address.isLinkLocalAddress() || address.isLoopbackAddress() || address.isMulticastAddress()) {
+                                continue;
+                            }
+                            if (address instanceof Inet6Address) {
+                                hasIpv6 = true;
+                            } else if (address instanceof Inet4Address) {
+                                if (address.getHostAddress().startsWith("192.0.0.")) {
+                                    hasStrangeIpv4 = true;
+                                } else {
+                                    hasIpv4 = true;
+                                }
+                            }
+                        }
+                        if (hasIpv6) {
+                            if (forceTryIpV6 || !hasIpv4) {
+                                return USE_IPV6_ONLY;
+                            }
+                            if (hasStrangeIpv4) {
+                                return USE_IPV4_IPV6_RANDOM;
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+            // If no active network information is available, retain the
+            // conservative default without falling back to netlink probing.
+            return USE_IPV4_ONLY;
+        }
+        return getLegacyIpStrategy();
+    }
+
+    @SuppressLint("NewApi")
+    private byte getLegacyIpStrategy() {
         if (Build.VERSION.SDK_INT < 19) {
             return USE_IPV4_ONLY;
         }
