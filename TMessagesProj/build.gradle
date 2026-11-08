@@ -114,6 +114,27 @@ def getStringForConfig(String s) {
 }
 
 def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)
+
+def localTelegramApiProperties = new Properties()
+def localTelegramApiFile = rootProject.file('local.properties')
+if (localTelegramApiFile.exists()) {
+    localTelegramApiFile.withInputStream { stream ->
+        localTelegramApiProperties.load(stream)
+    }
+}
+def telegramApiProperty = { String name ->
+    def localValue = localTelegramApiProperties.getProperty(name)
+    def value = localValue != null && localValue.trim() ? localValue.trim() : project.findProperty(name)?.toString()?.trim()
+    if (value == null || !value || value == '0') {
+        throw new GradleException("Missing valid ${name}: set it in the ignored root local.properties")
+    }
+    return value
+}
+def telegramApiId = telegramApiProperty('APP_ID')
+def telegramApiHash = telegramApiProperty('APP_HASH')
+if (!(telegramApiId ==~ /[0-9]+/) || telegramApiId.toLong() > Integer.MAX_VALUE || !(telegramApiHash ==~ /[0-9a-fA-F]{32}/)) {
+    throw new GradleException("Invalid Telegram API credentials: check APP_ID and APP_HASH in local.properties")
+}
 android {
     compileSdkVersion 36
     buildToolsVersion '36.0.0'
@@ -158,8 +179,8 @@ android {
         multiDexEnabled true
 
         //obtain your own keys at https://core.telegram.org/api/obtaining_api_id
-        buildConfigField 'int', 'APP_ID', APP_ID
-        buildConfigField 'String', 'APP_HASH', getStringForConfig(APP_HASH)
+        buildConfigField 'int', 'APP_ID', telegramApiId
+        buildConfigField 'String', 'APP_HASH', getStringForConfig(telegramApiHash)
         buildConfigField 'int', 'USER_ID_OWNER', USER_ID_OWNER
         buildConfigField 'String', 'USER_REPO', getStringForConfig(USER_REPO)
         buildConfigField 'int', 'CHECK_UPDATES', CHECK_UPDATES
