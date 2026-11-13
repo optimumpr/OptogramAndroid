@@ -1,5 +1,6 @@
 package org.telegram.messenger;
 
+import android.os.Build;
 import android.text.TextUtils;
 
 import java.io.BufferedReader;
@@ -20,6 +21,10 @@ public final class EmuInputDevicesDetector {
     }
 
     public static boolean detect() {
+        // Modern Android restricts /proc/bus/input/devices to privileged processes.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return false;
+        }
         final List<String> deviceNames = getInputDevicesNames();
 
         if (deviceNames != null) {
