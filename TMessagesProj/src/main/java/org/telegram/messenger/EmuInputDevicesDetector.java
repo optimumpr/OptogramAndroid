@@ -1,6 +1,8 @@
 package org.telegram.messenger;
 
+import android.os.Build;
 import android.text.TextUtils;
+import android.view.InputDevice;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public final class EmuInputDevicesDetector {
 
@@ -20,18 +23,34 @@ public final class EmuInputDevicesDetector {
     }
 
     public static boolean detect() {
-        final List<String> deviceNames = getInputDevicesNames();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            for (int id : InputDevice.getDeviceIds()) {
+                InputDevice device = InputDevice.getDevice(id);
+                if (device != null && matchesEmulatorName(device.getName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
+        final List<String> deviceNames = getInputDevicesNames();
         if (deviceNames != null) {
             for (String deviceName : deviceNames) {
-                for (String restrictedDeviceName : RESTRICTED_DEVICES) {
-                    if (deviceName.toLowerCase().contains(restrictedDeviceName)) {
-                        return true;
-                    }
+                if (matchesEmulatorName(deviceName)) {
+                    return true;
                 }
             }
         }
+        return false;
+    }
 
+    private static boolean matchesEmulatorName(String name) {
+        String normalizedName = name.toLowerCase(Locale.ROOT);
+        for (String emulatorName : RESTRICTED_DEVICES) {
+            if (normalizedName.contains(emulatorName)) {
+                return true;
+            }
+        }
         return false;
     }
 
