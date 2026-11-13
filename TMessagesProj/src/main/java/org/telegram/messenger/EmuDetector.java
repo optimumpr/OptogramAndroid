@@ -111,8 +111,7 @@ public class EmuDetector {
             new Property("ro.kernel.qemu", "1"),
             new Property("ro.product.device", "generic"),
             new Property("ro.product.model", "sdk"),
-            new Property("ro.product.name", "sdk"),
-            new Property("ro.serialno", null)
+            new Property("ro.product.name", "sdk")
     };
 
     private static final String IP = "10.0.2.15";
@@ -220,8 +219,7 @@ public class EmuDetector {
                         || Build.PRODUCT.equals("google_sdk")
                         || Build.PRODUCT.equals("sdk_x86")
                         || Build.PRODUCT.equals("vbox86p")
-                        || Build.PRODUCT.toLowerCase().contains("nox")
-                        || Build.SERIAL.toLowerCase().contains("nox");
+                        || Build.PRODUCT.toLowerCase().contains("nox");
 
         if (result) {
             return true;
@@ -240,7 +238,7 @@ public class EmuDetector {
                 || checkFiles(ANDY_FILES, EmulatorTypes.ANDY)
                 || checkFiles(NOX_FILES, EmulatorTypes.NOX)
                 || checkFiles(BLUE_FILES, EmulatorTypes.BLUE)
-                || checkQEmuDrivers()
+                || (Build.VERSION.SDK_INT < Build.VERSION_CODES.R && checkQEmuDrivers())
                 || checkFiles(PIPES, EmulatorTypes.PIPES)
                 || checkIp()
                 || (checkQEmuProps() && checkFiles(X86_FILES, EmulatorTypes.X86));
