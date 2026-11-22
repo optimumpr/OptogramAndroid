@@ -40,7 +40,7 @@ Four integrated, eight skipped, and twelve deferred. Resume with
 | `445094d84` | Add wav and wav_x support, based on commit by Attorelle | DEFERRED | WAV document recognition is already present through d2d2ce007. The legacy ExoPlayer classes are absent and the current build uses Media3. Decoder capability for x-wav and the active FFmpeg configuration still need verification. |
 | `801611b26` | Change app id | SKIPPED | 9c55abd6b already sets the Optogram application ID for the primary build. Keep newer flavor identities and signing behavior. |
 | `28555ec88` | Modify some icons | DEFERRED | The intro and numbered launcher images overlap later art edits. Review the final artwork per density and alias before replacing assets. |
-| `92cd90726` | Option to autolock the app immediately | DEFERRED | The setting remains absent. Review the later split port 1fa893219, 79f5a0308, 30ac0f4b2, and cb2193038 against current passcode lifecycle and multi-window behavior as one unit. |
+| `92cd90726` | Option to autolock the app immediately | INTEGRATED IN BATCH 6 | The later split port 1fa893219, 79f5a0308, 30ac0f4b2, and cb2193038 supplies the final implementation. Batch 6 also audited the current external-action and media-session paths. Earlier batch totals reflect dispositions at the time of review. |
 | `7730b5284` | Do not save qr login state | SKIPPED | Explicitly reversed by f0c897424. Preserve current QR login state handling. |
 | `97f3ca747` | Change background color | INTEGRATED | Apply the final darker gradient from 3bc748250 to the current standalone icon background resource. |
 | `f0c897424` | Revert "Do not save qr login state" | SKIPPED | Reverses 7730b5284. Neither change is needed to preserve the existing QR login state path. |
@@ -204,3 +204,55 @@ Resume with `df46603c8` (Treat local Premium as acknowledged in feature preview 
 | `3bc2e94d73` | Restore original Optogram sponsored-message suppression in chat rendering | SKIPPED | Existing integration gates sponsored chat messages and the bot ad panel through disableAds. |
 | `8d1ca233f5` | Expose original Optogram hide-sponsored-messages switch with default enabled | SKIPPED | The unified switch already defaults to suppressing sponsored messages. |
 | `32473dd021` | Hide Premium subscription tiers and purchase footer for local Premium UI | INTEGRATED | Hide the tier chooser and purchase footer for local-only Premium preview. Both footer update sites share the eligibility check. Preserve subscription upgrades for actual subscribers and keep Business purchase UI unchanged. |
+
+## Batch 6
+
+Baseline `f3a55a475`. Examined the next 30 first-parent commits on the 13.1.1
+port, `df46603c8` through `b401f0bb9` inclusive. 5 integrated,
+25 skipped, and 0 deferred.
+Resume with `7a7832f51` (Expose Optogram preferences within combined Forkgram settings).
+
+Birthday settings audit found one switch for each of `disableBirthdayReminder`
+and `disablePromo`. Both settings and their production hint conditions use
+`false` for the suppression default. `DialogsActivity.onResume()` refreshes
+both hints. The separate `hidePremiumSpeedPromo` setting retains its own
+consumer. No birthday correction was needed.
+
+The Local Premium acknowledgement uses the sheet's existing account and stays
+within the UI. It does not mark another user as Premium or change server status.
+The subscribed-subtitle deferral remains independent. DNS, reconnect behavior,
+updater retirement, launcher artwork and Media3 WAV support had no final port
+in this range and remain open.
+
+| Historical commit | Title | Disposition | Current behavior and follow-up |
+| --- | --- | --- | --- |
+| `df46603c84` | Treat local Premium as acknowledged in feature preview dialogs | INTEGRATED | Use the existing account's local UI eligibility for the acknowledgement overlay. Refresh on local and real Premium events. Keep gift and force-About handling and leave purchase and authorization methods intact. |
+| `217a531925` | Respect Optogram automatic web-login opt-out before attaching tokens | SKIPPED | Browser already checks the unified preference before attaching automatic web-login tokens. ChatActivity separately honors it for requestUrlAuth. |
+| `b69e847cdf` | Expose working automatic web-login privacy preference in Optogram settings | SKIPPED | The existing unified setting reads and writes disableAutowebLogin. |
+| `12ce442286` | Keep contacts sync opt-in visible and disabled by default throughout login | SKIPPED | LoginActivity already shows the opt-in during login and restores absent saved state as false. UserConfig also defaults off. |
+| `9d9003bac2` | Honor Optogram bot-open-button preference in DialogCell.java | SKIPPED | DialogCell already gates the bot open button on the same preference. |
+| `aa7c49d137` | Honor Optogram bot-open-button preference in ProfileSearchCell.java | SKIPPED | ProfileSearchCell already gates the bot open button on the same preference. |
+| `a290f48c60` | Expose correctly wired Optogram bot-open-button setting | SKIPPED | The unified screen already exposes disableOpenBotButton. |
+| `65718061b2` | Require channel admin rights at all affiliate controls visibility sites | SKIPPED | Batch 5 applied this final three-site admin gate under 3cd4f99a3. |
+| `1a0754fb94` | Default embedded bot WebView geolocation to disabled with explicit opt-in | SKIPPED | BotWebViewContainer already blocks geolocation by default and reads the explicit opt-in on WebView setup. |
+| `e8e7e9f693` | Add user-controlled WebView geolocation protection to Optogram settings | SKIPPED | The unified geolocation switch already uses disableWebViewGeolocation. |
+| `a2f119a899` | Release MediaActivity bulletin delegate when fragment is destroyed | SKIPPED | 32cb2f3e7 already removes the delegate during fragment teardown. |
+| `c4c47087bc` | Tag active VoIP call vibration with ringtone audio usage | SKIPPED | edd16759f already restores ringtone attributes in active VoIPService. |
+| `1fa8932199` | Restore immediate passcode auto-lock option in settings | INTEGRATED | Expose the saved one-second sentinel as Immediately using a string resource. Keep current durations, persistence, and picker navigation. |
+| `79f5a03082` | Honor immediate passcode auto-lock in AndroidUtilities.java | INTEGRATED | Honor the sentinel in the existing passcode foreground/background gate and the newer media-session timestamp check. Preserve existing timed lock and clock rollback behavior. |
+| `30ac0f4b2e` | Honor immediate passcode auto-lock in BubbleActivity.java | INTEGRATED | Use the existing one-second guarded scheduling path for the sentinel in BubbleActivity. |
+| `cb21930383` | Honor immediate passcode auto-lock in LaunchActivity.java | INTEGRATED | Use the existing one-second guarded scheduling path in LaunchActivity and its external-action counterpart. Keep resume checks and runnable cancellation. |
+| `9b75d11e29` | Honor Optogram phone-number hiding in ProfileSearchCell.java | SKIPPED | ProfileSearchCell already masks the number when hidePhoneNumber is set. |
+| `2a4946a428` | Honor Optogram phone-number hiding in PrivacyUsersActivity.java | SKIPPED | 0df92bcda already covers the privacy exception list. |
+| `405d1b0fa9` | Respect phone-number masking in alternate profile layout | SKIPPED | ProfileActivity2 already masks the number using the unified preference. |
+| `144c5dd9c5` | Clarify that Optogram phone-number hiding is local display masking | SKIPPED | Current unified setting already explains the local display scope and distinguishes Telegram privacy settings. |
+| `298f3b7267` | Restore Optogram From Bot label in current chat message header renderer | SKIPPED | 95fc5eda4 already restores bot attribution in the current header. |
+| `b3f18d7423` | Add localized resource key for Optogram From Bot message label | SKIPPED | The IsFromBot resource is already present. |
+| `868489e246` | Restore From Channel attribution in modern megagroup message header | SKIPPED | 95fc5eda4 already restores channel attribution in the current header. |
+| `be15c8afb4` | Restore From Channel label string resource | SKIPPED | The IsFromChannel resource is already present. |
+| `7be3e6549f` | Restore participant joined date in modern member menu | SKIPPED | b8d4527e7 already covers the profile and member-management menus and preserves the actual server date on cache load. |
+| `4dcd7466ca` | Keep original member-menu eligibility when join date is unavailable | SKIPPED | Current profile eligibility requires either the original menu actions or a positive join date. |
+| `5c18722efe` | Avoid empty separator in joined-date-only member menu | SKIPPED | Current separators are conditional on preceding actions. |
+| `3355f82230` | Restore gated View Stats action for eligible channel posts | SKIPPED | e70acc85e already restores eligible channel-post statistics. |
+| `99722a785b` | Keep channel message stats separate from poll and ephemeral menus | SKIPPED | Current statistics action excludes polls and ephemeral posts and keeps the poll-specific action separate. |
+| `b401f0bb97` | Apply Hide Sponsored Messages preference to bot ad panel | SKIPPED | Current bot ad panel already checks disableAds with a true suppression default. |
