@@ -460,7 +460,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
         webView.setCloseListener(onCloseListener);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setGeolocationEnabled(true);
+        settings.setGeolocationEnabled(!MessagesController.getGlobalMainSettings().getBoolean("disableWebViewGeolocation", true));
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setSupportMultipleWindows(true);
