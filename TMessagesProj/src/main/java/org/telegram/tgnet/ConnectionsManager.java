@@ -943,7 +943,7 @@ public class ConnectionsManager extends BaseController {
                     currentTask = task;
                 } else {
                     if (BuildVars.LOGS_ENABLED) {
-                        FileLog.d("start google txt task");
+                        FileLog.d("start AdGuard TXT task");
                     }
                     AdguardDnsLoadTask task = new AdguardDnsLoadTask(currentAccount);
                     task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
@@ -1878,6 +1878,15 @@ public class ConnectionsManager extends BaseController {
                 } else {
                     if (BuildVars.LOGS_ENABLED) {
                         FileLog.d("failed to get mozilla txt result");
+                    }
+                    try {
+                        // An empty buffer marks the end of the fallback chain.
+                        NativeByteBuffer exhausted = new NativeByteBuffer(0);
+                        if (exhausted.address != 0) {
+                            native_applyDnsConfig(currentAccount, exhausted.address, "", 0);
+                        }
+                    } catch (Exception e) {
+                        FileLog.e(e);
                     }
                 }
             });

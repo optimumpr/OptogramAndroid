@@ -3654,6 +3654,12 @@ inline bool checkPhoneByPrefixesRules(std::string phone, std::string rules) {
 
 void ConnectionsManager::applyDnsConfig(NativeByteBuffer *buffer, std::string phone, int32_t date) {
     scheduleTask([&, buffer, phone, date] {
+        if (buffer->limit() == 0) {
+            requestingSecondAddress = 0;
+            requestingSecondAddressByTlsHashMismatch = false;
+            buffer->reuse();
+            return;
+        }
         int32_t realDate = date;
         if (LOGS_ENABLED) DEBUG_D("trying to decrypt config %d", requestingSecondAddress);
         TL_help_configSimple *config = Datacenter::decodeSimpleConfig(buffer);
@@ -3703,6 +3709,8 @@ void ConnectionsManager::applyDnsConfig(NativeByteBuffer *buffer, std::string ph
                 }
             }
             delete config;
+            requestingSecondAddress = 0;
+            requestingSecondAddressByTlsHashMismatch = false;
         } else {
             if (config == nullptr) {
                 if (LOGS_ENABLED) DEBUG_D("can't decrypt dns config");
@@ -3718,6 +3726,7 @@ void ConnectionsManager::applyDnsConfig(NativeByteBuffer *buffer, std::string ph
                 delegate->onRequestNewServerIpAndPort(requestingSecondAddress, instanceNum);
             } else {
                 requestingSecondAddress = 0;
+                requestingSecondAddressByTlsHashMismatch = false;
             }
         }
         buffer->reuse();
