@@ -367,7 +367,7 @@ public class ForkSettingsActivity extends BaseFragment {
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        actionBar.setTitle(LocaleController.getString(R.string.ForkSettingsTitle));
+        actionBar.setTitle("Optogram Settings");
         actionBar.setAllowOverlayTitle(true);
 
         if (AndroidUtilities.isTablet()) {
