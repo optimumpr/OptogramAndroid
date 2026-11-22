@@ -78,7 +78,7 @@ Six integrated, twelve skipped, and seven deferred. Resume with
 | `644f8d532` | Darken some backgrounds | DEFERRED | The gradient was already restored using the final colors through 49702b3ac. The badge still used by PickerBottomLayoutViewer has a newer xxhdpi asset. Treat the density family as a set and inspect nine-patch behavior before replacing it. |
 | `e22106d34` | Darken some backgrounds | INTEGRATED | Both Android style overlays still used the original blue values. Apply the matching gray theme colors. |
 | `7398d11e7` | Update Readme | SKIPPED | Old README and screenshot advertise 200-message selection and other historical states. Keep the current feature and release documentation. |
-| `45c60f861` | Reset disconnect timeout on successful connection, commit by @tehcneko | DEFERRED | Native reconnect and Java app-config refresh behavior both need review. The later 650332534 covers only the native timeout reset. Check current retry and lifecycle behavior before importing either part. Batch 3 related this to d60bd9b51 and 4dc4c401e through the shared recovery path. All three remain deferred. |
+| `45c60f861` | Reset disconnect timeout on successful connection, commit by @tehcneko | DEFERRED | Native reconnect and Java app-config refresh behavior both need review. The later 650332534 covers only the native timeout reset. Check current retry and lifecycle behavior before importing either part. Batch 3 related this to d60bd9b51 and 4dc4c401e through the shared recovery path. Batch 8 integrated the native reconnect reset and replaced Google lookups. The Java app-config refresh and native delegation switch remain deferred. |
 | `a557449fd` | fix some crashes | DEFERRED | The original leftBaseline change targets the old tablet initialization. Current code has a context guard, a cached tablet mode, and a user override. Revisit with a reproducible startup or layout failure. |
 
 ## Batch 3
@@ -309,3 +309,56 @@ and subscription subtitle remain open.
 | `b70e4143f0` | Fix disable autoweb login | SKIPPED | Browser and the separate ChatActivity URL-auth branch already check the corrected disableAutowebLogin key. |
 | `b440adabbd` | Disable Premium Promo | SKIPPED | DialogsActivity and the unified switch already use hidePremiumSpeedPromo for the download-speed promotion. |
 | `c960a92e92` | Make all launcher icons available without Premium | INTEGRATED | Apply the final launcher availability flags to the three affected icons. Keep aliases, artwork, and the existing selector implementation, which continues to honor local UI eligibility wherever an icon is marked Premium. |
+
+## Batch 8
+
+Baseline `b84a355070`. Examined the next 30 first-parent commits on the
+13.1.1 port, `3bc748250` through `106a5b257` inclusive.
+16 integrated, 9 skipped, and 5 deferred.
+Resume with `e583657a2` (Miscellaneous6).
+
+The early numbered launcher artwork deferrals are substantially covered by
+`0ba245d28` and the Default/Adaptive artwork sequence. App-level launcher
+resources and any density or flavor assets outside these patches remain for
+later reconciliation. No activity aliases were renamed.
+
+System hostname DNS and final AdGuard/Cloudflare datacenter recovery replace
+the earlier deferred Google-specific routes. Java delegation remains enabled for
+asynchronous and IPv6-capable resolution. Native timeout reset is integrated,
+while app-config refresh remains open. Updater retirement advanced through the
+automatic, primary Settings and debug routes, with current standalone prompts
+and pending-update recovery still in place. The 200-item limits, Media3 WAV,
+avatar and Stealth Mode paths, and subscription subtitle remain deferred.
+
+| Historical commit | Title | Disposition | Current behavior and follow-up |
+| --- | --- | --- | --- |
+| `3bc7482500` | Restore dark original launcher icon background | SKIPPED | The standalone gradient matches the historical blob byte-for-byte through 49702b3ac. |
+| `0ba245d28a` | Edit some launcher icons | INTEGRATED | The numbered launcher artwork patch applies against the current source blobs. Carry its PNG variants together, including the Aqua selector foreground mapping. Manifest aliases are unchanged. |
+| `8af4e3e01d` | Remove app update entry from settings | INTEGRATED | Remove the primary Settings update row and handler. Keep the Optogram settings entry and other Settings actions. |
+| `e0d1359286` | Disable automatic Forkgram app update checks | INTEGRATED | Remove the automatic updater call on resume. Keep existing pending update and terms handling. |
+| `360b66b0b8` | Remove Forkgram update check from debug menu | INTEGRATED | Remove the check action from the current DebugSettingsActivity and the alternate ProfileActivity debug menu. Keep the positional debug IDs intact. |
+| `11149574e5` | Remove obsolete app update debug action | DEFERRED | The clean action is still a recovery route for a stored pending update. Decide its fate with the current update gate when the remaining updater is retired. |
+| `202aa1f9bb` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Align the Default and Adaptive selector previews with the historical original artwork resources. |
+| `33bb3f6768` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the regular Default alias foreground/background. Use the existing plane mask for themed icons. |
+| `98a7c8788f` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the round Default alias foreground/background and keep the plane monochrome asset. |
+| `46d9480f24` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the Adaptive alias foreground/background and keep the plane monochrome asset. Preserve manifest component names and API qualifiers. |
+| `d189f6a0b5` | Remove unused Forkgram app updater entry point | DEFERRED | The currently used overload still serves standalone update prompts from ChatActivity, ChannelAdminLogActivity, and PeerStoriesView and the alternate settings row. The other overload performs Telegram update RPCs. Keep both until the newer routes are reconciled. |
+| `cd38138f0a` | Remove obsolete Forkgram app updater | DEFERRED | AppUpdater and DownloadReceiver still serve newer explicit update prompts. Retirement needs a replacement policy for those routes and a review of interval settings, pending updates, and download cleanup. |
+| `eaa65f0947` | Use dark grey background on intro screen in night theme | INTEGRATED | Use the historical night gray across the current intro fragment, placeholder, GL texture reload and animation background. Keep the newer debounce and theme animation handling. |
+| `018ad25117` | Remove stale update interval settings search result | DEFERRED | The update interval still has a settings row, Kotlin lookup and updater consumer. Remove its search shortcut with retirement of the interval, not on its own. |
+| `5be174619e` | Add Optogram version footer string | INTEGRATED | Add the original Optogram version footer resource. |
+| `a2c0e65145` | Show Optogram name in settings version footer | INTEGRATED | Use the historical footer string while preserving version, build code and ABI formatting. |
+| `0faa19b9ea` | Miscellaneous5 | SKIPPED | The selector already checks local eligibility where an icon is flagged Premium. Batch 7 made the three historical icons available without that flag. |
+| `72d928809f` | Fix static app icon holder local premium check | SKIPPED | The static holder already uses the global preference rather than a fragment account field. |
+| `732fe0261f` | Correct Optogram settings search title | INTEGRATED | Correct the existing search/resource title and localized branding overrides. Reuse that same string for the visible settings tile. |
+| `8d50743117` | Use system DNS for delegated host resolution and WebSocket fallback | INTEGRATED | Remove hard-coded Google host lookups from the delegated and WebSocket paths. Use InetAddress system resolution and preserve asynchronous dispatch, address handling and native callbacks. |
+| `b95c7ced87` | Disable native delegated host resolution for system DNS | DEFERRED | Retain native delegation because the alternative uses synchronous IPv4-only gethostbyname for both WebSocket and proxy hostnames. The delegated Java resolver now fulfills system DNS intent without dropping IPv6. |
+| `08b5c48bd5` | Disable special DNS resolver for all Optogram build variants | SKIPPED | The intermediate all-flavor recovery disable was reversed by d78008446. |
+| `2741e47503` | Preserve datacenter DNS recovery via AdGuard and Cloudflare without Google | INTEGRATED | Restore AdGuard TXT resolution with the existing Cloudflare fallback. Remove the unused Google TXT task and preserve the startup guard and native signed configuration handling. |
+| `d780084468` | Re-enable non-Google datacenter recovery for non-F-Droid builds | SKIPPED | The current Gradle field already skips special recovery only for F-Droid, matching the final historical variant split. |
+| `3340672ecc` | Expose Optogram toggle to suppress phone number sharing prompt | SKIPPED | Batch 3 added one unified phone sharing prompt toggle and the corrected condition. |
+| `6503325349` | Reset native disconnect recovery timeout after successful reconnect | INTEGRATED | Gate recovery timeout accumulation on available, unpaused networking. Reset it on reconnect to the current datacenter's generic connection. The Java app-config throttling from 45c60f861 remains deferred. |
+| `4330e3da02` | Preserve original photo entry when sending high-quality grouped photos | SKIPPED | ca5d3e6e3 already preserves edited still-photo entries for the grouped high-quality worker. |
+| `1cb58e38ab` | Guard Settings back navigation before action bar initialization | SKIPPED | ecfbb6294 already protects the current SimpleActionBar back navigation. |
+| `08fcc356ad` | Avoid image decoding fallback for unavailable video thumbnails | SKIPPED | 47e16ffc3 already skips the generic decode fallback for unavailable video thumbnails. |
+| `106a5b2572` | Honor local Premium setting when displaying chat Boost menu | INTEGRATED | Use account-aware local UI eligibility to expose the Boost menu. Keep chat capability checks, admin routing and the existing userCanBoostChannel check before any boost action. |
