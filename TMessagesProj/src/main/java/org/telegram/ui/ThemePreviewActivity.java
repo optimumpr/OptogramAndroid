@@ -727,7 +727,7 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
         floatingButton.setImageResource(R.drawable.floating_pencil);
         page1.addView(floatingButton, FragmentFloatingButton.createDefaultLayoutParams());
 
-        dialogsAdapter = new DialogsAdapter(context);
+        dialogsAdapter = new DialogsAdapter(context, currentAccount);
         listView.setAdapter(dialogsAdapter);
 
         page2 = new FrameLayout(context) {
@@ -4691,11 +4691,13 @@ public class ThemePreviewActivity extends BaseFragment implements DownloadContro
     public static class DialogsAdapter extends RecyclerListView.SelectionAdapter {
 
         private Context mContext;
+        private final int currentAccount;
 
         private ArrayList<DialogCell.CustomDialog> dialogs;
 
-        public DialogsAdapter(Context context) {
+        public DialogsAdapter(Context context, int currentAccount) {
             mContext = context;
+            this.currentAccount = currentAccount;
             dialogs = new ArrayList<>();
 
             int date = (int) (System.currentTimeMillis() / 1000);
