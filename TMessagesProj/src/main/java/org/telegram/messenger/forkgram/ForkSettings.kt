@@ -37,6 +37,8 @@ import org.telegram.ui.LaunchActivity
  */
 object ForkSettings {
 
+    const val DEFAULT_CHAT_TITLE = "Optogram"
+
     private const val DUMP_FILE_NAME = "fork_settings.txt"
 
     private val TEST_BUILD: Boolean
@@ -147,8 +149,8 @@ object ForkSettings {
         BoolOption("hideInAppHints", ForkSettingsActivity.ID_HIDE_IN_APP_HINTS, false),
         BoolOption("hideBottomButton", ForkSettingsActivity.ID_HIDE_BOTTOM_BUTTON, false),
         StringOption(
-            "forkCustomTitle", ForkSettingsActivity.ID_CUSTOM_TITLE, "Fork Client",
-            writeFn = { raw -> raw.trim().ifEmpty { "Fork Client" } }),
+            "forkCustomTitle", ForkSettingsActivity.ID_CUSTOM_TITLE, DEFAULT_CHAT_TITLE,
+            writeFn = { raw -> raw.trim().ifEmpty { DEFAULT_CHAT_TITLE } }),
         IntOption("avatarCorners", ForkSettingsActivity.ID_AVATAR_CORNERS, 0, readFn = AndroidUtilities::avatarCornersType),
 
         BoolOption("syncPins", ForkSettingsActivity.ID_SYNC_PINS, true),
