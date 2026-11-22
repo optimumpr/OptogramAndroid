@@ -22,7 +22,7 @@ Four integrated, eight skipped, and twelve deferred. Resume with
 
 | Historical commit | Title | Disposition | Current behavior and follow-up |
 | --- | --- | --- | --- |
-| `9baa26817` | Revert "Added option for interval of updates check." | DEFERRED | The interval is now bypassed by all reachable forced checks. Its settings row, search, Kotlin lookup and unused timed path remain. Retire this inert setting as a focused change independent of the download/install lifecycle. |
+| `9baa26817` | Revert "Added option for interval of updates check." | INTEGRATED | R2 removed the interval row, dialog, Kotlin routing and persisted preference access in baa0bd2d8. The updater now rejects nonmanual checks and retains every reachable forced path. |
 | `64866563c` | Revert "Added Forkgram icon to list of devices." | SKIPPED | This upstream revert also removes Desktop icon classification. Keep the newer SessionCell and SessionBottomSheet mappings for remote clients. |
 | `89a4fcb84` | Revert "Added new button to settings to check updates." | DEFERRED | Batch 8 removed the primary Settings row and debug check actions. The alternate ProfileActivity manual route remains and needs a replacement or removal with the reachable updater flow. |
 | `8457f2523` | Revert | DEFERRED | Batch 8 removed automatic and several manual entry points. Standalone prompts, AppUpdater, DownloadReceiver and pending-update handling remain. See d189f6a0b5 and cd38138f0a for the later scoped retirement intent. |
@@ -184,7 +184,7 @@ Resume with `df46603c8` (Treat local Premium as acknowledged in feature preview 
 | `027e4e7667` | Add Optogram settings entry to Forkgram settings navigation | SKIPPED | The unified Optogram settings entry is already present, including the later Jaguar presentation. |
 | `1a2d3ce41a` | Fix Local Premium icon lock check in static view holder | SKIPPED | Batch 4's static icon holder already reads the global preference without relying on a fragment account. |
 | `9ac62ead92` | Restore self-profile Local Premium badge without affecting other users | INTEGRATED | Use the current self-profile badge rendering path. The older patch no longer applies. Preserve the real-Premium click gate for changing emoji status and retain other users' badges. |
-| `09e838335f` | Show subscribed Premium subtitle for locally enabled UI entitlement | DEFERRED | The referenced subtitle explicitly thanks the user for a Telegram subscription. A local-only toggle cannot truthfully use that text. Reassess the subtitle presentation independently of the local badge and purchase controls. |
+| `09e838335f` | Show subscribed Premium subtitle for locally enabled UI entitlement | INTEGRATED | R2 gives local-only previews a distinct Optogram subtitle in c2fb5e394. Existing Telegram subscriber and purchase-confirmation copy remains tied to the existing subscription and confirmation paths. |
 | `06c84270c4` | Restore Optogram device identification masking in settings diagnostics | SKIPPED | The old standalone Settings diagnostic branch is absent. Current ProfileActivity diagnostics already mask the device line through be10cbd06. |
 | `8cbe845934` | Expose restored diagnostic device-information toggle in Optogram settings | SKIPPED | One unified device-information switch already controls diagnostics and connection initialization. |
 | `34b6b7d52b` | Restore Optogram server-facing device model and system version masking | SKIPPED | Batch 3 already passes the conditional Unknown model and SDK into native_init for initConnection serialization. |
@@ -302,8 +302,8 @@ and subscription subtitle remain open.
 | `577285279b` | Hide unsupported passkey setup from privacy settings | SKIPPED | PrivacySettingsActivity already gates the passkey row and its click handler on the disabled capability. |
 | `ee08b028c6` | Disable unsupported passkeys in Optogram build configuration | SKIPPED | BuildVars.SUPPORTS_PASSKEYS is already false. |
 | `6a414559e3` | Hide unsupported passkey suggestion | SKIPPED | DialogsActivity already gates SETUP_PASSKEY on the disabled capability. |
-| `915991593a` | Miscellaneous4 | DEFERRED | VectorAvatarThumbDrawable takes only a Premium classification, with no owner or account identifier. A constructor-wide OR would apply the local setting to unrelated users' avatars. Review self-only call sites and rendering effects. |
-| `022240b4ed` | Miscellaneous2 | DEFERRED | ImageReceiver handles arbitrary users and has separate full-user fetch, avatar animation and rendering paths. Trace and scope any local behavior to the owning account before altering this renderer. |
+| `915991593a` | Miscellaneous4 | DEFERRED | R2 found the drawable uses the selected account, while equality compares type, colors and media IDs without account or presentation mode. Profile-sized rendering does not use the Premium flag for filter selection. An effective self-only port needs owner validation at the binding caller and account-aware reuse for small thumbs. |
+| `022240b4ed` | Miscellaneous2 | DEFERRED | R2 identified an ownership check using the binding account and its nonzero client user ID. Vector creation is reached through static or existing animation-eligibility paths. A self-only port needs explicit account context through the drawable and account-switch/rebind tests without changing the unrelated full-user fetch or animation gate. |
 | `3219810f78` | Miscelaneous | INTEGRATED | The account cell binds the actual user for its account. Use that account's existing local UI predicate for the badge and preserve emoji status precedence. No user or server status mutation. |
 | `51f512168c` | Miscelaneous | DEFERRED | The two StealthModeAlert checks govern an active TL_stories_activateStealthMode send path. Separate preview acknowledgement from authorization and verify cooldown and error handling before changing this gate. |
 | `b70e4143f0` | Fix disable autoweb login | SKIPPED | Browser and the separate ChatActivity URL-auth branch already check the corrected disableAutowebLogin key. |
@@ -343,9 +343,9 @@ avatar and Stealth Mode paths, and subscription subtitle remain deferred.
 | `98a7c8788f` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the round Default alias foreground/background and keep the plane monochrome asset. |
 | `46d9480f24` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the Adaptive alias foreground/background and keep the plane monochrome asset. Preserve manifest component names and API qualifiers. |
 | `d189f6a0b5` | Remove unused Forkgram app updater entry point | DEFERRED | The currently used overload still serves standalone update prompts from ChatActivity, ChannelAdminLogActivity, and PeerStoriesView and the alternate settings row. The other overload performs Telegram update RPCs. Keep both until the newer routes are reconciled. |
-| `cd38138f0a` | Remove obsolete Forkgram app updater | DEFERRED | AppUpdater and DownloadReceiver still serve newer explicit update prompts. Retirement needs a replacement policy for those routes and a review of interval settings, pending updates, and download cleanup. |
+| `cd38138f0a` | Remove obsolete Forkgram app updater | DEFERRED | R2 removed the interval controls. Full retirement still needs a replacement for reachable forced prompts, download/install, cached-installer cleanup and stored pending-update recovery. |
 | `eaa65f0947` | Use dark grey background on intro screen in night theme | INTEGRATED | Use the historical night gray across the current intro fragment, placeholder, GL texture reload and animation background. Keep the newer debounce and theme animation handling. |
-| `018ad25117` | Remove stale update interval settings search result | DEFERRED | The update interval still has a settings row, Kotlin lookup and updater consumer. Remove its search shortcut with retirement of the interval, not on its own. |
+| `018ad25117` | Remove stale update interval settings search result | INTEGRATED | R2 removed the stale settings-search result in df89f15750. |
 | `5be174619e` | Add Optogram version footer string | INTEGRATED | Add the original Optogram version footer resource. |
 | `a2c0e65145` | Show Optogram name in settings version footer | INTEGRATED | Use the historical footer string while preserving version, build code and ABI formatting. |
 | `0faa19b9ea` | Miscellaneous5 | SKIPPED | The selector already checks local eligibility where an icon is flagged Premium. Batch 7 made the three historical icons available without that flag. |
@@ -496,3 +496,21 @@ screen. No independent tablet startup defect was established. English and
 Russian metadata now describe Fast Forward for eligible messages, with the
 existing F-Droid branding retained. No native, network, updater lifecycle,
 or request-coupled Local Premium changes were made in R1.
+
+## Reconciliation R2
+
+Baseline `00221ed8f0f`. Resolved three historical entries, leaving 35 rows
+marked DEFERRED. Retired the Forkgram update interval and settings-search
+shortcut. All five reachable two-argument update callers explicitly pass
+`true`. The existing prompts, download receiver, APK handoff, cached installer
+cleanup and stored pending-update recovery remain reachable.
+
+Local-only Premium previews use distinct Optogram copy with an English fallback.
+The subscription and post-purchase confirmation flows retain their existing
+copy. Avatar work remains open. ProfileActivity, ProfileActivity2 and
+ProfileGalleryView have user/peer context, but profile-sized vector rendering
+does not use the flag for animation selection. ImageReceiver owns the small
+preview path and has a binding account plus the rendered user ID. A future
+change must verify self against that account, carry the binding account into
+vector loading and ensure equality/rebinding accounts for the presentation mode
+when switching accounts or toggling Local Premium.
