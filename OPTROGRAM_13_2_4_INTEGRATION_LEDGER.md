@@ -617,3 +617,36 @@ retry state. Preserve grouped ordering and paid-forward accounting. Keep
 operations with a standalone cap, such as pinned story limits, independent.
 Test 99, 100, 101, 199 and 200, mixed peers, album boundaries, share and copy,
 story and bot previews, undo, partial failure, retry, and account switching.
+
+## Reconciliation R8
+
+Baseline `719e4dbfa`. Reviewed `49b63e32d8`, `590d5f241`, `7efca28091`,
+`220cdddb3`, `ec05798ef`, and `ba435fe3c` against their historical
+patches, the working 13.1.1 reference and current code. No complete
+disposition changed. All 16 deferred entries remain open.
+
+- `1383364f9` ports only the proactive caption upsell portion of
+  `220cdddb3`. It reads the composer account and rechecks account,
+  edited message, attachment and eligibility after a delayed layout.
+  Submission validation and the rejection hint on an attempted save remain.
+- `e1cfc6d54` ports the inline presentation portion of `7efca28091`.
+  Local Premium can show already-returned peers up to the existing
+  ten-tile ceiling. The Local Premium-only card omits the unlock or More
+  tile and server remainder, since More navigation still uses genuine
+  Premium and the response may omit additional peers. Genuine Premium
+  and ordinary-account cards keep their existing behavior. Toggle and
+  reattach refreshes re-read the bound account's cache without a new
+  recommendation request. Normal loads and the profile tab stay intact.
+- `49b63e32d8` and `590d5f241` share the composer delegate. It opens a
+  Boost sheet for eligible chats; its fallback surfaces real slow-mode
+  and send restrictions. The existing Boost menu already recognizes Local
+  Premium alongside the chat support check. Deep links, story eligibility,
+  boost stats and actual boost availability remain tied to current chat
+  and server state.
+- The Downloads and folder-tag presentation portions of `ec05798ef`
+  are represented. The search-ad sheet couples subscriber copy to an ad
+  opt-out action; peer colors, folder operations, and story changes also
+  cross action boundaries. `ba435fe3c` has no remaining independent
+  presentation hunk after the existing preview, self-badge and launcher
+  ports. Its remaining changes touch account Premium state or peer story
+  eligibility.
