@@ -24,8 +24,8 @@ Four integrated, eight skipped, and twelve deferred. Resume with
 | --- | --- | --- | --- |
 | `9baa26817` | Revert "Added option for interval of updates check." | INTEGRATED | R2 removed the interval row, dialog, Kotlin routing and persisted preference access in baa0bd2d8. The updater now rejects nonmanual checks and retains every reachable forced path. |
 | `64866563c` | Revert "Added Forkgram icon to list of devices." | SKIPPED | This upstream revert also removes Desktop icon classification. Keep the newer SessionCell and SessionBottomSheet mappings for remote clients. |
-| `89a4fcb84` | Revert "Added new button to settings to check updates." | DEFERRED | Batch 8 removed the primary Settings row and debug check actions. The alternate ProfileActivity manual route remains and needs a replacement or removal with the reachable updater flow. |
-| `8457f2523` | Revert | DEFERRED | Batch 8 removed automatic and several manual entry points. Standalone prompts, AppUpdater, DownloadReceiver and pending-update handling remain. See d189f6a0b5 and cd38138f0a for the later scoped retirement intent. |
+| `89a4fcb84` | Revert "Added new button to settings to check updates." | INTEGRATED | R5 removed the remaining ProfileActivity Forkgram update row, handler and localized labels in a1c431a7f. The primary Settings and debug check actions were removed earlier. |
+| `8457f2523` | Revert | INTEGRATED | R5 completed custom updater retirement, including DownloadManagerUtil, GitHub release configuration and the hidden-download filter in f1320a167. Telegram update protocol and installer behavior remain. |
 | `7f6a745ae` | Revert "Changed book_logo icon." | SKIPPED | The book logo rollback was an intermediate asset state, superseded by 98bab246a. |
 | `d57a9b0ed` | Revert "Replaced default app icon with Forkgram icon." | SUPERSEDED | Batches 8 and 9 restore the final visual behavior with the existing alias names, selected icon compatibility, and plane monochrome layers. The older alias deletion is superseded. |
 | `21a028336` | Revert "Replaced launcher icons with Forkgram icons." | SKIPPED | The intermediate ic_launcher_dr rollback was superseded by 98bab246a and later artwork changes. |
@@ -78,7 +78,7 @@ Six integrated, twelve skipped, and seven deferred. Resume with
 | `644f8d532` | Darken some backgrounds | REPRESENTED | All affected paths, including the picker badge density family and standalone launcher gradient, match the final Optogram tip. The badge still needs a device rendering check. |
 | `e22106d34` | Darken some backgrounds | INTEGRATED | Both Android style overlays still used the original blue values. Apply the matching gray theme colors. |
 | `7398d11e7` | Update Readme | SKIPPED | Old README and screenshot advertise 200-message selection and other historical states. Keep the current feature and release documentation. |
-| `45c60f861` | Reset disconnect timeout on successful connection, commit by @tehcneko | DEFERRED | The native reconnect portion landed through 78427b5913. The independent MessagesController app-config refresh still uses a CacheFetcher callback and periodic runnable. Verify coalescing, force refresh and reconnect before porting the Java cadence. |
+| `45c60f861` | Reset disconnect timeout on successful connection, commit by @tehcneko | INTEGRATED | The native portion previously landed in 78427b5913. R5 ported the Java cadence in 8eeb73319 using elapsed milliseconds on the account update tick, preserving explicit refreshes and CacheFetcher hash and cache behavior. |
 | `a557449fd` | fix some crashes | DEFERRED | The original leftBaseline change targets the old tablet initialization. Current code has a context guard, a cached tablet mode, and a user override. Revisit with a reproducible startup or layout failure. |
 
 ## Batch 3
@@ -337,13 +337,13 @@ avatar and Stealth Mode paths, and subscription subtitle remain deferred.
 | `8af4e3e01d` | Remove app update entry from settings | INTEGRATED | Remove the primary Settings update row and handler. Keep the Optogram settings entry and other Settings actions. |
 | `e0d1359286` | Disable automatic Forkgram app update checks | INTEGRATED | Remove the automatic updater call on resume. Keep existing pending update and terms handling. |
 | `360b66b0b8` | Remove Forkgram update check from debug menu | INTEGRATED | Remove the check action from the current DebugSettingsActivity and the alternate ProfileActivity debug menu. Keep the positional debug IDs intact. |
-| `11149574e5` | Remove obsolete app update debug action | DEFERRED | The clean action is still a recovery route for a stored pending update. Decide its fate with the current update gate when the remaining updater is retired. |
+| `11149574e5` | Remove obsolete app update debug action | INTEGRATED | R5 removed the remaining manual pending-update reset actions from the current ProfileActivity and DebugSettingsActivity in 9af5bee88. Telegram mandatory and optional recovery remain. |
 | `202aa1f9bb` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Align the Default and Adaptive selector previews with the historical original artwork resources. |
 | `33bb3f6768` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the regular Default alias foreground/background. Use the existing plane mask for themed icons. |
 | `98a7c8788f` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the round Default alias foreground/background and keep the plane monochrome asset. |
 | `46d9480f24` | Restore Telegram artwork for Default and Adaptive launcher icons | INTEGRATED | Restore the Adaptive alias foreground/background and keep the plane monochrome asset. Preserve manifest component names and API qualifiers. |
-| `d189f6a0b5` | Remove unused Forkgram app updater entry point | DEFERRED | The currently used overload still serves standalone update prompts from ChatActivity, ChannelAdminLogActivity, and PeerStoriesView and the alternate settings row. The other overload performs Telegram update RPCs. Keep both until the newer routes are reconciled. |
-| `cd38138f0a` | Remove obsolete Forkgram app updater | DEFERRED | R2 removed the interval controls. Full retirement still needs a replacement for reachable forced prompts, download/install, cached-installer cleanup and stored pending-update recovery. |
+| `d189f6a0b5` | Remove unused Forkgram app updater entry point | INTEGRATED | R5 removed the Forkgram LaunchActivity entry point in 85e3d6d28. Existing standalone unsupported-content prompts use the independent Telegram protocol flow, as in Optogram 13.1.1. |
+| `cd38138f0a` | Remove obsolete Forkgram app updater | INTEGRATED | R5 removed AppUpdater, DownloadReceiver, update channel configuration and startup installer cleanup in c20cd506c. The interval retired in R2, and the remaining custom callers and helper retired in R5. |
 | `eaa65f0947` | Use dark grey background on intro screen in night theme | INTEGRATED | Use the historical night gray across the current intro fragment, placeholder, GL texture reload and animation background. Keep the newer debounce and theme animation handling. |
 | `018ad25117` | Remove stale update interval settings search result | INTEGRATED | R2 removed the stale settings-search result in df89f15750. |
 | `5be174619e` | Add Optogram version footer string | INTEGRATED | Add the original Optogram version footer resource. |
@@ -553,3 +553,27 @@ Visible self thumbnails and self table badges observe the existing
 `premiumStatusChangedGlobal` notification through view-scoped listeners,
 and refresh when reattached. A table row still gives emoji status precedence
 over the badge. The composer portion of `e035a9b9f` remains deferred.
+
+## Reconciliation R5
+
+Baseline `d87fd0d79`. Six deferrals resolved, leaving 24. Java app-config
+uses the existing per-account update tick and cache-backed periodic checks.
+Initialization and Telegram config updates retain forced refresh. A force
+arriving during a load is coalesced into one follow-up. A missing or unreadable
+cache row reaches remote fetch with hash zero. Native datacenter recovery,
+DNS fallbacks and JNI are unchanged.
+
+The Optogram 13.1.1 worktree at `6ddae5097` keeps Telegram's own
+`help.getAppUpdate` handler and standalone prompts. R5 follows that split and
+removes Forkgram release discovery, UI, dynamic receiver, download and
+installation paths, and cached installer cleanup. No custom manifest entry
+existed. Telegram's shared APK provider, installation permission, update
+notification, file-reference refresh and pending-update recovery stay in use.
+Forkgram previously wrote optional update records into the same Telegram
+store without a source marker. R5 removes that producer and preserves
+ambiguous existing records under Telegram's existing validity rules.
+
+Last.fm remains deferred. Its now-playing and scrobbling callbacks,
+settings and deep link, backup namespace, credential build inputs and
+resources remain active. The standalone store listing and wording
+deferrals remain open.
