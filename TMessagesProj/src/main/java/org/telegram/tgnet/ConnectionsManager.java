@@ -252,7 +252,8 @@ public class ConnectionsManager extends BaseController {
         if (systemVersion.trim().length() == 0) {
             systemVersion = "SDK Unknown";
         }
-        if (MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
+        SharedPreferences globalMainPreferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
+        if (globalMainPreferences.getBoolean("disableDeviceInfo", false)) {
             deviceModel = "Unknown";
             systemVersion = "Unknown";
         }
@@ -263,7 +264,7 @@ public class ConnectionsManager extends BaseController {
         int timezoneOffset = (TimeZone.getDefault().getRawOffset() + TimeZone.getDefault().getDSTSavings()) / 1000;
         SharedPreferences mainPreferences;
         if (currentAccount == 0) {
-            mainPreferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
+            mainPreferences = globalMainPreferences;
         } else {
             mainPreferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig" + currentAccount, Activity.MODE_PRIVATE);
         }
