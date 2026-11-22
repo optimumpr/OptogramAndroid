@@ -160,9 +160,9 @@ DNS and reconnect, and launcher pack reconciliation remain open.
 | `42a008e6a` | Show user phone number as unknown to others | INTEGRATED | Complete existing local phone masking in PrivacyUsersActivity. Other historical UI call sites and the unified switch already exist. The patch only affects display and sends no privacy request. |
 | `05c1c7295` | Miscelaneous | DEFERRED | Mixed app accent, upload ceiling, billing, native userPremium flag, story stealth gates and profile display. The native flag and upload thresholds need separate tracing. Compare later Miscellaneous ports before adopting surviving parts. |
 | `78fc7e36f` | Update Readme | SKIPPED | Old README describes hiding a phone number from other users, while 42a008e6a only masks local display. Keep the current accurate UI description. |
-| `e035a9b9f` | Miscellaneous2 | DEFERRED | ImageReceiver applies local Premium to all rendered user avatars and the composer sets premium mode unconditionally. Trace rendering and send effects against later targeted ports. |
+| `e035a9b9f` | Miscellaneous2 | DEFERRED | R4 integrated the avatar portion through the later targeted 022240b4ed. The separate composer SlowModeBtn default remains unresolved because the subsequent delegate controls slow-mode and restriction hints. See 49b63e32d8. |
 | `590d5f241` | Miscellaneous3 | DEFERRED | Mixed changes affect the Boost menu, restriction affordances, routing, and story eligibility. Compare the later Miscellaneous7 and Boost menu changes and separate UI exposure from requests. |
-| `5b500b31f` | Miscellaneous4 | DEFERRED | Batch 9 integrated the sticker classification portion through e583657a2 after tracing its instance-method consumers. Avatar and table presentation remain deferred. |
+| `5b500b31f` | Miscellaneous4 | INTEGRATED | Batch 9 integrated sticker classification through e583657a2. R4 integrated account-aware avatar presentation and the self-only table badge through 37637234e, 381a0208d and 6416411c7. |
 
 ## Batch 5
 
@@ -302,8 +302,8 @@ and subscription subtitle remain open.
 | `577285279b` | Hide unsupported passkey setup from privacy settings | SKIPPED | PrivacySettingsActivity already gates the passkey row and its click handler on the disabled capability. |
 | `ee08b028c6` | Disable unsupported passkeys in Optogram build configuration | SKIPPED | BuildVars.SUPPORTS_PASSKEYS is already false. |
 | `6a414559e3` | Hide unsupported passkey suggestion | SKIPPED | DialogsActivity already gates SETUP_PASSKEY on the disabled capability. |
-| `915991593a` | Miscellaneous4 | DEFERRED | The vector drawable still uses the selected account and equality ignores account and presentation mode. Profile-sized rendering is unchanged by the flag. Small-thumbnail rendering needs explicit binding-account propagation and mode-aware reuse. |
-| `022240b4ed` | Miscellaneous2 | DEFERRED | DialogCell has a binding account but its small-vector path does not explicitly pass that account to ImageReceiver, which defaults to the selected account. Compare the bound user ID with that account’s nonzero client user ID and carry the account to the drawable. The existing animation gate and settings-toggle refresh need independent handling. |
+| `915991593a` | Miscellaneous4 | INTEGRATED | R4 passes the binding account through vector rendering and compares account and small-thumbnail presentation mode before reusing drawables. Profile-sized presentation is unchanged. See 37637234e and 381a0208d. |
+| `022240b4ed` | Miscellaneous2 | INTEGRATED | R4 scopes small animated vector avatars to self in the binding account and rebinds affected cells on premiumStatusChangedGlobal and attach. The local path uses already-known markup and preserves the genuine-Premium full-user fetch gate. See 381a0208d. |
 | `3219810f78` | Miscelaneous | INTEGRATED | The account cell binds the actual user for its account. Use that account's existing local UI predicate for the badge and preserve emoji status precedence. No user or server status mutation. |
 | `51f512168c` | Miscelaneous | DEFERRED | The two StealthModeAlert checks govern an active TL_stories_activateStealthMode send path. Separate preview acknowledgement from authorization and verify cooldown and error handling before changing this gate. |
 | `b70e4143f0` | Fix disable autoweb login | SKIPPED | Browser and the separate ChatActivity URL-auth branch already check the corrected disableAutowebLogin key. |
@@ -536,3 +536,20 @@ Avatar work remains deferred. The small-vector path needs explicit binding
 identity, owner comparison, account- and mode-aware reuse, and a visible
 thumbnail rebind on Local Premium changes. None of those should change
 other users' fetch or animation eligibility.
+
+## Reconciliation R4
+
+Baseline `c71a0b190`. Resolved three historical entries, leaving 30 deferred.
+Dialog and chat avatar binds now pass the cell account. Profile galleries and
+vector artwork loaders also use their owning account. Local presentation
+requires an exact nonzero self ID match, the existing Local Premium
+preference, cached vector markup and permission to animate in that context.
+The preference keeps its existing global storage. Locally configured users
+seen as peers of another binding account retain their genuine Premium
+presentation. Drawable reuse checks the account and effective small-avatar
+mode. Existing media cache keys and profile-size rendering remain in place.
+
+Visible self thumbnails and self table badges observe the existing
+`premiumStatusChangedGlobal` notification through view-scoped listeners,
+and refresh when reattached. A table row still gives emoji status precedence
+over the badge. The composer portion of `e035a9b9f` remains deferred.
