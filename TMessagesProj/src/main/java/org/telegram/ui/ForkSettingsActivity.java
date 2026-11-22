@@ -162,6 +162,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_WEB_PUBLISH = 101;
     public static final int ID_VOICE_TIMECODES = 102;
     public static final int ID_QUICK_ATTACH = 103;
+    public static final int ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN = 108;
 
     public static final int ID_EXPORT_SETTINGS = 95;
     public static final int ID_IMPORT_SETTINGS = 96;
@@ -543,6 +544,8 @@ public class ForkSettingsActivity extends BaseFragment {
     }
 
     private void fillSettings(ArrayList<UItem> items) {
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN, "Disable Automatic Web Login", "Prevent automatic login tokens on Telegram-approved links")
+            .setChecked(pref("disableAutowebLogin", false)).setMultiline(true));
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
         if (!SharedConfig.isUserOwner()) {
             items.add(UItem.asButtonCheck(ID_HIDE_SENSITIVE_DATA, LocaleController.getString(R.string.HideSensitiveData), LocaleController.getString(R.string.ForkRestartRequired))
@@ -810,6 +813,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("showNotificationContent", item, view);
         } else if (id == ID_DROP_SCREENSHOT_CAPTION) {
             toggle("dropScreenshotCaption", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN) {
+            toggle("disableAutowebLogin", item, view);
         } else if (id == ID_HIDDEN_ACCOUNTS) {
             presentFragment(new HiddenAccountsActivity());
         } else if (id == ID_FORK_SETTINGS_LOCK) {
