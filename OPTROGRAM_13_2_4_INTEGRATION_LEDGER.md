@@ -37,7 +37,7 @@ Four integrated, eight skipped, and twelve deferred. Resume with
 | `9639cbb69` | Make it build | DEFERRED | The settings title and app identity are represented. The mixed build workaround removes browser preferences and changes DNS, signing, variants, and Premium. Review any surviving de-Googling gaps separately against the latest build. |
 | `1123c395a` | Change some more icons | SUPERSEDED | All touched raster paths match the final historical tip. The old IntroActivity drawable binding is superseded by the newer intro renderer and its Optogram background port. |
 | `d88e8ff7d` | Some branding changes | INTEGRATED | Apply the final display-name behavior from 552b08cfe and update existing localized name overrides. The chat title and settings entry are already branded. Defer icon mappings and diagnostic wording to the appropriate follow-ups. |
-| `445094d84` | Add wav and wav_x support, based on commit by Attorelle | DEFERRED | WAV document recognition is already present through d2d2ce007. The legacy ExoPlayer classes are absent and the current build uses Media3. Decoder capability for x-wav and the active FFmpeg configuration still need verification. |
+| `445094d84` | Add wav and wav_x support, based on commit by Attorelle | SUPERSEDED | Both document MIME variants are recognized through d2d2ce007; Media3 normalizes x-wav and WavExtractor handles supported sample encodings directly. The historical FFmpeg wav name refers to a container, not a sample decoder. R3 adds the independently missing outgoing WAV metadata path in e50793faa. G.711 playback needs device verification because the checked-in FFmpeg prebuild recipe does not enable its mapped decoders. |
 | `801611b26` | Change app id | SKIPPED | 9c55abd6b already sets the Optogram application ID for the primary build. Keep newer flavor identities and signing behavior. |
 | `28555ec88` | Modify some icons | REPRESENTED | All touched image paths match the final Optogram tip. Keep the current qualifiers and aliases. |
 | `92cd90726` | Option to autolock the app immediately | INTEGRATED IN BATCH 6 | The later split port 1fa893219, 79f5a0308, 30ac0f4b2, and cb2193038 supplies the final implementation. Batch 6 also audited the current external-action and media-session paths. Earlier batch totals reflect dispositions at the time of review. |
@@ -91,7 +91,7 @@ Resume with `6c7c51c29` (Spoof as  Windows when OEM device model is disabled).
 | --- | --- | --- | --- |
 | `bf941a730` | Revert "Replaced frequent contacts with logged in accounts in App Shortcuts." | SKIPPED | Current MediaDataController combines visible-account and opt-in contact shortcuts, caps the latter after reserving account slots, and suppresses them behind passcode or hidden-account gates. The old replacement would remove newer shortcut behavior. |
 | `af0854279` | some fixes | INTEGRATED IN R1 | The newer channel buttons already label search, gift, direct and broadcast-group info. R1 labels the current Recent Actions info button using the localized title of the dialog it opens. |
-| `0861de9d6` | some more fixes | DEFERRED | Grouped HQ photo entry preservation landed through ca5d3e6e3. MediaController.PhotoEntry.rebuildPhoto still needs an independent decode-failure and alias-safe bitmap lifecycle review. External group sharing is already integrated separately. |
+| `0861de9d6` | some more fixes | INTEGRATED | Grouped HQ entry preservation landed in ca5d3e6e3. R3 completed the rebuild in 8cbdfac4a with alias-safe release of private bitmaps, synchronous writes and preservation of the earlier edited path for fallback and shared consumers. |
 | `66c4e842b` | Add media resolution to details, commit @tehcneko | SKIPPED | Despite the title, the diff forces ShareAlert dark-theme geometry in light mode. It adds no resolution metadata and targets old picker layout behavior. |
 | `bfe15bbf8` | Revert "Removed debug button from settings." | SKIPPED | The historical revert restores a debug section header. Current profile has its own developer menu path. Keep its visibility and existing updater deferrals. |
 | `9e653f838` | Revert "Added ability to copy Username without long touch." | SKIPPED | Current ProfileActivity has explicit copy-username menu and row handlers. Keep the newer interaction paths. |
@@ -302,8 +302,8 @@ and subscription subtitle remain open.
 | `577285279b` | Hide unsupported passkey setup from privacy settings | SKIPPED | PrivacySettingsActivity already gates the passkey row and its click handler on the disabled capability. |
 | `ee08b028c6` | Disable unsupported passkeys in Optogram build configuration | SKIPPED | BuildVars.SUPPORTS_PASSKEYS is already false. |
 | `6a414559e3` | Hide unsupported passkey suggestion | SKIPPED | DialogsActivity already gates SETUP_PASSKEY on the disabled capability. |
-| `915991593a` | Miscellaneous4 | DEFERRED | R2 found the drawable uses the selected account, while equality compares type, colors and media IDs without account or presentation mode. Profile-sized rendering does not use the Premium flag for filter selection. An effective self-only port needs owner validation at the binding caller and account-aware reuse for small thumbs. |
-| `022240b4ed` | Miscellaneous2 | DEFERRED | R2 identified an ownership check using the binding account and its nonzero client user ID. Vector creation is reached through static or existing animation-eligibility paths. A self-only port needs explicit account context through the drawable and account-switch/rebind tests without changing the unrelated full-user fetch or animation gate. |
+| `915991593a` | Miscellaneous4 | DEFERRED | The vector drawable still uses the selected account and equality ignores account and presentation mode. Profile-sized rendering is unchanged by the flag. Small-thumbnail rendering needs explicit binding-account propagation and mode-aware reuse. |
+| `022240b4ed` | Miscellaneous2 | DEFERRED | DialogCell has a binding account but its small-vector path does not explicitly pass that account to ImageReceiver, which defaults to the selected account. Compare the bound user ID with that account’s nonzero client user ID and carry the account to the drawable. The existing animation gate and settings-toggle refresh need independent handling. |
 | `3219810f78` | Miscelaneous | INTEGRATED | The account cell binds the actual user for its account. Use that account's existing local UI predicate for the badge and preserve emoji status precedence. No user or server status mutation. |
 | `51f512168c` | Miscelaneous | DEFERRED | The two StealthModeAlert checks govern an active TL_stories_activateStealthMode send path. Separate preview acknowledgement from authorization and verify cooldown and error handling before changing this gate. |
 | `b70e4143f0` | Fix disable autoweb login | SKIPPED | Browser and the separate ChatActivity URL-auth branch already check the corrected disableAutowebLogin key. |
@@ -514,3 +514,25 @@ preview path and has a binding account plus the rendered user ID. A future
 change must verify self against that account, carry the binding account into
 vector loading and ensure equality/rebinding accounts for the presentation mode
 when switching accounts or toggling Local Premium.
+
+## Reconciliation R3
+
+Baseline `4580a1b60`. Resolved the grouped-photo rebuild and superseded the
+legacy WAV patch, leaving 33 deferred historical entries. Grouped send
+workers consume paths after the synchronous rebuild. Its decoded and
+composited bitmaps never leave that rebuild. The prior edited file remains
+available if decoding, cropping or writing fails, and can still be read by
+other users of the cloned entry's path.
+
+Media3 keeps PCM and float PCM in its raw-audio path, decodes IMA ADPCM to
+PCM in the extractor, and emits A-law and mu-law samples with their own MIME
+types for decoder selection. The FFmpeg renderer maps those sample types and
+checks whether the decoder was actually compiled. Unknown WAV encodings stay
+unsupported by the extractor. Device checks remain for PCM widths, float,
+extensible PCM, RF64, IMA ADPCM, G.711 and malformed input. Outgoing WAV uses
+Android's metadata retriever when it can read a duration.
+
+Avatar work remains deferred. The small-vector path needs explicit binding
+identity, owner comparison, account- and mode-aware reuse, and a visible
+thumbnail rebind on Local Premium changes. None of those should change
+other users' fetch or animation eligibility.
