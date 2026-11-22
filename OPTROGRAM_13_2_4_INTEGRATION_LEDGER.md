@@ -31,7 +31,7 @@ Four integrated, eight skipped, and twelve deferred. Resume with
 | `21a028336` | Revert "Replaced launcher icons with Forkgram icons." | SKIPPED | The intermediate ic_launcher_dr rollback was superseded by 98bab246a and later artwork changes. |
 | `db149d88b` | Revert "Added new Forkgram icons." | SUPERSEDED | The affected resources match the final Optogram tip. Later history restores the selectable icon pack. Keep its current alias and preference compatibility. |
 | `08d11bdcb` | Add option to disable ads | SKIPPED | Sponsored suppression and its unified setting are present through e020480e2 and 66c7ec2fc. |
-| `98bab246a` | Replace icons and some strings | DEFERRED | The affected book-logo and developer-release image paths match the final tip, including intentionally absent density variants. Only surviving historical strings still need separate reconciliation. |
+| `98bab246a` | Replace icons and some strings | INTEGRATED | Artwork was already represented. R6 localized the existing sponsored-message label and branded the test overlay in 0998aac96. Existing Optogram release labels and separate Forkgram F-Droid branding are preserved. |
 | `63ce4d4ea` | Option to add Local Premium | SKIPPED | The original patch changes entitlement checks. Keep the current local Premium behavior under the batch constraints. |
 | `dce602cc4` | Change some icons | SUPERSEDED | All affected default launcher bitmaps match the final Optogram tip. The early intermediate bitmaps were replaced by later artwork. |
 | `9639cbb69` | Make it build | DEFERRED | The settings title and app identity are represented. The mixed build workaround removes browser preferences and changes DNS, signing, variants, and Premium. Review any surviving de-Googling gaps separately against the latest build. |
@@ -56,7 +56,7 @@ Six integrated, twelve skipped, and seven deferred. Resume with
 | Historical commit | Title | Disposition | Current behavior and follow-up |
 | --- | --- | --- | --- |
 | `b5283d54d` | Show joined date in menu, commit by tehcneko | INTEGRATED | Use the final menu corrections from 7be3e6549, 4dcd7466c, and 5c18722ef as the basis for the profile menu. Also restore the date in the member-management menu. The cache now keeps the serialized server date while retaining SQL ordering by the local timestamp. |
-| `bd9a412f8` | Miscellaneous | DEFERRED | R1 corrected the overbroad Fast Forward claim in both localized full descriptions. The root listing still uses Forkgram branding, consistent with the current F-Droid package and label. A standalone Optogram listing needs an explicit release target and verified feature copy before renaming. |
+| `bd9a412f8` | Miscellaneous | INTEGRATED | R1 corrected the Fast Forward claim in root listings. R6 added direct-release Optogram listing text in English and Russian in 0711b278d, including the current sponsored-message option. The root listing remains for org.forkgram.messenger. |
 | `b0a807898` | Change some strings | INTEGRATED | Use the current branded app name in the Settings section header. Keep current settings copy and sentence casing. |
 | `f6b4787ea` | Change more strings | INTEGRATED | Use the current branded app name in the alternate profile settings section header. Shares the Settings branding commit. |
 | `f57b4b332` | Change more strings | SKIPPED | Historical title-case changes leave current custom-title, chat prompt, send-as, and emoji behaviors intact. Keep the newer wording. |
@@ -65,7 +65,7 @@ Six integrated, twelve skipped, and seven deferred. Resume with
 | `c00e9757c` | Revert "Added duration info in Shared Voices tab." | SKIPPED | The old reversal targets legacy SharedAudioCell formatting. Keep newer voice captions and metadata layouts. |
 | `5a017c6d3` | Revert "Changed notification icon." | SUPERSEDED | All four affected notification PNG paths match the final Optogram tip. The early rollback bitmaps were replaced by the later artwork. |
 | `ada4ca510` | Restore disable passkeys | SKIPPED | Current BuildVars capability and setup gates already disable passkeys. The old activity-specific patch is unnecessary. |
-| `243e5f70c` | Remove LastFM | DEFERRED | Last.fm still exists in current settings and playback. Its historical removal spans CI, credentials, preferences, playback callbacks, and UI. Review as a cohesive feature retirement. |
+| `243e5f70c` | Remove LastFM | INTEGRATED | R6 removed Last.fm clients, authentication, playback dispatch, settings, deep link, resource and build inputs in a6d7ff0f2. The backup allowlist drops the retired preference file and continues to accept older exports. |
 | `643fda950` | Increase message selection to 200 | DEFERRED | Both chat and shared-media selection still cap at 100. Keep the previous audit decision pending verification of deletion and other unchunked bulk requests. |
 | `3a9dd2c39` | Up version | SKIPPED | Obsolete 12.4.2 version update. Keep the 13.2.4 build version. |
 | `ba7a62ad3` | Update gitignore | SKIPPED | Ignoring all Gradle properties is obsolete under current tracked configuration and local credential files. |
@@ -105,7 +105,7 @@ Resume with `6c7c51c29` (Spoof as  Windows when OEM device model is disabled).
 | `2eda2c23e` | Fix NPE | SKIPPED | Already covered by ecfbb6294 using the current SimpleActionBar. |
 | `1976d2896` | V23.4.3.0 | SKIPPED | Forkgram already handles bot-forum row updates through checkRemoveBotForumRowsStartThreadRow(boolean) and has newer sticker/topic implementations. Exclude the historical bottom-overlay modification and compiler log. |
 | `c0f5e6590` | Tell user if message is from Bot | INTEGRATED | Use 298f3b726 and b3f18d742 to add the bot attribution fallback to the same megagroup header. |
-| `0bec92872` | Fix NPE | DEFERRED | Legacy ExoPlayer paths no longer exist. Map the audio and video buffer null cases to the active Media3 module and confirm JNI ownership before porting. Exclude the compiler log. |
+| `0bec92872` | Fix NPE | SUPERSEDED | R6 verified that Media3 uses a nonnull audio buffer sentinel, guards video buffer allocation and allows absent supplemental data. The old ExoPlayer patch would clear nullable buffers or mutate them after returning them to the owner. No corresponding defect was found in the active code. |
 | `ccdb3c2c3` | add multi share, commit by @dic1911 | INTEGRATED IN BATCH 7 | The later dc5834259 port resolves this entry. The current implementation checks all members and files, preserves protected content, and grants read-only content URIs for the album. |
 | `eff4d8268` | Fix sharing web links | SKIPPED | LaunchActivity already combines a subject with incoming HTTP(S) text shares, the behavior also carried by 6e7c2efe0. |
 | `c8305e930` | Some more changes | DEFERRED | Poll editor gates and emoji tab changes are mixed with a local Premium predicate change. Compare poll entity serialization and newer poll restrictions before adopting the intended per-context behavior. |
@@ -423,7 +423,7 @@ Java app-config refresh remain deferred.
 | `d8fcd0cca5` | Miscellaneous16 | DEFERRED | The lock state switches the featured emoji pack from an upsell to installation and removal controls. Review the add/remove handlers and installStickerSet error handling across current hosts before exposing actions. |
 | `7efca28091` | Miscellaneous17 | DEFERRED | The current recommendation card's More action still gates the recommendations tab in ChatActivity. Porting only the card would advertise a More action that opens an upsell. Review tab access and returned results together. |
 | `552b08cfef` | Update application display name to Optogram | SKIPPED | Batch 1 already branded the default and localized app name resources. |
-| `aa550fca29` | Update remaining settings-lock branding to Optogram | INTEGRATED | Update the app name in the three current settings-lock strings while keeping resource keys and lock behavior. |
+| `aa550fca29` | Update remaining settings-lock branding to Optogram | INTEGRATED | Default settings-lock copy was already integrated. R6 applied the same brand correction to three stale strings in each of ten locales in a97e05ab6. Resource keys and lock behavior remain intact. |
 | `83265120a6` | Use dark Telegram adaptive icon for application branding | INTEGRATED | Apply the final dark standalone background and plane foreground to app-level ic_launcher while preserving its plane monochrome layer. |
 | `7d785231e7` | Use dark Telegram adaptive icon for application branding | INTEGRATED | Apply the matching variant to ic_launcher_round with alias names and the monochrome layer unchanged. |
 | `a9fdee75da` | Clean up Optogram branding and redundant settings UI | SKIPPED | fc31ed760 already uses the Optogram default without rewriting saved custom titles. |
@@ -577,3 +577,25 @@ Last.fm remains deferred. Its now-playing and scrobbling callbacks,
 settings and deep link, backup namespace, credential build inputs and
 resources remain active. The standalone store listing and wording
 deferrals remain open.
+
+## Reconciliation R6
+
+Baseline `83ea32c8a`. Resolved four historical deferrals, leaving 20. The
+direct Optogram release listing has its own English and Russian text. Root
+metadata and the F-Droid app label still match the separate Forkgram
+distribution. The sponsored-message toggle and settings-lock strings
+retain their existing behavior. Launcher artwork was already represented.
+
+Last.fm now-playing and scrobbling hooks were isolated from playlist
+progression, media metadata, focus and notification code. Removal includes
+authentication and session tasks, the setting and deep link, the icon,
+the empty section header and build inputs. Older backup files remain
+readable under the existing marker. Restore skips the retired namespace
+before parsing its content, and export excludes it. Credentials already on
+disk are unused. No migration or manifest change was needed.
+
+The historical ExoPlayer buffer patch has no safe counterpart in the
+current Media3 ownership model. Tablet initialization and the mixed
+historical build workaround remain deferred. Tablet work needs a
+reproducible failure. The build workaround touches networking, signing,
+variants and entitlement outside this batch.
