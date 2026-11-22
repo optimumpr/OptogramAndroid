@@ -165,6 +165,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_DISABLE_AUTO_WEB_LOGIN = 108;
     public static final int ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION = 107;
     public static final int ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON = 109;
+    public static final int ID_OPTOGRAM_HIDE_PHONE_NUMBER = 110;
 
     public static final int ID_EXPORT_SETTINGS = 95;
     public static final int ID_IMPORT_SETTINGS = 96;
@@ -546,6 +547,8 @@ public class ForkSettingsActivity extends BaseFragment {
     }
 
     private void fillSettings(ArrayList<UItem> items) {
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PHONE_NUMBER, "Hide Phone Number in Profiles", "Masks phone numbers in supported Optogram screens; does not change Telegram privacy settings")
+            .setChecked(pref("hidePhoneNumber", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON, "Disable Open Bot Button", "Hide bot application buttons in chat lists and search results")
             .setChecked(pref("disableOpenBotButton", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION, "Disable WebView Geolocation", "Block geolocation requests in newly opened bot webviews")
@@ -825,6 +828,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("disableWebViewGeolocation", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON) {
             toggle("disableOpenBotButton", item, view);
+        } else if (id == ID_OPTOGRAM_HIDE_PHONE_NUMBER) {
+            toggle("hidePhoneNumber", item, view);
         } else if (id == ID_HIDDEN_ACCOUNTS) {
             presentFragment(new HiddenAccountsActivity());
         } else if (id == ID_FORK_SETTINGS_LOCK) {
