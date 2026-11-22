@@ -676,7 +676,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                 ).show();
                 BotWebViewVibrationEffect.APP_ERROR.vibrate();
                 AndroidUtilities.shakeViewSpring(view, shakeDp = -shakeDp);
-            } else if (rulesType == PRIVACY_RULES_TYPE_VOICE_MESSAGES && (position == myContactsRow || position == nobodyRow) && !getUserConfig().isPremium()) {
+            } else if (isVoiceMessagePrivacyLocked() && (position == myContactsRow || position == nobodyRow)) {
                 BulletinFactory.of(this).createSimpleBulletin(
                         R.raw.star_premium_2,
                         LocaleController.getString(R.string.OptionPremiumRequiredTitle),
@@ -1241,6 +1241,10 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
         if (pendingRequests.get() > 0) {
             doneButton.setLoading(true, true);
         }
+    }
+
+    private boolean isVoiceMessagePrivacyLocked() {
+        return rulesType == PRIVACY_RULES_TYPE_VOICE_MESSAGES && !getUserConfig().hasLocalPremiumFeatures();
     }
 
     private void showErrorAlert() {
@@ -2208,7 +2212,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                                 radioCell.setText(LocaleController.getString(R.string.LastSeenEverybody), currentType == TYPE_EVERYBODY, true);
                             }
                         } else if (position == myContactsRow) {
-                            if (rulesType == PRIVACY_RULES_TYPE_VOICE_MESSAGES && !getUserConfig().isPremium() || rulesType == PRIVACY_RULES_TYPE_MESSAGES && !getMessagesController().newNoncontactPeersRequirePremiumWithoutOwnpremium && !getUserConfig().isPremium()) {
+                            if (isVoiceMessagePrivacyLocked() || rulesType == PRIVACY_RULES_TYPE_MESSAGES && !getMessagesController().newNoncontactPeersRequirePremiumWithoutOwnpremium && !getUserConfig().isPremium()) {
                                 radioCell.setRadioIcon(getContext().getResources().getDrawable(R.drawable.mini_switch_lock).mutate());
                             }
                             if (rulesType == PRIVACY_RULES_TYPE_P2P) {
@@ -2224,7 +2228,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
                             }
                             radioCell.setText(getString(R.string.PrivateMessagesChargePrice), currentType == TYPE_PAY, false);
                         } else {
-                            if (rulesType == PRIVACY_RULES_TYPE_VOICE_MESSAGES && !getUserConfig().isPremium() || rulesType == PRIVACY_RULES_TYPE_MESSAGES && !getMessagesController().newNoncontactPeersRequirePremiumWithoutOwnpremium && !getUserConfig().isPremium()) {
+                            if (isVoiceMessagePrivacyLocked() || rulesType == PRIVACY_RULES_TYPE_MESSAGES && !getMessagesController().newNoncontactPeersRequirePremiumWithoutOwnpremium && !getUserConfig().isPremium()) {
                                 radioCell.setRadioIcon(getContext().getResources().getDrawable(R.drawable.mini_switch_lock).mutate());
                             }
                             if (rulesType == PRIVACY_RULES_TYPE_P2P) {
