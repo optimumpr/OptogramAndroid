@@ -9582,7 +9582,7 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                 }
                 cover = audioInfo.getCover();
             }
-        } else if (extL.equals("opus") || extL.equals("ogg") || extL.equals("flac")) {
+        } else if (extL.equals("opus") || extL.equals("ogg") || extL.equals("flac") || extL.equals("wav")) {
             MediaMetadataRetriever mediaMetadataRetriever = null;
             try {
                 mediaMetadataRetriever = new MediaMetadataRetriever();
@@ -9690,6 +9690,9 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                         break;
                     case "flac":
                         document.mime_type = "audio/flac";
+                        break;
+                    case "wav":
+                        document.mime_type = "audio/wav";
                         break;
                     default:
                         String mimeType = myMime.getMimeTypeFromExtension(extL);
