@@ -22,24 +22,24 @@ Four integrated, eight skipped, and twelve deferred. Resume with
 
 | Historical commit | Title | Disposition | Current behavior and follow-up |
 | --- | --- | --- | --- |
-| `9baa26817` | Revert "Added option for interval of updates check." | DEFERRED | The update interval still has a live row in the unified settings. Review with updater removal as one change. |
+| `9baa26817` | Revert "Added option for interval of updates check." | DEFERRED | The interval is now bypassed by all reachable forced checks. Its settings row, search, Kotlin lookup and unused timed path remain. Retire this inert setting as a focused change independent of the download/install lifecycle. |
 | `64866563c` | Revert "Added Forkgram icon to list of devices." | SKIPPED | This upstream revert also removes Desktop icon classification. Keep the newer SessionCell and SessionBottomSheet mappings for remote clients. |
-| `89a4fcb84` | Revert "Added new button to settings to check updates." | DEFERRED | The historical settings update entry is part of the updater retirement. Review current settings, search, and debug entry points together. |
-| `8457f2523` | Revert | DEFERRED | The original updater removal mixes CI, build constants, and download infrastructure. Start with the later scoped removal sequence ending at cd38138f0, and review current automatic checks and download ownership. |
+| `89a4fcb84` | Revert "Added new button to settings to check updates." | DEFERRED | Batch 8 removed the primary Settings row and debug check actions. The alternate ProfileActivity manual route remains and needs a replacement or removal with the reachable updater flow. |
+| `8457f2523` | Revert | DEFERRED | Batch 8 removed automatic and several manual entry points. Standalone prompts, AppUpdater, DownloadReceiver and pending-update handling remain. See d189f6a0b5 and cd38138f0a for the later scoped retirement intent. |
 | `7f6a745ae` | Revert "Changed book_logo icon." | SKIPPED | The book logo rollback was an intermediate asset state, superseded by 98bab246a. |
-| `d57a9b0ed` | Revert "Replaced default app icon with Forkgram icon." | DEFERRED | The old default-icon rollback changes manifest aliases and removes selectable icons. Compare the later Default and Adaptive restoration against the current alias and launcher settings model. |
+| `d57a9b0ed` | Revert "Replaced default app icon with Forkgram icon." | SUPERSEDED | Batches 8 and 9 restore the final visual behavior with the existing alias names, selected icon compatibility, and plane monochrome layers. The older alias deletion is superseded. |
 | `21a028336` | Revert "Replaced launcher icons with Forkgram icons." | SKIPPED | The intermediate ic_launcher_dr rollback was superseded by 98bab246a and later artwork changes. |
-| `db149d88b` | Revert "Added new Forkgram icons." | DEFERRED | Removing the old icon pack wholesale would affect selectable icons and stored launcher choices. Review the final artwork by alias and flavor. |
+| `db149d88b` | Revert "Added new Forkgram icons." | SUPERSEDED | The affected resources match the final Optogram tip. Later history restores the selectable icon pack. Keep its current alias and preference compatibility. |
 | `08d11bdcb` | Add option to disable ads | SKIPPED | Sponsored suppression and its unified setting are present through e020480e2 and 66c7ec2fc. |
-| `98bab246a` | Replace icons and some strings | DEFERRED | Review surviving book_logo and developer-release artwork as part of the final asset set. The old strings include wording and settings behavior that changed later. |
+| `98bab246a` | Replace icons and some strings | DEFERRED | The affected book-logo and developer-release image paths match the final tip, including intentionally absent density variants. Only surviving historical strings still need separate reconciliation. |
 | `63ce4d4ea` | Option to add Local Premium | SKIPPED | The original patch changes entitlement checks. Keep the current local Premium behavior under the batch constraints. |
-| `dce602cc4` | Change some icons | DEFERRED | Older default launcher PNGs need to be reconciled with the later Telegram artwork restoration and the current adaptive aliases. Batch 3 reviewed 0265c9ca9 and c6fff4052 and carried the artwork reconciliation forward. |
+| `dce602cc4` | Change some icons | SUPERSEDED | All affected default launcher bitmaps match the final Optogram tip. The early intermediate bitmaps were replaced by later artwork. |
 | `9639cbb69` | Make it build | DEFERRED | The settings title and app identity are represented. The mixed build workaround removes browser preferences and changes DNS, signing, variants, and Premium. Review any surviving de-Googling gaps separately against the latest build. |
-| `1123c395a` | Change some more icons | DEFERRED | The intro logo and launcher PNGs need comparison with the later art and intro changes for each active flavor. |
+| `1123c395a` | Change some more icons | SUPERSEDED | All touched raster paths match the final historical tip. The old IntroActivity drawable binding is superseded by the newer intro renderer and its Optogram background port. |
 | `d88e8ff7d` | Some branding changes | INTEGRATED | Apply the final display-name behavior from 552b08cfe and update existing localized name overrides. The chat title and settings entry are already branded. Defer icon mappings and diagnostic wording to the appropriate follow-ups. |
 | `445094d84` | Add wav and wav_x support, based on commit by Attorelle | DEFERRED | WAV document recognition is already present through d2d2ce007. The legacy ExoPlayer classes are absent and the current build uses Media3. Decoder capability for x-wav and the active FFmpeg configuration still need verification. |
 | `801611b26` | Change app id | SKIPPED | 9c55abd6b already sets the Optogram application ID for the primary build. Keep newer flavor identities and signing behavior. |
-| `28555ec88` | Modify some icons | DEFERRED | The intro and numbered launcher images overlap later art edits. Review the final artwork per density and alias before replacing assets. |
+| `28555ec88` | Modify some icons | REPRESENTED | All touched image paths match the final Optogram tip. Keep the current qualifiers and aliases. |
 | `92cd90726` | Option to autolock the app immediately | INTEGRATED IN BATCH 6 | The later split port 1fa893219, 79f5a0308, 30ac0f4b2, and cb2193038 supplies the final implementation. Batch 6 also audited the current external-action and media-session paths. Earlier batch totals reflect dispositions at the time of review. |
 | `7730b5284` | Do not save qr login state | SKIPPED | Explicitly reversed by f0c897424. Preserve current QR login state handling. |
 | `97f3ca747` | Change background color | INTEGRATED | Apply the final darker gradient from 3bc748250 to the current standalone icon background resource. |
@@ -56,14 +56,14 @@ Six integrated, twelve skipped, and seven deferred. Resume with
 | Historical commit | Title | Disposition | Current behavior and follow-up |
 | --- | --- | --- | --- |
 | `b5283d54d` | Show joined date in menu, commit by tehcneko | INTEGRATED | Use the final menu corrections from 7be3e6549, 4dcd7466c, and 5c18722ef as the basis for the profile menu. Also restore the date in the member-management menu. The cache now keeps the serialized server date while retaining SQL ordering by the local timestamp. |
-| `bd9a412f8` | Miscellaneous | DEFERRED | Old store descriptions mix branding with an outdated feature list. Update publishable metadata against current behavior and distribution separately. |
+| `bd9a412f8` | Miscellaneous | DEFERRED | R1 corrected the overbroad Fast Forward claim in both localized full descriptions. The root listing still uses Forkgram branding, consistent with the current F-Droid package and label. A standalone Optogram listing needs an explicit release target and verified feature copy before renaming. |
 | `b0a807898` | Change some strings | INTEGRATED | Use the current branded app name in the Settings section header. Keep current settings copy and sentence casing. |
 | `f6b4787ea` | Change more strings | INTEGRATED | Use the current branded app name in the alternate profile settings section header. Shares the Settings branding commit. |
 | `f57b4b332` | Change more strings | SKIPPED | Historical title-case changes leave current custom-title, chat prompt, send-as, and emoji behaviors intact. Keep the newer wording. |
 | `16ca13adb` | Improve default sync contacts to false | SKIPPED | 338a07ef1 already defaults sync off, including login state restore. Current UserConfig also defaults and clears it to false. The original patch precedes the first-login correction 1ca6a2e06, confirmed equivalent in Batch 4. |
 | `a593a66b0` | Revert "Disabled new passkeys." | SKIPPED | Intermediate passkey reversal superseded by ada4ca510 and the current disabled capability. |
 | `c00e9757c` | Revert "Added duration info in Shared Voices tab." | SKIPPED | The old reversal targets legacy SharedAudioCell formatting. Keep newer voice captions and metadata layouts. |
-| `5a017c6d3` | Revert "Changed notification icon." | DEFERRED | The historical reversal restores older notification PNGs. Reconcile the active notification, launcher, and flavor assets before replacing any artwork from the newer base. |
+| `5a017c6d3` | Revert "Changed notification icon." | SUPERSEDED | All four affected notification PNG paths match the final Optogram tip. The early rollback bitmaps were replaced by the later artwork. |
 | `ada4ca510` | Restore disable passkeys | SKIPPED | Current BuildVars capability and setup gates already disable passkeys. The old activity-specific patch is unnecessary. |
 | `243e5f70c` | Remove LastFM | DEFERRED | Last.fm still exists in current settings and playback. Its historical removal spans CI, credentials, preferences, playback callbacks, and UI. Review as a cohesive feature retirement. |
 | `643fda950` | Increase message selection to 200 | DEFERRED | Both chat and shared-media selection still cap at 100. Keep the previous audit decision pending verification of deletion and other unchunked bulk requests. |
@@ -75,10 +75,10 @@ Six integrated, twelve skipped, and seven deferred. Resume with
 | `2da084874` | Sample gradle properties | SKIPPED | Historical example superseded by the current local properties and signing setup. Keep obsolete credential configuration out of the repository. |
 | `4e53491dd` | update Readme | SKIPPED | Credit-line follow-up to the historical README rewrite. Revisit attribution only in a current documentation update. |
 | `82bf42cd5` | View Stats in Message Menu, commit by @immat0x1 | INTEGRATED | Reuse the existing statistics handler with the final eligibility from 3355f8223 and 99722a785. Separate poll statistics and exclude ephemeral and ineligible posts. |
-| `644f8d532` | Darken some backgrounds | DEFERRED | The gradient was already restored using the final colors through 49702b3ac. The badge still used by PickerBottomLayoutViewer has a newer xxhdpi asset. Treat the density family as a set and inspect nine-patch behavior before replacing it. |
+| `644f8d532` | Darken some backgrounds | REPRESENTED | All affected paths, including the picker badge density family and standalone launcher gradient, match the final Optogram tip. The badge still needs a device rendering check. |
 | `e22106d34` | Darken some backgrounds | INTEGRATED | Both Android style overlays still used the original blue values. Apply the matching gray theme colors. |
 | `7398d11e7` | Update Readme | SKIPPED | Old README and screenshot advertise 200-message selection and other historical states. Keep the current feature and release documentation. |
-| `45c60f861` | Reset disconnect timeout on successful connection, commit by @tehcneko | DEFERRED | Native reconnect and Java app-config refresh behavior both need review. The later 650332534 covers only the native timeout reset. Check current retry and lifecycle behavior before importing either part. Batch 3 related this to d60bd9b51 and 4dc4c401e through the shared recovery path. Batch 8 integrated the native reconnect reset and replaced Google lookups. The Java app-config refresh and native delegation switch remain deferred. |
+| `45c60f861` | Reset disconnect timeout on successful connection, commit by @tehcneko | DEFERRED | The native reconnect portion landed through 78427b5913. The independent MessagesController app-config refresh still uses a CacheFetcher callback and periodic runnable. Verify coalescing, force refresh and reconnect before porting the Java cadence. |
 | `a557449fd` | fix some crashes | DEFERRED | The original leftBaseline change targets the old tablet initialization. Current code has a context guard, a cached tablet mode, and a user override. Revisit with a reproducible startup or layout failure. |
 
 ## Batch 3
@@ -90,8 +90,8 @@ Resume with `6c7c51c29` (Spoof as  Windows when OEM device model is disabled).
 | Historical commit | Title | Disposition | Current behavior and follow-up |
 | --- | --- | --- | --- |
 | `bf941a730` | Revert "Replaced frequent contacts with logged in accounts in App Shortcuts." | SKIPPED | Current MediaDataController combines visible-account and opt-in contact shortcuts, caps the latter after reserving account slots, and suppresses them behind passcode or hidden-account gates. The old replacement would remove newer shortcut behavior. |
-| `af0854279` | some fixes | DEFERRED | Search, gift, direct and broadcast-group info already have current content descriptions. Audit the newer Recent Actions info button label separately. Old index-based labels do not fit current buttons. |
-| `0861de9d6` | some more fixes | DEFERRED | The grouped high-quality photo part is already handled by ca5d3e6e3. The bitmap part needs decode-failure handling and alias checks in rebuildPhoto because a crop or transform can fail or retain its source. |
+| `af0854279` | some fixes | INTEGRATED IN R1 | The newer channel buttons already label search, gift, direct and broadcast-group info. R1 labels the current Recent Actions info button using the localized title of the dialog it opens. |
+| `0861de9d6` | some more fixes | DEFERRED | Grouped HQ photo entry preservation landed through ca5d3e6e3. MediaController.PhotoEntry.rebuildPhoto still needs an independent decode-failure and alias-safe bitmap lifecycle review. External group sharing is already integrated separately. |
 | `66c4e842b` | Add media resolution to details, commit @tehcneko | SKIPPED | Despite the title, the diff forces ShareAlert dark-theme geometry in light mode. It adds no resolution metadata and targets old picker layout behavior. |
 | `bfe15bbf8` | Revert "Removed debug button from settings." | SKIPPED | The historical revert restores a debug section header. Current profile has its own developer menu path. Keep its visibility and existing updater deferrals. |
 | `9e653f838` | Revert "Added ability to copy Username without long touch." | SKIPPED | Current ProfileActivity has explicit copy-username menu and row handlers. Keep the newer interaction paths. |
@@ -109,11 +109,11 @@ Resume with `6c7c51c29` (Spoof as  Windows when OEM device model is disabled).
 | `ccdb3c2c3` | add multi share, commit by @dic1911 | INTEGRATED IN BATCH 7 | The later dc5834259 port resolves this entry. The current implementation checks all members and files, preserves protected content, and grants read-only content URIs for the album. |
 | `eff4d8268` | Fix sharing web links | SKIPPED | LaunchActivity already combines a subject with incoming HTTP(S) text shares, the behavior also carried by 6e7c2efe0. |
 | `c8305e930` | Some more changes | DEFERRED | Poll editor gates and emoji tab changes are mixed with a local Premium predicate change. Compare poll entity serialization and newer poll restrictions before adopting the intended per-context behavior. |
-| `d60bd9b51` | Disable Use_Delegate_Host_Resolve to prevent using Google servers, commit by @Timothy Redaelli | DEFERRED | USE_DELEGATE_HOST_RESOLVE is still defined. Review the final system DNS changes with current native and Java WebSocket fallback together, including the earlier deferred reconnect fix. |
-| `4dc4c401e` | Replace Google dns with Adguard | DEFERRED | Current Java resolver still contains Google endpoints. Historical replacement was followed by several resolver changes, including 2741e4750 and d78008446. Trace active per-flavor lookup and recovery paths before adapting final non-Google behavior. |
+| `d60bd9b51` | Disable Use_Delegate_Host_Resolve to prevent using Google servers, commit by @Timothy Redaelli | REPRESENTED | Batch 8 replaced the Google hostname resolver with Android system DNS. Keep native delegation for asynchronous IPv6-capable resolution. The old macro removal would force the blocking IPv4-only native fallback. |
+| `4dc4c401e` | Replace Google dns with Adguard | REPRESENTED | Batch 8 integrated later 2741e47503 recovery via AdGuard and Cloudflare. The existing F-Droid special-resolver skip matches d78008446. Batches 9 and 10 handled validation and completion. Network verification remains. |
 | `681288265` | Disable geo location for  webview | SKIPPED | Default WebView geolocation denial and explicit opt-in already exist through badf97380 and 9c58060f6. |
-| `0265c9ca9` | Edit some launcher icons | DEFERRED | The final dark standalone gradient is already in 49702b3ac. Numbered launcher foregrounds need the open density, alias, and flavor reconciliation from Batch 1. |
-| `c6fff4052` | Edit some more launcher icons | DEFERRED | This changes the standalone adaptive foreground and the controller mapping together. Reconcile with the later adaptive icon commits before replacing any alias resources. |
+| `0265c9ca9` | Edit some launcher icons | REPRESENTED | All affected foreground and background resource paths match the final Optogram tip. Covered by the early gradient restoration and Batch 8 artwork port. |
+| `c6fff4052` | Edit some more launcher icons | REPRESENTED | All five Aqua foreground PNGs match the final Optogram tip and the selector uses icon_foreground_saa through the Batch 8 port. |
 | `de5c5f7da` | Toggle to disable Premium Promo | SKIPPED | Current hidePremiumSpeedPromo setting and dialog-search gate already implement the corrected behavior from b440adabb. The original condition was inverted. |
 | `25e447fd9` | Toggle to disable AutoPlay of Next Audio Message | INTEGRATED | Reuse the original preference key and an independent unified music setting. Reuse current end-of-playlist cleanup on automatic end so the player is released and the playlist position is retained. Manual navigation and Forkgram voice autoplay remain independent. |
 | `25a01d2c7` | Toggle to disable Birthday Reminders | SKIPPED | Current disableBirthdayReminder row and BIRTHDAY_CONTACTS_TODAY gate already implement the corrected behavior. |
@@ -140,7 +140,7 @@ DNS and reconnect, and launcher pack reconciliation remain open.
 | `28004bfb2` | Update Readme | SKIPPED | Historical README lists Google DNS replacement that is still deferred. Keep current documentation pending verified behavior. |
 | `7be1befac` | Provide link to Optogram releases | SKIPPED | Historical release channel link refers to an older distribution setup. Keep the current release guidance. |
 | `41cd7725f` | Update Readme | SKIPPED | Historical push-provider wording and credits follow the old README rewrite. Preserve current provider setup documentation. |
-| `9beb5107b` | fix: text input value UI oerflow, commit by @dic1911 | DEFERRED | Current TextSettingsCell uses AnimatedTextView with AT_MOST measurement and a new layout path. Confirm clipping on narrow screens before adapting. The old character-count truncation can generate invalid substring bounds. |
+| `9beb5107b` | fix: text input value UI oerflow, commit by @dic1911 | INTEGRATED IN R1 | Clamp width calculations before passing them to MeasureSpec, including decorated rows with the newer layout. Keep AnimatedTextView and its current text fitting rather than using the old character-count truncation. |
 | `27dbf82f6` | fix: Fix missing open linked channel, commit by @tehcneko | SKIPPED | The legacy linked-channel menu insertion was explicitly reverted by 96aaad414. |
 | `e9e853045` | fix: Fix id text overlapping, commit by @tehcneko | INTEGRATED | Apply the larger no-action-bar gap in both current profile subtitle positioning paths while retaining the newer offsets and animation. |
 | `c9e12ae33` | Revert "Do not compress videos" | SKIPPED | The historical no-compression field is absent. Keep Forkgram's current send-as-file, grouped-media and video conversion paths. |
@@ -352,7 +352,7 @@ avatar and Stealth Mode paths, and subscription subtitle remain deferred.
 | `72d928809f` | Fix static app icon holder local premium check | SKIPPED | The static holder already uses the global preference rather than a fragment account field. |
 | `732fe0261f` | Correct Optogram settings search title | INTEGRATED | Correct the existing search/resource title and localized branding overrides. Reuse that same string for the visible settings tile. |
 | `8d50743117` | Use system DNS for delegated host resolution and WebSocket fallback | INTEGRATED | Remove hard-coded Google host lookups from the delegated and WebSocket paths. Use InetAddress system resolution and preserve asynchronous dispatch, address handling and native callbacks. |
-| `b95c7ced87` | Disable native delegated host resolution for system DNS | DEFERRED | Retain native delegation because the alternative uses synchronous IPv4-only gethostbyname for both WebSocket and proxy hostnames. The delegated Java resolver now fulfills system DNS intent without dropping IPv6. |
+| `b95c7ced87` | Disable native delegated host resolution for system DNS | REPRESENTED | System DNS is active through the Java delegate from 49928ddf3a. Keep the delegate, async callbacks and IPv6 support. The historical macro change is unnecessary for the final behavior. |
 | `08b5c48bd5` | Disable special DNS resolver for all Optogram build variants | SKIPPED | The intermediate all-flavor recovery disable was reversed by d78008446. |
 | `2741e47503` | Preserve datacenter DNS recovery via AdGuard and Cloudflare without Google | INTEGRATED | Restore AdGuard TXT resolution with the existing Cloudflare fallback. Remove the unused Google TXT task and preserve the startup guard and native signed configuration handling. |
 | `d780084468` | Re-enable non-Google datacenter recovery for non-F-Droid builds | SKIPPED | The current Gradle field already skips special recovery only for F-Droid, matching the final historical variant split. |
@@ -471,3 +471,28 @@ retirement, or remaining launcher artwork.
 | `aa819aa9884` | Avoid restricted emulator detection probes on Android 11+ | INTEGRATED | Replace the Android 11+ procfs input-device read with the public InputDevice list. Keep the original name checks and pre-Android 11 path. |
 | `033269bbebb` | Open Optogram settings from push service notification | INTEGRATED | Use the current unified settings deep link and an explicit immutable LaunchActivity intent. Reuse the open settings screen on subsequent taps. Preserve notification lifecycle and push configuration. |
 | `6ddae509718` | Use Optogram log tag for push service diagnostics | INTEGRATED | Apply the Optogram log tag to the ApplicationLoader push startup and watchdog messages. The preceding service commit also updates its diagnostics. |
+
+## Reconciliation R1
+
+Baseline `41f908ac61a`. Reconciled 14 historical deferrals, leaving 38 rows
+marked DEFERRED. Batch totals above record dispositions at the time of each
+batch. Partial updater retirement, the Java portion of app-config refresh, the
+bitmap portion of grouped-photo rebuild, and store branding stay open.
+
+Compared 216 tracked launcher resource paths with `6ddae5097`, including
+regular and round Default aliases, Adaptive, numbered and app-level resources,
+and the forkTest overlay. Three alias XMLs intentionally keep the plane
+monochrome layer with the historical foreground and background. Four
+standalone gradients match the earlier `2865d363a` Optogram artwork. All
+other compared paths match the historical tip. Debug, standalone and release
+manifest mappings keep their current flavor and component identities.
+Merged-resource and launcher runtime checks remain to be run.
+
+Source review found the missing Recent Actions info accessibility label
+and an arithmetic underflow in decorated settings-row width measurement.
+Both are corrected under their historical subjects. Notification navigation
+already uses the immutable unified-settings link and reuses an open settings
+screen. No independent tablet startup defect was established. English and
+Russian metadata now describe Fast Forward for eligible messages, with the
+existing F-Droid branding retained. No native, network, updater lifecycle,
+or request-coupled Local Premium changes were made in R1.
