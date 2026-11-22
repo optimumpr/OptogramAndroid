@@ -171,6 +171,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
     public static final int ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES = 118;
+    public static final int ID_OPTOGRAM_LOCAL_PREMIUM = 105;
     public static final int ID_OPTOGRAM_HIDE_DEVICE_INFO = 106;
     public static final int ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT = 119;
 
@@ -576,6 +577,8 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableDeviceInfo", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT, "Disable Contact Number Sharing Prompt", "Hide the prompt offering to share your phone number in chats")
             .setChecked(pref("disablePhoneSharePrompt", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_LOCAL_PREMIUM, "Local Premium", "Unlock Premium launcher icons on this device")
+            .setChecked(pref("localPremium", false)).setMultiline(true));
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
         if (!SharedConfig.isUserOwner()) {
             items.add(UItem.asButtonCheck(ID_HIDE_SENSITIVE_DATA, LocaleController.getString(R.string.HideSensitiveData), LocaleController.getString(R.string.ForkRestartRequired))
@@ -855,6 +858,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("hidePremiumSpeedPromo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER) {
             toggle("disableBirthdayReminder", item, view);
+        } else if (id == ID_OPTOGRAM_LOCAL_PREMIUM) {
+            toggle("localPremium", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_DEVICE_INFO) {
             toggle("disableDeviceInfo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT) {
