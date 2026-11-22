@@ -16,7 +16,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
@@ -84,7 +83,7 @@ public class NotificationsService extends Service {
             try {
                 startForeground(NOTIFICATION_ID, getNotification());
             } catch (Throwable e) {
-                Log.d("Fork Client", "Failed to move push service to foreground");
+                Log.d("Optogram", "Failed to move push service to foreground");
             }
         }
         foregroundStartPending = false;
@@ -107,11 +106,13 @@ public class NotificationsService extends Service {
                     .setShowWhen(false)
                     .setOngoing(true)
                     .setSmallIcon(R.drawable.notification)
-                    .setContentText("Push service: tap to learn more");
+                    .setContentText("Push service: tap to open settings");
             try {
-                Intent explainIntent = new Intent("android.intent.action.VIEW");
-                explainIntent.setData(Uri.parse("https://github.com/forkgram/TelegramAndroid"));
-                builder.setContentIntent(PendingIntent.getActivity(this, 0, explainIntent, pendingIntentFlags));
+                Intent settingsIntent = new Intent(this, org.telegram.ui.LaunchActivity.class);
+                settingsIntent.setAction(Intent.ACTION_VIEW);
+                settingsIntent.setData(android.net.Uri.parse("tg://settings"));
+                settingsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                builder.setContentIntent(PendingIntent.getActivity(this, 0, settingsIntent, pendingIntentFlags));
             } catch (Throwable ignore) {
                 Log.d("Fork Client", "Failed to set intent");
             }
