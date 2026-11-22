@@ -3707,8 +3707,8 @@ void ConnectionsManager::applyDnsConfig(NativeByteBuffer *buffer, std::string ph
             if (config == nullptr) {
                 if (LOGS_ENABLED) DEBUG_D("can't decrypt dns config");
             } else {
-                delete config;
                 if (LOGS_ENABLED) DEBUG_D("dns config not valid due to date or expire, current date = %d, config date = %d, config expired = %d", currentDate, config->date, config->expires);
+                delete config;
             }
             if (requestingSecondAddress == 1) {
                 requestingSecondAddress = 2;

@@ -1639,6 +1639,9 @@ public class ConnectionsManager extends BaseController {
         }
     }
 
+    // The native datacenter config decoder requires a 256-byte RSA block.
+    private static final int MIN_DNS_CONFIG_BYTES = 256;
+
     private static class AdguardDnsLoadTask extends AsyncTask<Void, Void, NativeByteBuffer> {
 
         private int currentAccount;
@@ -1714,6 +1717,9 @@ public class ConnectionsManager extends BaseController {
                     builder.append(arrayList.get(a).replace("\"", ""));
                 }
                 byte[] bytes = Base64.decode(builder.toString(), Base64.DEFAULT);
+                if (bytes.length < MIN_DNS_CONFIG_BYTES) {
+                    return null;
+                }
                 NativeByteBuffer buffer = new NativeByteBuffer(bytes.length);
                 buffer.writeBytes(bytes);
                 return buffer;
@@ -1835,6 +1841,9 @@ public class ConnectionsManager extends BaseController {
                     builder.append(arrayList.get(a).replace("\"", ""));
                 }
                 byte[] bytes = Base64.decode(builder.toString(), Base64.DEFAULT);
+                if (bytes.length < MIN_DNS_CONFIG_BYTES) {
+                    return null;
+                }
                 NativeByteBuffer buffer = new NativeByteBuffer(bytes.length);
                 buffer.writeBytes(bytes);
                 return buffer;
