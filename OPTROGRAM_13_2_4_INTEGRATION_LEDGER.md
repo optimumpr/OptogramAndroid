@@ -437,3 +437,37 @@ Java app-config refresh remain deferred.
 | `754cd3e57b` | Keep release signing credentials in local configuration | SKIPPED | Current release signing already obtains credentials from local configuration without restoring the older tracked fields. |
 | `cbeb12069d` | Use active network link properties for IP strategy on Android 11+ | INTEGRATED | Use active LinkProperties on Android 11+. Preserve legacy IPv6-forced, mixed CLAT and IPv6-only precedence. Keep older network enumeration and the current Java/native callback interface. |
 | `3a6334bc85` | Load Telegram API credentials from local properties and reject placeholders | SKIPPED | Current Gradle configuration already reads and validates Telegram API values with local properties support and rejects placeholders. |
+
+## Batch 10
+
+Baseline `73bdb37e227`. Examined the remaining four first-parent commits,
+`997123f94` through `6ddae5097` inclusive, on the Forkgram-base continuation.
+Four integrated, zero skipped, and zero newly deferred. `6ddae5097` is the
+tip of the available historical lineage. No further first-parent commit is
+available on these refs.
+
+The resolver's 256-byte minimum matches Datacenter::decodeSimpleConfig.
+Invalid Base64 and truncated TXT payloads fail before native application.
+The native decoder retains its RSA/hash, deserialization and date checks.
+Rejected-date logging reads the fields before freeing the config. Final
+Cloudflare transport/parser failures now complete the native recovery
+attempt using a valid zero-length buffer through the existing JNI method.
+Success and exhausted native validation also clear the phase and TLS
+mismatch marker. An earlier native library safely treats the empty buffer
+as invalid and may follow its earlier retry sequence. F-Droid keeps
+skipping the special resolver and makes no recovery DNS request. The
+current native library must be rebuilt to exercise the new completion
+semantics.
+
+Deferred features remain open. This last segment supplied no final ports for
+Local Premium composer hints, translation, autoarchive, featured packs,
+recommendations, avatar rendering, Stealth Mode, 200-item selection, WAV
+decoding, Java app-config refresh, subscription text, standalone updater
+retirement, or remaining launcher artwork.
+
+| Historical commit | Title | Disposition | Current behavior and follow-up |
+| --- | --- | --- | --- |
+| `997123f94ad` | Avoid restricted emulator detection probes on Android 11+ | INTEGRATED | Remove serial-number heuristics and skip the legacy kernel driver file reads on Android 11+. Keep public Build heuristics and other detector paths. Treat a null reflective property as unavailable so the remaining probes can continue. |
+| `aa819aa9884` | Avoid restricted emulator detection probes on Android 11+ | INTEGRATED | Replace the Android 11+ procfs input-device read with the public InputDevice list. Keep the original name checks and pre-Android 11 path. |
+| `033269bbebb` | Open Optogram settings from push service notification | INTEGRATED | Use the current unified settings deep link and an explicit immutable LaunchActivity intent. Reuse the open settings screen on subsequent taps. Preserve notification lifecycle and push configuration. |
+| `6ddae509718` | Use Optogram log tag for push service diagnostics | INTEGRATED | Apply the Optogram log tag to the ApplicationLoader push startup and watchdog messages. The preceding service commit also updates its diagnostics. |
