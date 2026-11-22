@@ -162,7 +162,7 @@ DNS and reconnect, and launcher pack reconciliation remain open.
 | `78fc7e36f` | Update Readme | SKIPPED | Old README describes hiding a phone number from other users, while 42a008e6a only masks local display. Keep the current accurate UI description. |
 | `e035a9b9f` | Miscellaneous2 | DEFERRED | ImageReceiver applies local Premium to all rendered user avatars and the composer sets premium mode unconditionally. Trace rendering and send effects against later targeted ports. |
 | `590d5f241` | Miscellaneous3 | DEFERRED | Mixed changes affect the Boost menu, restriction affordances, routing, and story eligibility. Compare the later Miscellaneous7 and Boost menu changes and separate UI exposure from requests. |
-| `5b500b31f` | Miscellaneous4 | DEFERRED | Sticker nopremium classification and avatar/table presentation need call-site review. Compare later Miscellaneous6 and downstream sticker sending and rendering before porting. |
+| `5b500b31f` | Miscellaneous4 | DEFERRED | Batch 9 integrated the sticker classification portion through e583657a2 after tracing its instance-method consumers. Avatar and table presentation remain deferred. |
 
 ## Batch 5
 
@@ -324,7 +324,7 @@ later reconciliation. No activity aliases were renamed.
 
 System hostname DNS and final AdGuard/Cloudflare datacenter recovery replace
 the earlier deferred Google-specific routes. Java delegation remains enabled for
-asynchronous and IPv6-capable resolution. Native timeout reset is integrated,
+asynchronous and IPv6-capable resolution. Batch 9 confirmed both native proxy and WebSocket routes and added the newer active-link IP strategy. Native timeout reset is integrated,
 while app-config refresh remains open. Updater retirement advanced through the
 automatic, primary Settings and debug routes, with current standalone prompts
 and pending-update recovery still in place. The 200-item limits, Media3 WAV,
@@ -362,3 +362,78 @@ avatar and Stealth Mode paths, and subscription subtitle remain deferred.
 | `1cb58e38ab` | Guard Settings back navigation before action bar initialization | SKIPPED | ecfbb6294 already protects the current SimpleActionBar back navigation. |
 | `08fcc356ad` | Avoid image decoding fallback for unavailable video thumbnails | SKIPPED | 47e16ffc3 already skips the generic decode fallback for unavailable video thumbnails. |
 | `106a5b2572` | Honor local Premium setting when displaying chat Boost menu | INTEGRATED | Use account-aware local UI eligibility to expose the Boost menu. Keep chat capability checks, admin routing and the existing userCanBoostChannel check before any boost action. |
+
+## Batch 9
+
+Baseline `95864ca3ed`. Examined 30 first-parent commits on the 13.1.1 port
+through the documented Forkgram-base continuation, `e583657a2` through
+`3a6334bc8` inclusive. 13 integrated, 12 skipped, and
+5 deferred. Resume with `997123f94`
+(Avoid restricted emulator detection probes on Android 11+).
+
+### DNS and reconnect boundary
+
+Native hostname delegation remains enabled. Both proxy and WebSocket
+hostnames reach Java. Ordinary resolution uses system DNS with IPv4 and IPv6
+results. Recognized WebSocket hosts use their own queue/cache with IPv4
+preference and IPv6 fallback. Android 11+ IP strategy now uses the active
+network's LinkProperties and preserves the existing CLAT selection precedence.
+Pre-Android 11 enumeration remains available.
+
+Emergency datacenter recovery is separate. Non-F-Droid builds request AdGuard
+TXT payloads with Cloudflare fallback, while F-Droid skips special recovery.
+The current Java paths have no hard-coded Google DNS endpoint. The native
+decoder still authenticates and date-checks configs. Recovery timeout accrues
+only while online and unpaused and resets upon a generic current-DC reconnect.
+A separate correction rejects undersized payloads before handing them to JNI
+and reads the rejected-config dates before freeing the object. Native changes
+need compilation alongside device coverage. The separate Java app-config
+refresh change remains open.
+
+### Updater call graph
+
+Automatic checks remain absent. ProfileActivity's alternate row is a manual
+caller. Standalone update prompts in ChatActivity, ChannelAdminLogActivity,
+and PeerStoriesView still reach the two-argument LaunchActivity.checkAppUpdate.
+It calls AppUpdater, which checks the Telegram release channel or legacy
+release flow and owns download registration. DownloadReceiver completes the
+APK flow. LaunchActivity also clears cached installers once and resumes the
+stored pendingAppUpdate gate. Its unused three-argument overload has no
+current callers and uses a different Telegram update RPC. The interval timer
+does not gate current forced callers. Full retirement remains deferred until
+the prompt, installation and stored-update paths have an agreed replacement.
+Selection limits, Media3 WAV, avatar rendering, Stealth Mode, subtitle and
+Java app-config refresh remain deferred.
+
+| Historical commit | Title | Disposition | Current behavior and follow-up |
+| --- | --- | --- | --- |
+| `e583657a2e` | Miscellaneous6 | INTEGRATED | Apply the exact instance-method guard. With Local Premium off, a media nopremium flag still suppresses Premium sticker effects. With it on, use the same underlying document classifier as unflagged media. Static classification, sending, and UserConfig status are unchanged. |
+| `49b63e32d8` | Miscellaneous7 | DEFERRED | The current composer uses this delegate to suppress slow-mode and restricted-send hints. The historical unconditional true would silence those hints even on chats without boost eligibility. Trace the intended affordance separately from the actual boost and send restrictions. |
+| `e3d55bb6b6` | Miscellaneous9 | SKIPPED | Batch 5 Miscellaneous5 already applied both logout checks. |
+| `367854c860` | Miscellaneous9 | SKIPPED | Batch 5 Miscellaneous5 already applied all three account settings checks. |
+| `28151a6291` | Miscellaneous10 | INTEGRATED | Carry the same local account-prompt behavior into MainTabsActivity without changing the current hard account cap. |
+| `2cb33b745a` | Miscellaneous11 | SKIPPED | Batch 4 applied the no-actions profile subtitle offset in both current layout paths. |
+| `90ba2ad9eb` | Miscellaneous12 | INTEGRATED | Use the local UI capability in the current emoji tab calculation. Preserve the separate allowEmojisForNonPremium condition and existing send gates. |
+| `4c8448aa79` | Fix ringtone vibration attributes on older Android versions | SKIPPED | 5bba4c964 already passes ringtone audio attributes on the pre-Android 13 branch. |
+| `287f5e4f29` | Miscellaneous13 | INTEGRATED | Restore conditional sticker suggestions and request animated results from the local keyword-suggestion path using the current adapter account. Keep selection, sending and controller checks. |
+| `b6e274e6ee` | Miscellaneous13 | INTEGRATED | Request the existing animated keyword-suggestion variant in StickersAdapter using local UI eligibility. Other sticker and sending behavior stays in the current code. |
+| `57c990543a` | Miscellaneous14 | DEFERRED | The original TranslateController checks combine the chat translation setting, local provider and Telegram translation requests. The newer controller also handles rich messages and autotranslation. Trace eligibility and error behavior per provider before porting. |
+| `82d5a8e75e` | Miscellaneous15 | DEFERRED | The ArchiveSettingsActivity row both advertises eligibility and persists a Telegram global privacy update. Current code also uses autoarchiveAvailable. Review the response and rollback behavior before changing this shared gate. |
+| `cbef5a1d03` | Miscellaneous15 | INTEGRATED | Use the actual account's local UI predicate to render its existing folder tags. Preserve the folderTags preference and its consumers. |
+| `d8fcd0cca5` | Miscellaneous16 | DEFERRED | The lock state switches the featured emoji pack from an upsell to installation and removal controls. Review the add/remove handlers and installStickerSet error handling across current hosts before exposing actions. |
+| `7efca28091` | Miscellaneous17 | DEFERRED | The current recommendation card's More action still gates the recommendations tab in ChatActivity. Porting only the card would advertise a More action that opens an upsell. Review tab access and returned results together. |
+| `552b08cfef` | Update application display name to Optogram | SKIPPED | Batch 1 already branded the default and localized app name resources. |
+| `aa550fca29` | Update remaining settings-lock branding to Optogram | INTEGRATED | Update the app name in the three current settings-lock strings while keeping resource keys and lock behavior. |
+| `83265120a6` | Use dark Telegram adaptive icon for application branding | INTEGRATED | Apply the final dark standalone background and plane foreground to app-level ic_launcher while preserving its plane monochrome layer. |
+| `7d785231e7` | Use dark Telegram adaptive icon for application branding | INTEGRATED | Apply the matching variant to ic_launcher_round with alias names and the monochrome layer unchanged. |
+| `a9fdee75da` | Clean up Optogram branding and redundant settings UI | SKIPPED | fc31ed760 already uses the Optogram default without rewriting saved custom titles. |
+| `f7abadcaa3` | Clean up Optogram branding and redundant settings UI | SKIPPED | The legacy OptogramSettingsActivity is absent. |
+| `83601ed534` | Clean up Optogram branding and redundant settings UI | INTEGRATED | Remove the redundant unified-screen shortcut and click route. NotificationsSettingsActivity remains the real settings destination. |
+| `ab52e06876` | Normalize legacy default chat title to Optogram | SKIPPED | The default header is already Optogram. The historical string-equality migration would overwrite the display of user-entered titles that happen to match former defaults. |
+| `663cbac073` | Normalize legacy default chat title to Optogram | SKIPPED | The settings row, edit dialog, and programmatic option already share the Optogram default. Preserve saved titles verbatim for the same reason as ab52e0687. |
+| `d45e24222d` | Remove obsolete UnifiedPush settings search shortcut | INTEGRATED | Remove the obsolete search shortcut and its dead Kotlin navigation alias and row ID. Preserve the live DisableUnifiedPush search route. |
+| `908a70cbe4` | Remove remaining birthday diagnostics from active Optogram settings | SKIPPED | Production birthday switches already refresh without the removed diagnostic row. |
+| `c898e603f6` | Avoid cross-directory rename during scoped-storage media path probes | INTEGRATED | Use the historical copy-based media path probe on scoped-storage Android versions. Keep the older rename probe and existing file cleanup. |
+| `754cd3e57b` | Keep release signing credentials in local configuration | SKIPPED | Current release signing already obtains credentials from local configuration without restoring the older tracked fields. |
+| `cbeb12069d` | Use active network link properties for IP strategy on Android 11+ | INTEGRATED | Use active LinkProperties on Android 11+. Preserve legacy IPv6-forced, mixed CLAT and IPv6-only precedence. Keep older network enumeration and the current Java/native callback interface. |
+| `3a6334bc85` | Load Telegram API credentials from local properties and reject placeholders | SKIPPED | Current Gradle configuration already reads and validates Telegram API values with local properties support and rejects placeholders. |
