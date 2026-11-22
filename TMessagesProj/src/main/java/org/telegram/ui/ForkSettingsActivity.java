@@ -166,6 +166,8 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_DISABLE_WEBVIEW_GEOLOCATION = 107;
     public static final int ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON = 109;
     public static final int ID_OPTOGRAM_HIDE_PHONE_NUMBER = 110;
+    public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
+    public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
 
     public static final int ID_EXPORT_SETTINGS = 95;
     public static final int ID_IMPORT_SETTINGS = 96;
@@ -547,6 +549,10 @@ public class ForkSettingsActivity extends BaseFragment {
     }
 
     private void fillSettings(ArrayList<UItem> items) {
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO, "Hide Premium Speed Promotion", "Hide the download-speed promotion in chat search")
+            .setChecked(pref("hidePremiumSpeedPromo", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER, "Disable Birthday Reminder", null)
+            .setChecked(pref("disableBirthdayReminder", false)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PHONE_NUMBER, "Hide Phone Number in Profiles", "Masks phone numbers in supported Optogram screens; does not change Telegram privacy settings")
             .setChecked(pref("hidePhoneNumber", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_OPEN_BOT_BUTTON, "Disable Open Bot Button", "Hide bot application buttons in chat lists and search results")
@@ -830,6 +836,10 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("disableOpenBotButton", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_PHONE_NUMBER) {
             toggle("hidePhoneNumber", item, view);
+        } else if (id == ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO) {
+            toggle("hidePremiumSpeedPromo", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER) {
+            toggle("disableBirthdayReminder", item, view);
         } else if (id == ID_HIDDEN_ACCOUNTS) {
             presentFragment(new HiddenAccountsActivity());
         } else if (id == ID_FORK_SETTINGS_LOCK) {
