@@ -31310,7 +31310,7 @@ public class ChatActivity extends BaseFragment implements
                 }
                 addToContactsButton.setTag(null);
                 addToContactsButton.setVisibility(View.VISIBLE);
-            } else if (showShare && !user.self) {
+            } else if (showShare && !user.self && !MessagesController.getGlobalMainSettings().getBoolean("disablePhoneSharePrompt", false)) {
                 createTopPanel();
                 if (topChatPanelView == null) {
                     return;

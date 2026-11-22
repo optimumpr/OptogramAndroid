@@ -252,6 +252,10 @@ public class ConnectionsManager extends BaseController {
         if (systemVersion.trim().length() == 0) {
             systemVersion = "SDK Unknown";
         }
+        if (MessagesController.getGlobalMainSettings().getBoolean("disableDeviceInfo", false)) {
+            deviceModel = "Unknown";
+            systemVersion = "Unknown";
+        }
         getUserConfig().loadConfig();
         String pushString = getRegId();
         String fingerprint = AndroidUtilities.getCertificateSHA256Fingerprint();

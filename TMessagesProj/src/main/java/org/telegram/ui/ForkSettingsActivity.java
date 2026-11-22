@@ -170,6 +170,8 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
     public static final int ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES = 118;
+    public static final int ID_OPTOGRAM_HIDE_DEVICE_INFO = 106;
+    public static final int ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT = 119;
 
     public static final int ID_EXPORT_SETTINGS = 95;
     public static final int ID_IMPORT_SETTINGS = 96;
@@ -567,6 +569,10 @@ public class ForkSettingsActivity extends BaseFragment {
             .setChecked(pref("disableAutowebLogin", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL, LocaleController.getString(R.string.HideChatKeyboard), null)
             .setChecked(pref("hide_chat_keyboard", false)));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_DEVICE_INFO, "Hide Device Information", "Report Unknown for the device model and Android version after restarting Optogram")
+            .setChecked(pref("disableDeviceInfo", false)).setMultiline(true));
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT, "Disable Contact Number Sharing Prompt", "Hide the prompt offering to share your phone number in chats")
+            .setChecked(pref("disablePhoneSharePrompt", false)).setMultiline(true));
         items.add(UItem.asHeader(LocaleController.getString(R.string.PrivacySettings)));
         if (!SharedConfig.isUserOwner()) {
             items.add(UItem.asButtonCheck(ID_HIDE_SENSITIVE_DATA, LocaleController.getString(R.string.HideSensitiveData), LocaleController.getString(R.string.ForkRestartRequired))
@@ -846,6 +852,10 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("hidePremiumSpeedPromo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER) {
             toggle("disableBirthdayReminder", item, view);
+        } else if (id == ID_OPTOGRAM_HIDE_DEVICE_INFO) {
+            toggle("disableDeviceInfo", item, view);
+        } else if (id == ID_OPTOGRAM_DISABLE_PHONE_SHARE_PROMPT) {
+            toggle("disablePhoneSharePrompt", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_KEYBOARD_ON_SCROLL) {
             toggle("hide_chat_keyboard", item, view);
         } else if (id == ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES) {
