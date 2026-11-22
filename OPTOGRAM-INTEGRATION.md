@@ -4,8 +4,9 @@
 
 Use the original Optogram first-parent history after Forkgram 12.4.2
 (`b55b00680`) through `optogram-security-2026-11-02^{commit}` (`d041fcba2`).
-Use `main` and `integration/optogram-forkgram-base` as references for later
-13.1.1 ports and fixes. Compare product behavior and file paths when matching
+After the original lineage ends at `d041fcba2`, continue with the first-parent
+Optogram 13.1.1 port on `main` starting at `a5ad8d6ff`. Use
+`integration/optogram-forkgram-base` to cross-check subsequent fixes. Compare product behavior and file paths when matching
 ports to their original commits. The Telegram-based experiment also contains
 alternate ports.
 
@@ -127,8 +128,7 @@ Resume with `f536c4a72` (Miscellaneous5).
 
 The launcher-only Local Premium setting uses the original preference and the
 later selector correction `1a2d3ce41`. This advances the isolated launcher slice
-of the deferred Local Premium work. Review the remaining `f536c4a72` surfaces
-when they come up in sequence. Updater retirement, Media3 WAV decoder support,
+of the deferred Local Premium work. Batch 5 integrated the remaining `f536c4a72` surfaces in LogoutActivity and UserInfoActivity. Updater retirement, Media3 WAV decoder support,
 DNS and reconnect, and launcher pack reconciliation remain open.
 
 | Historical commit | Title | Disposition | Current behavior and follow-up |
@@ -147,7 +147,7 @@ DNS and reconnect, and launcher pack reconciliation remain open.
 | `a540042ff` | toggle to disable autoweb login, based on commit by @omg-xtao | SKIPPED | Browser's token attachment and the unified opt-out already use the corrected disableAutowebLogin preference. |
 | `96aaad414` | Revert "fix: Fix missing open linked channel, commit by @tehcneko" | SKIPPED | Explicitly reverses 27dbf82f6. Keep current linked-chat menu and permissions. |
 | `2f3a63094` | Remove unused file | INTEGRATED | The tracked file was still empty and defined no class. Remove it. |
-| `ba435fe3c` | Improve local premium | DEFERRED | This patch mixes purchase locks, UserConfig.updatePremium and story-user eligibility. Later 9a3f784be separates UI entitlement from server status. The launcher slice is restored in this batch. Audit account lifecycle and story request effects before extending it. |
+| `ba435fe3c` | Improve local premium | DEFERRED | This patch mixes purchase locks, UserConfig.updatePremium and story-user eligibility. Later 9a3f784be separates UI entitlement from server status. Batch 4 restored launcher selection. Batch 5 restored the distinct UI predicate, self-profile badge, and local-only purchase preview behavior. Audit remaining account lifecycle and story request effects before extending it. |
 | `c2cb1df43` | Adjust Optogram setting icon | INTEGRATED | Use the final adjusted Jaguar PNG in the same tile commit as ca723638e. Launcher alias and icon-pack changes stay separate. |
 | `1ca6a2e06` | Finally, Contacts syncing off on first login | SKIPPED | Current login UI and saved-state handling already use a false default. This closes the review of the earlier 16ca13adb sequence without new code. |
 | `247ac670f` | Fix memory leak in media activity, commit by @tehcneko | SKIPPED | ImageLoader's video fallback and MediaActivity delegate teardown are already covered by 47e16ffc3 and 32cb2f3e7. |
@@ -163,3 +163,44 @@ DNS and reconnect, and launcher pack reconciliation remain open.
 | `e035a9b9f` | Miscellaneous2 | DEFERRED | ImageReceiver applies local Premium to all rendered user avatars and the composer sets premium mode unconditionally. Trace rendering and send effects against later targeted ports. |
 | `590d5f241` | Miscellaneous3 | DEFERRED | Mixed changes affect the Boost menu, restriction affordances, routing, and story eligibility. Compare the later Miscellaneous7 and Boost menu changes and separate UI exposure from requests. |
 | `5b500b31f` | Miscellaneous4 | DEFERRED | Sticker nopremium classification and avatar/table presentation need call-site review. Compare later Miscellaneous6 and downstream sticker sending and rendering before porting. |
+
+## Batch 5
+
+Baseline `781e178c0`. Examined the remaining three commits of the original
+first-parent lineage (`f536c4a72` through `d041fcba2`), then the first 27
+commits of the 13.1.1 port (`a5ad8d6ff` through `32473dd02`).
+9 integrated, 20 skipped, and 1 deferred.
+Resume with `df46603c8` (Treat local Premium as acknowledged in feature preview dialogs).
+
+| Historical commit | Title | Disposition | Current behavior and follow-up |
+| --- | --- | --- | --- |
+| `f536c4a722` | Miscellaneous5 | INTEGRATED | Batch 4 covered launcher selection. Restore the other five original checks in LogoutActivity and UserInfoActivity. Both account caps are currently 90, so this primarily changes Premium account-limit prompts. The hard cap and login path stay in place. |
+| `234ccc4370` | Fix affiliate showing up without permission, commit by @omg-xtao | INTEGRATED | Use the later 65718061b correction at all three current visibility sites. Keep channel type and server configuration gates, and require channel admin rights before showing the controls. |
+| `d041fcba29` | Fix unsafe video rotation parsing in tgcalls | SKIPPED | Both active tgcalls sources moved to jni/tgcalls/tgcalls. They already check the rotation field and read the validated videoRotation iterator. |
+| `a5ad8d6ff7` | Establish working Optogram 13.1.1 Forkgram baseline | SKIPPED | The primary Optogram application ID already exists. Preserve 13.2.4 flavor suffixes, signing, and test identities. |
+| `9a3f784be9` | Add separate local Premium UI entitlement without changing server status | INTEGRATED | Apply the dedicated local UI capability predicate. UserConfig.isPremium and native or server authorization remain based on the account's actual status. |
+| `83d1854af6` | Allow locally enabled Premium launcher icons in selection and lock display | SKIPPED | Batch 4 already restored the final behavior in both icon selection and lock rendering. |
+| `f4356ccbd2` | Introduce minimal Optogram settings screen with verified Local Premium toggle | INTEGRATED | Keep the existing switch in the unified screen. Restore its UI refresh notification and update its description for the supported local surfaces. |
+| `027e4e7667` | Add Optogram settings entry to Forkgram settings navigation | SKIPPED | The unified Optogram settings entry is already present, including the later Jaguar presentation. |
+| `1a2d3ce41a` | Fix Local Premium icon lock check in static view holder | SKIPPED | Batch 4's static icon holder already reads the global preference without relying on a fragment account. |
+| `9ac62ead92` | Restore self-profile Local Premium badge without affecting other users | INTEGRATED | Use the current self-profile badge rendering path. The older patch no longer applies. Preserve the real-Premium click gate for changing emoji status and retain other users' badges. |
+| `09e838335f` | Show subscribed Premium subtitle for locally enabled UI entitlement | DEFERRED | The referenced subtitle explicitly thanks the user for a Telegram subscription. A local-only toggle cannot truthfully use that text. Reassess the subtitle presentation independently of the local badge and purchase controls. |
+| `06c84270c4` | Restore Optogram device identification masking in settings diagnostics | SKIPPED | The old standalone Settings diagnostic branch is absent. Current ProfileActivity diagnostics already mask the device line through be10cbd06. |
+| `8cbe845934` | Expose restored diagnostic device-information toggle in Optogram settings | SKIPPED | One unified device-information switch already controls diagnostics and connection initialization. |
+| `34b6b7d52b` | Restore Optogram server-facing device model and system version masking | SKIPPED | Batch 3 already passes the conditional Unknown model and SDK into native_init for initConnection serialization. |
+| `3e60a2de60` | Correct device masking setting description to reflect server-facing behavior | SKIPPED | The unified device switch already explains the server-reported model and Android version and the restart boundary. |
+| `f8a1dd46e5` | Restore Optogram birthday reminder and birthday setup promotion controls | INTEGRATED | The contact birthday reminder gate already exists. Restore the distinct birthday setup promotion gate using disablePromo in the current DialogsActivity path. |
+| `10910be8e2` | Expose birthday reminder and birthday promotion preferences in Optogram settings | INTEGRATED | Expose the missing birthday setup switch in the unified screen. Reuse the existing contact birthday reminder switch. |
+| `372f6b718b` | Refresh birthday and promotion hints when returning from Optogram settings | INTEGRATED | Refresh the existing hint selector when returning to the dialogs screen. The current other refresh points are tied to preview and search state. |
+| `bbd05ba521` | Restore original Optogram profile phone-number visibility preference | SKIPPED | Both original ProfileActivity phone-display sites already respect hidePhoneNumber. Batch 4 also completed the exception-list path. |
+| `ffb5b83fa3` | Expose original Optogram hide-phone-number profile preference | SKIPPED | The unified screen already exposes the exact preference. |
+| `bfbc968772` | Make expanding Optogram preferences screen vertically scrollable | SKIPPED | The legacy screen is absent. The current unified screen already scrolls. |
+| `bd2a48da86` | Expose original archive pull and archived stories controls backed by existing Forkgram behavior | SKIPPED | Forkgram already exposes archive pull and archived stories settings with active consumers. |
+| `43f3c5551f` | Restore original Optogram automatic next-message playback preference | SKIPPED | Batch 3 restored the music playlist preference using current cleanup and kept voice playback independent. |
+| `b9b97a1137` | Add original Optogram next-message autoplay switch | SKIPPED | The unified music autoplay setting already exists and uses the corrected preference key. |
+| `27a6d5c7fa` | Expose existing corrected recent-files attachment suppression in Optogram settings | SKIPPED | Forkgram already provides the recent-files attachment preference and uses it in ChatAttachAlertDocumentLayout. |
+| `253cabf7bb` | Expose existing Optogram bot-link parameter protection in settings | SKIPPED | Forkgram already exposes bot-link parameter protection with the existing preference. |
+| `80d462ac17` | Restore Optogram dialog thumbnail and last-seen indicator settings backed by existing code | SKIPPED | Forkgram already exposes dialog thumbnail and colored last-seen switches. The current renderer honors these preferences. |
+| `3bc2e94d73` | Restore original Optogram sponsored-message suppression in chat rendering | SKIPPED | Existing integration gates sponsored chat messages and the bot ad panel through disableAds. |
+| `8d1ca233f5` | Expose original Optogram hide-sponsored-messages switch with default enabled | SKIPPED | The unified switch already defaults to suppressing sponsored messages. |
+| `32473dd021` | Hide Premium subscription tiers and purchase footer for local Premium UI | INTEGRATED | Hide the tier chooser and purchase footer for local-only Premium preview. Both footer update sites share the eligibility check. Preserve subscription upgrades for actual subscribers and keep Business purchase UI unchanged. |
