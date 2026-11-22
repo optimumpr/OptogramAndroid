@@ -304,8 +304,10 @@ object ForkSettings {
         FileLog.d("ForkSettings: open${if (itemKey != null && itemId != 0) " item=$itemKey" else ""}")
 
         val last = LaunchActivity.getSafeLastFragment()
-        if (last is ForkSettingsActivity && itemId != 0) {
-            last.rehighlight(itemId)
+        if (last is ForkSettingsActivity) {
+            if (itemId != 0) {
+                last.rehighlight(itemId)
+            }
             return true
         }
         val settings = if (itemId != 0) ForkSettingsActivity().highlight(itemId) else ForkSettingsActivity()

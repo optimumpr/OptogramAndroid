@@ -22,6 +22,8 @@ import android.os.IBinder;
 import androidx.core.app.NotificationCompat;
 import android.util.Log;
 
+import org.telegram.ui.LaunchActivity;
+
 public class NotificationsService extends Service {
 
     private static final int NOTIFICATION_ID = 9999;
@@ -84,7 +86,7 @@ public class NotificationsService extends Service {
             try {
                 startForeground(NOTIFICATION_ID, getNotification());
             } catch (Throwable e) {
-                Log.d("Fork Client", "Failed to move push service to foreground");
+                Log.d("Optogram", "Failed to move push service to foreground");
             }
         }
         foregroundStartPending = false;
@@ -95,25 +97,21 @@ public class NotificationsService extends Service {
 
     private Notification getNotification() {
         if (notification == null) {
-            int pendingIntentFlags;
-            if (Build.VERSION.SDK_INT >= 34) {
-                pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE;
-            } else {
-                pendingIntentFlags = PendingIntent.FLAG_MUTABLE;
-            }
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "Push Notifications Service", NotificationManager.IMPORTANCE_DEFAULT));
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                     .setShowWhen(false)
                     .setOngoing(true)
                     .setSmallIcon(R.drawable.notification)
-                    .setContentText("Push service: tap to learn more");
+                    .setContentText("Push service: tap to open settings");
             try {
-                Intent explainIntent = new Intent("android.intent.action.VIEW");
-                explainIntent.setData(Uri.parse("https://github.com/forkgram/TelegramAndroid"));
-                builder.setContentIntent(PendingIntent.getActivity(this, 0, explainIntent, pendingIntentFlags));
+                Intent settingsIntent = new Intent(this, LaunchActivity.class);
+                settingsIntent.setAction(Intent.ACTION_VIEW);
+                settingsIntent.setData(Uri.parse("tg://forksettings"));
+                settingsIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                builder.setContentIntent(PendingIntent.getActivity(this, 0, settingsIntent, PendingIntent.FLAG_IMMUTABLE));
             } catch (Throwable ignore) {
-                Log.d("Fork Client", "Failed to set intent");
+                Log.d("Optogram", "Failed to set intent");
             }
             notification = builder.build();
         }
