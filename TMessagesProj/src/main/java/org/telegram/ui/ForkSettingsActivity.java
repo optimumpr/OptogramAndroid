@@ -168,6 +168,7 @@ public class ForkSettingsActivity extends BaseFragment {
     public static final int ID_OPTOGRAM_HIDE_PHONE_NUMBER = 110;
     public static final int ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO = 117;
     public static final int ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER = 114;
+    public static final int ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES = 118;
 
     public static final int ID_EXPORT_SETTINGS = 95;
     public static final int ID_IMPORT_SETTINGS = 96;
@@ -549,6 +550,8 @@ public class ForkSettingsActivity extends BaseFragment {
     }
 
     private void fillSettings(ArrayList<UItem> items) {
+        items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES, "Hide Sponsored Messages", null)
+            .setChecked(pref("disableAds", true)));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_HIDE_PREMIUM_SPEED_PROMO, "Hide Premium Speed Promotion", "Hide the download-speed promotion in chat search")
             .setChecked(pref("hidePremiumSpeedPromo", false)).setMultiline(true));
         items.add(UItem.asButtonCheck(ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER, "Disable Birthday Reminder", null)
@@ -840,6 +843,8 @@ public class ForkSettingsActivity extends BaseFragment {
             toggle("hidePremiumSpeedPromo", item, view);
         } else if (id == ID_OPTOGRAM_DISABLE_BIRTHDAY_REMINDER) {
             toggle("disableBirthdayReminder", item, view);
+        } else if (id == ID_OPTOGRAM_HIDE_SPONSORED_MESSAGES) {
+            toggle("disableAds", item, view);
         } else if (id == ID_HIDDEN_ACCOUNTS) {
             presentFragment(new HiddenAccountsActivity());
         } else if (id == ID_FORK_SETTINGS_LOCK) {
