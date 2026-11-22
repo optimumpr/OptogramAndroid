@@ -106,7 +106,7 @@ Resume with `6c7c51c29` (Spoof as  Windows when OEM device model is disabled).
 | `1976d2896` | V23.4.3.0 | SKIPPED | Forkgram already handles bot-forum row updates through checkRemoveBotForumRowsStartThreadRow(boolean) and has newer sticker/topic implementations. Exclude the historical bottom-overlay modification and compiler log. |
 | `c0f5e6590` | Tell user if message is from Bot | INTEGRATED | Use 298f3b726 and b3f18d742 to add the bot attribution fallback to the same megagroup header. |
 | `0bec92872` | Fix NPE | DEFERRED | Legacy ExoPlayer paths no longer exist. Map the audio and video buffer null cases to the active Media3 module and confirm JNI ownership before porting. Exclude the compiler log. |
-| `ccdb3c2c3` | add multi share, commit by @dic1911 | DEFERRED | PhotoViewer currently shares the selected item and newer share ingress handles multiple items. The historical viewer chooser still needs a port that validates all album members, file readiness, protected content, and URI grants. Existing grouped sending is separate. |
+| `ccdb3c2c3` | add multi share, commit by @dic1911 | INTEGRATED IN BATCH 7 | The later dc5834259 port resolves this entry. The current implementation checks all members and files, preserves protected content, and grants read-only content URIs for the album. |
 | `eff4d8268` | Fix sharing web links | SKIPPED | LaunchActivity already combines a subject with incoming HTTP(S) text shares, the behavior also carried by 6e7c2efe0. |
 | `c8305e930` | Some more changes | DEFERRED | Poll editor gates and emoji tab changes are mixed with a local Premium predicate change. Compare poll entity serialization and newer poll restrictions before adopting the intended per-context behavior. |
 | `d60bd9b51` | Disable Use_Delegate_Host_Resolve to prevent using Google servers, commit by @Timothy Redaelli | DEFERRED | USE_DELEGATE_HOST_RESOLVE is still defined. Review the final system DNS changes with current native and Java WebSocket fallback together, including the earlier deferred reconnect fix. |
@@ -256,3 +256,56 @@ in this range and remain open.
 | `3355f82230` | Restore gated View Stats action for eligible channel posts | SKIPPED | e70acc85e already restores eligible channel-post statistics. |
 | `99722a785b` | Keep channel message stats separate from poll and ephemeral menus | SKIPPED | Current statistics action excludes polls and ephemeral posts and keeps the poll-specific action separate. |
 | `b401f0bb97` | Apply Hide Sponsored Messages preference to bot ad panel | SKIPPED | Current bot ad panel already checks disableAds with a true suppression default. |
+
+## Batch 7
+
+Baseline `46ae8a928f`. Examined the next 30 first-parent commits on the
+13.1.1 port, `7a7832f51` through `c960a92e9` inclusive.
+4 integrated, 21 skipped, and 5 deferred.
+Resume with `3bc748250` (Restore dark original launcher icon background).
+
+Batch 6 committed diff `f3a55a475..46ae8a928f` contains nine files, 93 insertions
+and 28 deletions. The previously reported large working-tree diff included the
+two pre-existing wallet-engine modifications. Neither file was committed.
+
+The current Java settings screen remains the sole visible Optogram settings
+entry. The Kotlin ForkSettings registry is a programmatic interface with scoped
+test-build writes, independent of normal row persistence. Existing registry
+keys and custom title behavior are unchanged. Local Premium remains an
+installation-wide preference resolved through the active account's UI predicate.
+Existing sponsored, birthday, device privacy, and passcode paths keep their keys
+and defaults. DNS/reconnect, updater retirement, launcher artwork, Media3 WAV,
+and subscription subtitle remain open.
+
+| Historical commit | Title | Disposition | Current behavior and follow-up |
+| --- | --- | --- | --- |
+| `7a7832f51f` | Expose Optogram preferences within combined Forkgram settings | SKIPPED | The unified ForkSettingsActivity already contains the Optogram rows and backing preferences. The historical intermediate extra preferences link has no current destination. |
+| `fd3c316bea` | Unify Optogram and Forkgram settings under one entry | SKIPPED | SettingsActivity already opens the unified ForkSettingsActivity from its Optogram entry. Keep the current navigation and search. |
+| `f911786eef` | Move sponsored-message preference into unified Optogram settings | SKIPPED | The unified screen already owns the sponsored toggle with disableAds defaulting true. |
+| `56d70f207b` | Remove duplicate sponsored-message toggle from legacy preferences page | SKIPPED | There is no legacy OptogramSettingsActivity or duplicate sponsored row to remove. |
+| `536db30300` | Restore original Jaguar icon for Optogram Settings | SKIPPED | Batch 4 already restored the final Jaguar asset and current settings tile. |
+| `a418c19a51` | Move device identity and WebView geolocation privacy toggles into unified Optogram settings | SKIPPED | The unified device and geolocation rows already use their original keys and defaults. Device metadata is read on connection initialization and geolocation on WebView setup. |
+| `db3faf86ff` | Consolidate web login, bot button and phone masking privacy settings | SKIPPED | The unified page already contains web-login, bot-button, and phone masking controls with current consumers. |
+| `15617a89a9` | Remove duplicated Optogram toggles already implemented in Forkgram settings | SKIPPED | Keep Forkgram's archive, thumbnails, last-seen, recent attachments, and bot-link rows. The removed legacy duplicate settings are absent. |
+| `e95e5f3e2d` | Integrate Optogram audio playlist autoplay control alongside Forkgram voice autoplay | SKIPPED | Batch 3 restored the music playlist control separately from Forkgram voice autoplay. |
+| `f6468321f7` | Restore optional keyboard dismissal on manual chat scrolling | SKIPPED | Batch 2 already added the opt-in manual drag behavior and one unified row. |
+| `05687a82b5` | Use Optogram Client as the default custom app title | SKIPPED | fc31ed760 implements the later Optogram default and preserves stored custom titles, including through ForkSettings.kt. |
+| `fddb7d0be5` | Add local birthday hint diagnostics using shared production suppression gates | SKIPPED | Intermediate birthday diagnostic UI was removed by 908a70cbe. Both production suppression paths are already present. |
+| `71c2275fdb` | Render birthday diagnostic output with actual line breaks | SKIPPED | Formatting fix for the removed diagnostics. Preserve the production hint refresh. |
+| `08bc01017e` | Move Optogram local premium and birthday controls into Privacy and Security | INTEGRATED | Move the existing Local Premium and two separate birthday controls below the unified Privacy and Security heading. Keep keys, IDs, defaults, and callbacks. Exclude diagnostics removed in 908a70cbe. |
+| `7e99ab8ee6` | Restore WAV and X-WAV music document recognition | SKIPPED | WAV and X-WAV document classification is already present via d2d2ce007. This patch does not address the deferred Media3 decoder support. |
+| `0fa046e936` | Raise shared media message selection limit to 200 | DEFERRED | The Batch 2 audit found unchunked deletion and story requests plus other bulk consumers. Confirm limits and failure handling before raising shared-media selection. |
+| `90ff756bf6` | Increase main chat message selection limit to 200 | DEFERRED | The standard forward path chunks at 100, while multiple other bulk operations do not. Keep the chat limit pending the coordinated audit with 0fa046e93. |
+| `dc58342595` | Restore sharing entire media groups | INTEGRATED | Restore the viewer's single-item or album chooser. Reuse the current file-resolution path, validate each member against account, dialog, group, and protected-media conditions, and require every file before granting content URIs. Keep ordinary single-item sharing. |
+| `94852d6500` | Restore grouped media sharing and phone sharing prompt control | SKIPPED | This commit implements phone prompt suppression and its old PrivacySettingsActivity row. Batch 3 already uses the corrected condition and one unified row. The PhotoViewer album patch is separate. |
+| `765b338ab0` | Disable passkey creation in unofficial Optogram client | SKIPPED | The capability is false and PasskeysController rejects registration before credential or network work. The current registration entry also sits behind the disabled settings route. |
+| `577285279b` | Hide unsupported passkey setup from privacy settings | SKIPPED | PrivacySettingsActivity already gates the passkey row and its click handler on the disabled capability. |
+| `ee08b028c6` | Disable unsupported passkeys in Optogram build configuration | SKIPPED | BuildVars.SUPPORTS_PASSKEYS is already false. |
+| `6a414559e3` | Hide unsupported passkey suggestion | SKIPPED | DialogsActivity already gates SETUP_PASSKEY on the disabled capability. |
+| `915991593a` | Miscellaneous4 | DEFERRED | VectorAvatarThumbDrawable takes only a Premium classification, with no owner or account identifier. A constructor-wide OR would apply the local setting to unrelated users' avatars. Review self-only call sites and rendering effects. |
+| `022240b4ed` | Miscellaneous2 | DEFERRED | ImageReceiver handles arbitrary users and has separate full-user fetch, avatar animation and rendering paths. Trace and scope any local behavior to the owning account before altering this renderer. |
+| `3219810f78` | Miscelaneous | INTEGRATED | The account cell binds the actual user for its account. Use that account's existing local UI predicate for the badge and preserve emoji status precedence. No user or server status mutation. |
+| `51f512168c` | Miscelaneous | DEFERRED | The two StealthModeAlert checks govern an active TL_stories_activateStealthMode send path. Separate preview acknowledgement from authorization and verify cooldown and error handling before changing this gate. |
+| `b70e4143f0` | Fix disable autoweb login | SKIPPED | Browser and the separate ChatActivity URL-auth branch already check the corrected disableAutowebLogin key. |
+| `b440adabbd` | Disable Premium Promo | SKIPPED | DialogsActivity and the unified switch already use hidePremiumSpeedPromo for the download-speed promotion. |
+| `c960a92e92` | Make all launcher icons available without Premium | INTEGRATED | Apply the final launcher availability flags to the three affected icons. Keep aliases, artwork, and the existing selector implementation, which continues to honor local UI eligibility wherever an icon is marked Premium. |
