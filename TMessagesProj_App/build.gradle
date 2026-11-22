@@ -45,7 +45,7 @@ android {
     compileSdkVersion 36
     buildToolsVersion '36.0.0'
 
-    defaultConfig.applicationId = "org.forkclient.messenger"
+    defaultConfig.applicationId = "org.jaguar.optogram"
 
 
     lintOptions {
