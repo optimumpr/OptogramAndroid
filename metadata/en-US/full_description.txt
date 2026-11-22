@@ -49,7 +49,7 @@ Forkgram is a simple fork of the Telegram Messenger with a few minor improvement
 ͏ • Disable parameters from bot links
 
 <b>Fast Forward</b>
-͏ • You can forward any message with Share Alert from Fast Forward menu item.
+͏ • Use Fast Forward to open the sharing dialog for messages that can be forwarded.
 ͏ • Share Alert now has two additional buttons: forward as copy (Anon Button) and forward without original caption (No-Text Button).
 ͏ • If you have pre-written comment, then No-Text Button will replace the original caption with your text.
 ͏ • A long press on both the Anon and No-Text buttons will send the message without sound.
