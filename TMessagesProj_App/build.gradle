@@ -158,7 +158,6 @@ android {
             debuggable false
             jniDebuggable false
             signingConfig = unsignedCiRelease ? null : signingConfigs.release
-            applicationIdSuffix appSuffix
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
@@ -310,7 +309,7 @@ android {
     defaultConfig {
         minSdkVersion 23
         targetSdkVersion 36
-        versionName Utils['getVersionName']()
+        versionName = fdroid ? Utils['getVersionName']() : APP_VERSION_NAME
         ndkVersion "27.2.12479018"
 
         multiDexEnabled true
