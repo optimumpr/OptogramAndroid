@@ -418,7 +418,7 @@ Java app-config refresh remain deferred.
 | `287f5e4f29` | Miscellaneous13 | INTEGRATED | Restore conditional sticker suggestions and request animated results from the local keyword-suggestion path using the current adapter account. Keep selection, sending and controller checks. |
 | `b6e274e6ee` | Miscellaneous13 | INTEGRATED | Request the existing animated keyword-suggestion variant in StickersAdapter using local UI eligibility. Other sticker and sending behavior stays in the current code. |
 | `57c990543a` | Miscellaneous14 | DEFERRED | Main widens the account gate. Current TranslateController uses genuine Premium for the chat toggle and distinct provider and rich-message paths. The toggle invokes messages.togglePeerTranslations and server resolution can invoke messages.translateText. A local provider port needs independent routing and failure handling. |
-| `82d5a8e75e` | Miscellaneous15 | DEFERRED | Main widens row availability. Current checks account Premium or autoarchiveAvailable, allowing existing enabled state to be turned off. The action persists account.setGlobalPrivacySettings. Reconcile optimistic UI and request failure before changing the gate. |
+| `82d5a8e75e` | Miscellaneous15 | INTEGRATED | R9 opened autoarchive selection for Local Premium in 6fa6b48ff. The screen now publishes only server-confirmed archive settings and keeps the prior state on error. An enabled setting remains removable without eligibility. |
 | `cbef5a1d03` | Miscellaneous15 | INTEGRATED | Use the actual account's local UI predicate to render its existing folder tags. Preserve the folderTags preference and its consumers. |
 | `d8fcd0cca5` | Miscellaneous16 | DEFERRED | Main widens the featured emoji lock. Current FeaturedStickerSetCell2 uses account Premium and the pack restriction; host actions install or uninstall through MediaDataController. Keep the lock until host behavior and failed-request UI are handled together. |
 | `7efca28091` | Miscellaneous17 | DEFERRED | Main widens the recommendation card. Current card and SharedMediaLayout still use account Premium for the More count and navigation; channel/bot results are fetched through MessagesController. Coordinate card, tab, returned results and upsell rather than relabeling one surface. |
@@ -650,3 +650,31 @@ disposition changed. All 16 deferred entries remain open.
   presentation hunk after the existing preview, self-badge and launcher
   ports. Its remaining changes touch account Premium state or peer story
   eligibility.
+
+## Reconciliation R9
+
+Baseline `aae00b162`. Examined `57c990543a`, `82d5a8e75e`,
+`d8fcd0cca5`, `bf272f005`, `220cdddb3`, and `05c1c7295`.
+Resolved one entry, leaving 15 deferred.
+
+Autoarchive uses the existing global privacy request. All three controls on
+Archive Settings now save immediately and serially within the bound account
+because they share one payload. Prior confirmed values remain visible while
+saving. The controller publishes the response to any replacement view.
+Errors leave the previous settings intact. Confirmed changes are independent
+of the lifetime of the fragment that initiated them.
+
+`ca9eeeab3` partially integrates `d8fcd0cca5` by offering a View Pack
+action for locked featured emoji packs. The existing preview takes the
+hosting account. Install and uninstall controls retain their genuine
+Premium and pack gates. No Local Premium install access or optimistically
+installed state was added.
+
+`57c990543a` stays deferred. The historical gates permit multiple engines.
+Current offline translation uses an installed AIDL provider and falls back
+to an external translator when that service fails. Other content paths,
+including rich messages, can directly request Telegram translation.
+The per-peer visibility control sends Telegram a toggle and updates the
+local cache. A safe port needs strict local-only dispatch across supported
+content types, provider-switch handling and local-only visibility state.
+Related mixed entries remain deferred.
