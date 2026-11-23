@@ -294,8 +294,8 @@ and subscription subtitle remain open.
 | `71c2275fdb` | Render birthday diagnostic output with actual line breaks | SKIPPED | Formatting fix for the removed diagnostics. Preserve the production hint refresh. |
 | `08bc01017e` | Move Optogram local premium and birthday controls into Privacy and Security | INTEGRATED | Move the existing Local Premium and two separate birthday controls below the unified Privacy and Security heading. Keep keys, IDs, defaults, and callbacks. Exclude diagnostics removed in 908a70cbe. |
 | `7e99ab8ee6` | Restore WAV and X-WAV music document recognition | SKIPPED | WAV and X-WAV document classification is already present via d2d2ce007. This patch does not address the deferred Media3 decoder support. |
-| `0fa046e936` | Raise shared media message selection limit to 200 | DEFERRED | Both shared-media entry points cap at 100; main uses 200. Message deletion, story deletion and pinning, and bot preview bulk operations pass ID/media vectors without a cap-specific batch plan. Coordinate per-action limits and undo/error behavior with 90ff756bf6. |
-| `90ff756bf6` | Increase main chat message selection limit to 200 | DEFERRED | Chat tap/group and drag entry points cap at 100; main uses 200. Standard forwarding chunks at 100 or a source-peer transition. Deletion and reporting can pass a full vector. Verify grouped selection at the boundary, merged peers, action-specific limits and partial failure before raising the cap. |
+| `0fa046e936` | Raise shared media message selection limit to 200 | DEFERRED | R11 (05708ed46) raises ordinary shared-media admission to 200. Forwarding and deletion retain the previous 100-item action limit. The historical increase for bot previews remains deferred pending validation of preview deletion. Story selection and pinning limits stay independent. |
+| `90ff756bf6` | Increase main chat message selection limit to 200 | DEFERRED | R11 (7034958dd) raises chat tap, drag, album, and range admission to 200. Forwarding, deletion, reporting, and other unverified bulk actions retain the previous 100-item action limit with feedback. Larger operation batches remain deferred. |
 | `dc58342595` | Restore sharing entire media groups | INTEGRATED | Restore the viewer's single-item or album chooser. Reuse the current file-resolution path, validate each member against account, dialog, group, and protected-media conditions, and require every file before granting content URIs. Keep ordinary single-item sharing. |
 | `94852d6500` | Restore grouped media sharing and phone sharing prompt control | SKIPPED | This commit implements phone prompt suppression and its old PrivacySettingsActivity row. Batch 3 already uses the corrected condition and one unified row. The PhotoViewer album patch is separate. |
 | `765b338ab0` | Disable passkey creation in unofficial Optogram client | SKIPPED | The capability is false and PasskeysController rejects registration before credential or network work. The current registration entry also sits behind the disabled settings route. |
@@ -705,3 +705,36 @@ persistence use shared Telegram peer state, language settings and message
 translation fields. Rich messages, formatted content, polls, and other
 specialized paths need separate content handling. No existing Telegram
 translation or peer-state request was changed.
+
+## Reconciliation R11
+
+Baseline `a27daaf8f`. Reviewed `90ff756bf6`, `0fa046e936`, `643fda950`,
+`220cdddb3` and `bf272f005` against the 13.1.1 reference and current
+selection and operation paths. `643fda950` remains superseded by the
+later tap and drag implementation. The mixed patches do not provide a
+larger safe operation batch.
+
+Chat and ordinary shared-media selections support 200 items. Chat
+whole-album taps check the number of missing items before admission.
+Chat drag snapshots preserve current versus migrated dialog identity.
+Shared-media selection persists across ordinary media tabs, clears at
+specialized tab boundaries and prunes deleted messages. Dedicated global
+search and attachment-picker limits are unchanged.
+
+Selected forwarding and grouped or anonymous sharing retain a 100-item
+action boundary. The sender flushes at 100 or a source-peer transition
+and does not reserve space for a whole album. Deletion and reporting
+still send whole ID vectors within the previous selection bound.
+A report with migrated-chat items is refused rather than dropping those
+IDs. Existing permissions, confirmation, revocation, and request paths
+are preserved. Stories, story pins and bot previews keep their existing
+limits. Android external sharing from the chat selection remains
+single-item, and an unsuccessful clipboard write keeps the selection.
+
+For larger operations, validate each protocol path separately. Forward
+batch planning needs source-peer and album-aware packing and tests for
+restricted items, paid sends and partial failure. Deletion and reporting
+need endpoint-specific limits, correct peer routing and a way to present
+partial outcomes without changing revoke or undo semantics. The two
+selection entries are partially integrated. All 15 historical deferrals
+remain open.
