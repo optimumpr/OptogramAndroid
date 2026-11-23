@@ -98,7 +98,7 @@ Resume with `6c7c51c29` (Spoof as  Windows when OEM device model is disabled).
 | `6d78d4974` | More dark backgrounds | INTEGRATED | Apply the three matching splash logo drawable background changes. No launcher alias or artwork replacement. |
 | `144907372` | Disable contact phone number sharing prompt, commit by @cinitdev | INTEGRATED | Follow 94852d650 and 3340672ec for the corrected negated preference and one unified setting. Manual contact sharing is unchanged. |
 | `d93a44db4` | Remove video quality limitation in Stories, commit by @omg-xtao | INTEGRATED | Expose the existing story quality selector for non-Premium accounts and let the preference choose between the received primary and alternative documents. Keep the outer story eligibility and existing server requests. |
-| `220cdddb3` | Remove some restrictions | DEFERRED | R7 ported profile-button press feedback in 60bc2c5c7. R12 ported the Business presentation gate and three editor entry points in 75a6821ed, with confirmed-save handling in c87997b2f. Upload size decisions, peer Premium rendering, emoji/reaction eligibility, posting search and sheet purchase controls still need independent review. Preserve the current account-aware avatar and verified Premium gates. |
+| `220cdddb3` | Remove some restrictions | DEFERRED | R7 ported profile-button press feedback in 60bc2c5c7. R12 attempted Business Local Premium access in 75a6821ed. Device testing prompted its deliberate exclusion in fae6036ee. The independent confirmed-save handling in c87997b2f remains. Upload size decisions, peer Premium rendering, emoji/reaction eligibility, posting search and sheet purchase controls still need independent review. Preserve the current account-aware avatar and verified Premium gates. |
 | `bf272f005` | Remove some more restrictions | DEFERRED | Translation, autoarchive, featured sets and recommendation gates overlap the later targeted Miscellaneous commits. Remaining changes mix captions and animated-emoji sends, transcription, paid/restricted forwarding, folders, and topic operations. UI-only exposure needs separation from serialization and error handling. |
 | `ec05798ef` | And some more restrictions | DEFERRED | R7 ported only suppression of the Downloads speed upsell for Local Premium in 612f4a7fc. Event consumption, throttling and transfer state are preserved. Folder-tag rendering already uses hasLocalPremiumFeatures. Mentions, folder changes, peer-color saves and story privacy or viewer access remain separate action paths. |
 | `ae60ebfde` | Tell user if message is from Channeln | INTEGRATED | Use 868489e24 and be15c8afb in the current megagroup header, preserving earlier tag precedence. Exclude the unrelated historical Debian package. |
@@ -755,6 +755,14 @@ bind the new fragment explicitly. Local Premium opens hours, location,
 and intro editors. Genuine Premium keeps its existing editor routes.
 The application-level Premium availability gate remains authoritative.
 
+Release correction `fae6036ee` supersedes the Local Premium eligibility
+portion of `75a6821ed`. The R12 APK compiled, installed, and launched.
+On-device testing found that attempting to use the newly opened
+Business features returned to the general Business screen. The release
+therefore restores the original upgrade flow for accounts without
+genuine Telegram Premium. Account binding remains in the Settings
+entry points, Business deep links, and Business editors.
+
 `c87997b2f` keeps those editors' saved state unchanged until Telegram
 confirms the request, including the separate location removal action.
 The same account, payloads, and serializers are used. A rejected
@@ -771,3 +779,29 @@ as do Stories, emoji status, and the Business ads setting.
 `05c1c7295` and `590d5f241` supply no independent Business navigation
 change. Their upload, billing, Stealth Mode and Boost areas remain
 outside this reconciliation. All 15 historical deferrals remain open.
+
+## Optogram 13.2.4 release closure
+
+Historical reconciliation is complete for this release. All 263 original
+rows remain in chronological order. The 15 open historical rows retain
+their DEFERRED status for traceability. The release decisions below
+distinguish the functionality already shipped from the work left open.
+No additional historical changes were ported in the closure batch.
+
+| Historical commit | Exact subject | Release disposition |
+| --- | --- | --- |
+| `a557449fd` | fix some crashes | Deferred beyond this release. Current startup already guards tablet detection, and no reproducible defect supports changing its initialization order. |
+| `220cdddb3` | Remove some restrictions | Partial. Profile feedback and caption upsell presentation ship. Local Premium Business access was deliberately excluded after device testing. Upload limits, peer status, and other entitlement-dependent changes stay out. |
+| `bf272f005` | Remove some more restrictions | Partial. Narrower translation, autoarchive, pack-preview, and recommendation implementations ship. Sending, quick replies, transcription, paid forwarding, and folder or topic operations stay out. |
+| `ec05798ef` | And some more restrictions | Partial. Downloads and folder-tag presentation ship. Folder changes, peer colors, and story or mention operations stay out. |
+| `c8305e930` | Some more changes | Deferred beyond this release. The poll emoji patch affects serialized entities and shared picker eligibility. |
+| `ba435fe3c` | Improve local premium | Partial. Purchase preview, self badge, and launcher appearance are represented. Changes to genuine account Premium state and peer story eligibility stay out. |
+| `05c1c7295` | Miscelaneous | Partial. Phone masking is represented, and newer accent and profile code supersede the historical UI paths. Upload, billing, and Stealth Mode changes stay out. |
+| `590d5f241` | Miscellaneous3 | Deferred beyond this release. Existing Boost UI already recognizes Local Premium where the chat supports it. The historical expansion lacks a valid route for ineligible chats. |
+| `0fa046e936` | Raise shared media message selection limit to 200 | Partial. Ordinary shared-media selection ships at 200. Existing bulk-action, story, and bot-preview limits stand for this release. |
+| `90ff756bf6` | Increase main chat message selection limit to 200 | Partial. Chat selection ships at 200. Existing 100-item forwarding, deletion, reporting, and related bulk-action limits stand for this release. |
+| `51f512168c` | Miscelaneous | Deferred beyond this release. Stealth Mode activation is server-backed, and the current path can display optimistic state without rollback. |
+| `49b63e32d8` | Miscellaneous7 | Partial. Eligible chats retain the existing Boost route. The broader composer gate stays out because it also controls real slow-mode and send restrictions. |
+| `57c990543a` | Miscellaneous14 | Partial. The strict offline action for supported individual messages ships. Whole-chat translation, server peer state, and unsupported rich content stay out. |
+| `d8fcd0cca5` | Miscellaneous16 | Partial. Locked featured packs can be previewed. Install and uninstall keep their existing eligibility. |
+| `7efca28091` | Miscellaneous17 | Partial. Inline recommendations can show already-returned peers. Genuine Premium still governs More navigation. |
