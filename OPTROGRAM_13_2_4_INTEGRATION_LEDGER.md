@@ -678,3 +678,30 @@ The per-peer visibility control sends Telegram a toggle and updates the
 local cache. A safe port needs strict local-only dispatch across supported
 content types, provider-switch handling and local-only visibility state.
 Related mixed entries remain deferred.
+
+## Reconciliation R10
+
+Baseline `ca4a9d8df`. Revisited `57c990543a` and `bf272f005`.
+The 13.1.1 reference widens chat eligibility and restricted-language
+selection using Local Premium. Its ordinary controller can still reach
+Telegram requests and external fallback. R10 ports a narrower offline
+message action, leaving all 15 deferred entries open.
+
+`198a639a1` adds a strict dispatcher through the existing installed AIDL
+provider. Each attempt owns a fresh binding and releases it on completion,
+failure or cancellation. The legacy offline wrapper and its existing
+fallback remain available to existing workflows.
+
+`724c2ba56` adds Translate Offline to the chat message menu when Local
+Premium, the Offline Translator provider and the existing manual
+translation setting are enabled. It handles plain text and unformatted
+photo/video captions. It excludes protected messages and unsupported
+content, checks the bound account and live message before displaying a
+result, and keeps the result only in its dialog. Dismissal and navigation
+cancel the attempt. No translation or peer visibility cache is written.
+
+Whole-chat and background translation remain deferred. Their display and
+persistence use shared Telegram peer state, language settings and message
+translation fields. Rich messages, formatted content, polls, and other
+specialized paths need separate content handling. No existing Telegram
+translation or peer-state request was changed.
