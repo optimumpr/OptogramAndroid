@@ -378,7 +378,8 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
         }
 
         doneButton.setLoading(true, true);
-        TLRPC.UserFull userFull = getMessagesController().getUserFull(getUserConfig().getClientUserId());
+        final long clientUserId = getUserConfig().getClientUserId();
+        final TLRPC.TL_businessLocation confirmedValue;
         TL_account.updateBusinessLocation req = new TL_account.updateBusinessLocation();
         if (!empty) {
             if (geo != null) {
@@ -390,36 +391,42 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
             req.flags |= 1;
             req.address = address;
 
-            if (userFull != null) {
-                userFull.flags2 |= 2;
-                userFull.business_location = new TLRPC.TL_businessLocation();
-                userFull.business_location.address = address;
-                if (geo != null) {
-                    userFull.business_location.flags |= 1;
-                    userFull.business_location.geo_point = new TLRPC.TL_geoPoint();
-                    userFull.business_location.geo_point.lat = geo.lat;
-                    userFull.business_location.geo_point._long = geo._long;
-                }
+            confirmedValue = new TLRPC.TL_businessLocation();
+            confirmedValue.address = req.address;
+            if (req.geo_point != null) {
+                confirmedValue.flags |= 1;
+                confirmedValue.geo_point = new TLRPC.TL_geoPoint();
+                confirmedValue.geo_point.lat = req.geo_point.lat;
+                confirmedValue.geo_point._long = req.geo_point._long;
             }
         } else {
-            if (userFull != null) {
-                userFull.flags2 &=~ 2;
-                userFull.business_location = null;
-            }
+            confirmedValue = null;
         }
 
         getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+            if (clientUserId == 0 || clientUserId != getUserConfig().getClientUserId()) return;
             if (err != null) {
+                if (isFinished) return;
                 doneButton.setLoading(false, true);
                 BulletinFactory.showError(err);
-            } else if (res instanceof TLRPC.TL_boolFalse) {
+            } else if (!(res instanceof TLRPC.TL_boolTrue)) {
+                if (isFinished) return;
                 doneButton.setLoading(false, true);
                 BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.UnknownError)).show();
             } else {
+                TLRPC.UserFull userFull = getMessagesController().getUserFull(clientUserId);
+                if (userFull != null) {
+                    userFull.business_location = confirmedValue;
+                    if (confirmedValue != null) {
+                        userFull.flags2 |= 2;
+                    } else {
+                        userFull.flags2 &= ~2;
+                    }
+                    getMessagesStorage().updateUserInfo(userFull, false);
+                }
                 finishFragment();
             }
         }));
-        getMessagesStorage().updateUserInfo(userFull, false);
     }
 
     @Override
@@ -477,20 +484,26 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
             builder.setTitle(LocaleController.getString(R.string.BusinessLocationClearTitle));
             builder.setMessage(LocaleController.getString(R.string.BusinessLocationClearMessage));
             builder.setPositiveButton(LocaleController.getString(R.string.Remove), (di, w) -> {
+                if (doneButton.isLoading()) return;
                 doneButton.setLoading(true, true);
-                TLRPC.UserFull userFull = getMessagesController().getUserFull(getUserConfig().getClientUserId());
+                final long clientUserId = getUserConfig().getClientUserId();
                 TL_account.updateBusinessLocation req = new TL_account.updateBusinessLocation();
-                if (userFull != null) {
-                    userFull.business_location = null;
-                    userFull.flags2 &=~ 2;
-                }
                 getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
-                    doneButton.setLoading(false, true);
+                    if (clientUserId == 0 || clientUserId != getUserConfig().getClientUserId()) return;
+                    if (!isFinished) doneButton.setLoading(false, true);
                     if (err != null) {
+                        if (isFinished) return;
                         BulletinFactory.showError(err);
-                    } else if (res instanceof TLRPC.TL_boolFalse) {
+                    } else if (!(res instanceof TLRPC.TL_boolTrue)) {
+                        if (isFinished) return;
                         BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.UnknownError)).show();
                     } else {
+                        TLRPC.UserFull userFull = getMessagesController().getUserFull(clientUserId);
+                        if (userFull != null) {
+                            userFull.business_location = null;
+                            userFull.flags2 &= ~2;
+                            getMessagesStorage().updateUserInfo(userFull, false);
+                        }
                         finishFragment();
                     }
                 }));
@@ -502,6 +515,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
 
     private void showLocationAlert() {
         org.telegram.ui.LocationActivity fragment = new org.telegram.ui.LocationActivity(ChatAttachAlertLocationLayout.LOCATION_TYPE_BIZ);
+        fragment.setCurrentAccount(currentAccount);
         if (geo != null) {
             TLRPC.TL_channelLocation initialLocation = new TLRPC.TL_channelLocation();
             initialLocation.address = address;

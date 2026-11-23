@@ -376,7 +376,8 @@ public class OpeningHoursActivity extends BaseFragment implements NotificationCe
         }
 
         doneButton.setLoading(true, true);
-        TLRPC.UserFull userFull = getMessagesController().getUserFull(getUserConfig().getClientUserId());
+        final long clientUserId = getUserConfig().getClientUserId();
+        final TL_account.TL_businessWorkHours confirmedValue;
         TL_account.updateBusinessWorkHours req = new TL_account.updateBusinessWorkHours();
         ArrayList<TL_account.TL_businessWeeklyOpen> periods = fromDaysHours(value);
         if (enabled && !periods.isEmpty()) {
@@ -387,31 +388,37 @@ public class OpeningHoursActivity extends BaseFragment implements NotificationCe
             req.flags |= 1;
             req.business_work_hours = business_work_hours;
 
-            if (userFull != null) {
-                userFull.flags2 |= 1;
-                userFull.business_work_hours = business_work_hours;
-            }
+            confirmedValue = business_work_hours;
         } else {
-            if (userFull != null) {
-                userFull.flags2 &=~ 1;
-                userFull.business_work_hours = null;
-            }
+            confirmedValue = null;
         }
 
         getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+            if (clientUserId == 0 || clientUserId != getUserConfig().getClientUserId()) return;
             if (err != null) {
+                if (isFinished) return;
                 doneButton.setLoading(false, true);
                 BulletinFactory.showError(err);
-            } else if (res instanceof TLRPC.TL_boolFalse) {
+            } else if (!(res instanceof TLRPC.TL_boolTrue)) {
+                if (isFinished) return;
                 if (getContext() == null) return;
                 doneButton.setLoading(false, true);
                 BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.UnknownError)).show();
             } else {
+                TLRPC.UserFull userFull = getMessagesController().getUserFull(clientUserId);
+                if (userFull != null) {
+                    userFull.business_work_hours = confirmedValue;
+                    if (confirmedValue != null) {
+                        userFull.flags2 |= 1;
+                    } else {
+                        userFull.flags2 &= ~1;
+                    }
+                    getMessagesStorage().updateUserInfo(userFull, false);
+                }
                 if (!isFinished && !finishing)
                     finishFragment();
             }
         }));
-        getMessagesStorage().updateUserInfo(userFull, false);
     }
 
     public boolean enabled;

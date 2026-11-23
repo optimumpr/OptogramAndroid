@@ -435,7 +435,8 @@ public class BusinessIntroActivity extends UniversalFragment implements Notifica
 //        }
 
         doneButton.setLoading(true, true);
-        TLRPC.UserFull userFull = getMessagesController().getUserFull(getUserConfig().getClientUserId());
+        final long clientUserId = getUserConfig().getClientUserId();
+        final TL_account.TL_businessIntro confirmedValue;
         TL_account.updateBusinessIntro req = new TL_account.updateBusinessIntro();
         if (!isEmpty()) {
             req.flags |= 1;
@@ -451,38 +452,45 @@ public class BusinessIntroActivity extends UniversalFragment implements Notifica
                 }
             }
 
-            if (userFull != null) {
-                userFull.flags2 |= 16;
-                userFull.business_intro = new TL_account.TL_businessIntro();
-                userFull.business_intro.title = req.intro.title;
-                userFull.business_intro.description = req.intro.description;
-                if (!stickerRandom && sticker != null) {
-                    userFull.business_intro.flags |= 1;
-                    userFull.business_intro.sticker = sticker;
-                }
+            confirmedValue = new TL_account.TL_businessIntro();
+            confirmedValue.title = req.intro.title;
+            confirmedValue.description = req.intro.description;
+            if (!stickerRandom && sticker != null) {
+                confirmedValue.flags |= 1;
+                confirmedValue.sticker = sticker;
             }
         } else {
-            if (userFull != null) {
-                userFull.flags2 &=~ 16;
-                userFull.business_intro = null;
-            }
+            confirmedValue = null;
         }
 
+        final boolean refreshSticker = inputSticker != null;
         getConnectionsManager().sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+            if (clientUserId == 0 || clientUserId != getUserConfig().getClientUserId()) return;
             if (err != null) {
+                if (isFinished) return;
                 doneButton.setLoading(false, true);
                 BulletinFactory.showError(err);
-            } else if (res instanceof TLRPC.TL_boolFalse) {
+            } else if (!(res instanceof TLRPC.TL_boolTrue)) {
+                if (isFinished) return;
                 doneButton.setLoading(false, true);
                 BulletinFactory.of(this).createErrorBulletin(LocaleController.getString(R.string.UnknownError)).show();
             } else {
-                if (inputSticker != null) {
+                TLRPC.UserFull userFull = getMessagesController().getUserFull(clientUserId);
+                if (userFull != null) {
+                    userFull.business_intro = confirmedValue;
+                    if (confirmedValue != null) {
+                        userFull.flags2 |= 16;
+                    } else {
+                        userFull.flags2 &= ~16;
+                    }
+                    getMessagesStorage().updateUserInfo(userFull, false);
+                }
+                if (refreshSticker) {
                     getMessagesController().loadFullUser(getUserConfig().getCurrentUser(), 0, true);
                 }
                 finishFragment();
             }
         }));
-        getMessagesStorage().updateUserInfo(userFull, false);
     }
 
     @Override
