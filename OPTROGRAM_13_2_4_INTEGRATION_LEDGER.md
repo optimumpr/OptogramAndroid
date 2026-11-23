@@ -98,7 +98,7 @@ Resume with `6c7c51c29` (Spoof as  Windows when OEM device model is disabled).
 | `6d78d4974` | More dark backgrounds | INTEGRATED | Apply the three matching splash logo drawable background changes. No launcher alias or artwork replacement. |
 | `144907372` | Disable contact phone number sharing prompt, commit by @cinitdev | INTEGRATED | Follow 94852d650 and 3340672ec for the corrected negated preference and one unified setting. Manual contact sharing is unchanged. |
 | `d93a44db4` | Remove video quality limitation in Stories, commit by @omg-xtao | INTEGRATED | Expose the existing story quality selector for non-Premium accounts and let the preference choose between the received primary and alternative documents. Keep the outer story eligibility and existing server requests. |
-| `220cdddb3` | Remove some restrictions | DEFERRED | R7 ported only profile-button press feedback in 60bc2c5c7. Upload size decisions, peer Premium rendering, emoji/reaction eligibility, posting search and sheet purchase controls still need independent review. Preserve the current account-aware avatar and verified Premium gates. |
+| `220cdddb3` | Remove some restrictions | DEFERRED | R7 ported profile-button press feedback in 60bc2c5c7. R12 ported the Business presentation gate and three editor entry points in 75a6821ed, with confirmed-save handling in c87997b2f. Upload size decisions, peer Premium rendering, emoji/reaction eligibility, posting search and sheet purchase controls still need independent review. Preserve the current account-aware avatar and verified Premium gates. |
 | `bf272f005` | Remove some more restrictions | DEFERRED | Translation, autoarchive, featured sets and recommendation gates overlap the later targeted Miscellaneous commits. Remaining changes mix captions and animated-emoji sends, transcription, paid/restricted forwarding, folders, and topic operations. UI-only exposure needs separation from serialization and error handling. |
 | `ec05798ef` | And some more restrictions | DEFERRED | R7 ported only suppression of the Downloads speed upsell for Local Premium in 612f4a7fc. Event consumption, throttling and transfer state are preserved. Folder-tag rendering already uses hasLocalPremiumFeatures. Mentions, folder changes, peer-color saves and story privacy or viewer access remain separate action paths. |
 | `ae60ebfde` | Tell user if message is from Channeln | INTEGRATED | Use 868489e24 and be15c8afb in the current megagroup header, preserving earlier tag precedence. Exclude the unrelated historical Debian package. |
@@ -738,3 +738,36 @@ need endpoint-specific limits, correct peer routing and a way to present
 partial outcomes without changing revoke or undo semantics. The two
 selection entries are partially integrated. All 15 historical deferrals
 remain open.
+
+## Reconciliation R12
+
+Baseline `803a16d9b`. The Settings row in both 13.1.1 main and the
+13.2.4 baseline opens the Business variant of PremiumPreviewFragment.
+Both snapshots use genuine Premium for editor dispatch. The archived
+`220cdddb3` patch adds Local Premium to Business presentation, but its
+mixed AND/OR predicates are not a reliable eligibility policy.
+
+`75a6821ed` adds a Business-specific local preview state using the bound
+account's existing helper. It suppresses the promotional footer and
+tier chooser and uses the existing Optogram Local Premium subtitle.
+The profile settings row, tablet settings row, and Business deep link
+bind the new fragment explicitly. Local Premium opens hours, location,
+and intro editors. Genuine Premium keeps its existing editor routes.
+The application-level Premium availability gate remains authoritative.
+
+`c87997b2f` keeps those editors' saved state unchanged until Telegram
+confirms the request, including the separate location removal action.
+The same account, payloads, and serializers are used. A rejected
+request retains the previous cached configuration and leaves a visible
+editor retryable. Responses for a replaced account are ignored.
+
+`bf272f005` changes quick-reply attachment eligibility on the sending
+path. Quick replies, greeting and away setup share shortcut operations.
+Bot automation uses multiple requests, and links have a separate
+mutation and refresh lifecycle. They retain their existing eligibility,
+as do Stories, emoji status, and the Business ads setting.
+`ec05798ef` includes separate folder, peer-color and story actions.
+`ba435fe3c` overlaps existing self and purchase-preview behavior.
+`05c1c7295` and `590d5f241` supply no independent Business navigation
+change. Their upload, billing, Stealth Mode and Boost areas remain
+outside this reconciliation. All 15 historical deferrals remain open.
